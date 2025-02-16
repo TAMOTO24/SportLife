@@ -1,0 +1,31 @@
+*{
+    font-family: "Adelle Cyrillic", "Dctz38", Arial, Helvetica, sans-serif !important;
+    margin: 0;
+}
+.block {
+    background-color: black;
+    padding: 20px;
+}
+  
+.block ul {
+    list-style: none;
+    display: flex;
+    gap: 2%;
+    justify-content: center;
+    
+    /* margin-inline: 20px; */
+}
+
+.block a {
+    color: gray;
+    text-decoration: none;
+    font-weight: bolder;
+    display: inline-block;
+    position: relative;
+    transition: transform 0.3s ease, font-weight 0.3s ease;
+}
+.block a:hover {
+    color: whitesmoke;
+    transform: scale(1.2);
+}
+  

@@ -16,7 +16,7 @@ mongoose.connect(process.env.DB_CONNECTION_STRING, {
   .catch(err => console.error("❌ Ошибка подключения:", err));
 
 // API роут
-app.get("/api/items", async (req, res) => {
+app.get("/api/items", async (req, res) => {// Take all items from member Collection
   try {
     const items = await Item.find();
     res.json(items);
@@ -26,8 +26,8 @@ app.get("/api/items", async (req, res) => {
 });
 
 // Раздача статического фронта
-const __dirname = path.resolve();
-app.use(express.static(path.join(__dirname, "client/build")));
+// const __dirname = path.resolve();
+// app.use(express.static(path.join(__dirname, "client/build")));
 
 app.get("*", (req, res) => {
   res.sendFile(path.join(__dirname, "client/build", "index.html"));

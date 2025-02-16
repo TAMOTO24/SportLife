@@ -18,8 +18,7 @@ function Home() {
       <ul>
         {items.map(item => (
           <li key={item._id}>
-            <h3>{item.name}</h3>
-            <p>{item.age}</p>
+            <h3>Name: {item.name} Age: {item.age}</h3>
           </li>
         ))}
       </ul>

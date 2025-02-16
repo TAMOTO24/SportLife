@@ -1,17 +1,29 @@
 // import logo from './logo.svg';
-// import './App.css';
+import './style.css';
 import { Outlet, Link } from "react-router-dom";
 
 function Header() {
   return (
     <>
-      <nav>
+      <nav className="block">
         <ul>
           <li>
-            <Link to="/">Home</Link>
+            <Link to="/">Homepage</Link>
           </li>
           <li>
-            <Link to="/infpage">Inf</Link>
+            <Link to="/infpage">Trainers</Link>
+          </li>
+          <li>
+            <Link to="">News & Info</Link>
+          </li>
+          <li>
+            <Link to="">Layout</Link>
+          </li>
+          <li>
+            <Link to="">Clubs</Link>
+          </li>
+          <li>
+            <Link to="">More</Link>
           </li>
         </ul>
       </nav>
