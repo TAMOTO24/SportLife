@@ -5,29 +5,22 @@ import { Outlet, Link } from "react-router-dom";
 function Header() {
   return (
     <>
-      <nav className="block">
+     <nav className="nav">
         <ul>
-          <li>
-            <Link to="/">Homepage</Link>
-          </li>
-          <li>
-            <Link to="/infpage">Trainers</Link>
-          </li>
-          <li>
-            <Link to="">News & Info</Link>
-          </li>
-          <li>
-            <Link to="">Layout</Link>
-          </li>
-          <li>
-            <Link to="">Clubs</Link>
-          </li>
-          <li>
-            <Link to="">More</Link>
-          </li>
+          {[
+            { to: "/", label: "Homepage" },
+            { to: "/infpage", label: "Trainers" },
+            { to: "/news", label: "News & Info" },
+            { to: "/layout", label: "Layout" },
+            { to: "/clubs", label: "Clubs" },
+            { to: "/more", label: "More" },
+          ].map((item) => (
+            <li key={item.label}>
+              <Link to={item.to}>{item.label}</Link>
+            </li>
+          ))}
         </ul>
       </nav>
-
       <Outlet />
     </>
   );

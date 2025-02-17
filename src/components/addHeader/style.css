@@ -2,21 +2,38 @@
     font-family: "Adelle Cyrillic", "Dctz38", Arial, Helvetica, sans-serif !important;
     margin: 0;
 }
-.block {
+body{
+    padding-top: 60px;
+}
+.nav {
     background-color: black;
-    padding: 20px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 100;
 }
   
-.block ul {
+.nav ul {
     list-style: none;
     display: flex;
     gap: 2%;
     justify-content: center;
-    
-    /* margin-inline: 20px; */
 }
 
-.block a {
+.nav li{
+    margin: 0;
+    padding-block: 20px;
+    padding-inline: 20px;
+    margin-inline: 1px;
+
+    background-image: linear-gradient(white, whitesmoke);
+    background-repeat: no-repeat;
+    background-size: 0% 100%;
+    background-position-x: right;
+    transition: background-size 500ms;
+}
+.nav a {
     color: gray;
     text-decoration: none;
     font-weight: bolder;
@@ -24,8 +41,13 @@
     position: relative;
     transition: transform 0.3s ease, font-weight 0.3s ease;
 }
-.block a:hover {
-    color: whitesmoke;
+.nav li:hover a{
+    color: black;
     transform: scale(1.2);
+    background-position-x: left;
+}
+.nav li:hover{
+    background-position-x: left;
+    background-size: 100% 100%;
 }
   
