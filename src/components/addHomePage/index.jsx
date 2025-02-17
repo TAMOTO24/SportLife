@@ -25,15 +25,15 @@ function Home() {
       window.scrollTo({ top: targetPosition, behavior: "smooth" });
     }
   };
-  const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
+  // const scrollToTop = () => {
+  //   window.scrollTo({ top: 0, behavior: "smooth" });
+  // };
   
   
   return (
     <div>
       <div className="sectionNav">
-        <button onClick={scrollToTop}>1</button>
+        {/* <button onClick={scrollToTop}>1</button> */}
         <button onClick={() => scrollTo(section1)}>2</button>
         <button onClick={() => scrollTo(section2)}>3</button>
         <button onClick={() => scrollTo(section3)}>4</button>
