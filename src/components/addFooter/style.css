@@ -1,0 +1,45 @@
+.footer{
+    /* background-color: #333; */
+    background-color: black;
+    color: white;
+    display: grid;
+    text-align: center;
+    color: #919191;
+    padding-bottom: 5%;
+    font-size: 12px;
+    padding-top: 30px;
+}
+
+.footer > div{
+    padding-bottom: 20px;
+}
+.buttonBlock{
+    display: flex;
+    justify-content: center;
+    /* gap: 0px; */
+    padding: 20px;
+}
+.buttonBlock button{
+    padding: 10px;
+    background-color: transparent;
+    border: 0;
+    color: #919191;
+}
+.buttonBlock button:hover {
+    text-decoration: underline;
+}
+.description{
+    padding-inline: 30%;
+}
+.policyText{
+    color: whitesmoke;
+}
+/* .logoBlock{
+    padding: 0;
+} */
+.footer img {
+    padding: 0;
+    width: 20%;
+    margin: 0 auto;
+    display: block;
+}

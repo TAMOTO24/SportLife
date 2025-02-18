@@ -19,7 +19,7 @@ function Home() {
 
   const scrollTo = (ref) => {
     if (ref.current) {
-      const offset = -60; // Настройка смещения
+      const offset = -80; // Настройка смещения
       const targetPosition =
         ref.current.getBoundingClientRect().top + window.scrollY + offset;
       window.scrollTo({ top: targetPosition, behavior: "smooth" });

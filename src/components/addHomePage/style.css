@@ -55,7 +55,7 @@
     gap: 0.25rem;
 }
 .gallery:hover > :not(:hover){
-    transform: perspective(400px)   rotateY(30deg) scale(0.9);
+    transform: perspective(400px)   rotateY(30deg) ;
     filter: blur(2px)
 }
 .card:hover{

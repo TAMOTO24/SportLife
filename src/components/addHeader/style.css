@@ -3,7 +3,7 @@
     margin: 0;
 }
 body{
-    padding-top: 60px;
+    padding-top: 80px;
 }
 .nav {
     background-color: black;
@@ -12,26 +12,36 @@ body{
     left: 0;
     width: 100%;
     z-index: 100;
+    height: 80px;
 }
   
-.nav ul {
+.nav ul{
     list-style: none;
     display: flex;
     gap: 2%;
     justify-content: center;
+    align-items: stretch;
+    height: 100%;
 }
 
 .nav li{
     margin: 0;
-    padding-block: 20px;
     padding-inline: 20px;
     margin-inline: 1px;
+
+    display: flex; /* Додаємо flex для центрування контенту li */
+    align-items: center; /* Центрування контенту li */
 
     background-image: linear-gradient(white, whitesmoke);
     background-repeat: no-repeat;
     background-size: 0% 100%;
     background-position-x: right;
     transition: background-size 500ms;
+}
+.nav img{
+    margin: 0;
+    width: 380px;
+    transform: scale(0.8);
 }
 .nav a {
     color: gray;
