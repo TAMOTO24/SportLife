@@ -25,7 +25,7 @@ function Footer() {
             </p>
         </div>
         
-        <div><p className="policyText">Copyright © TEST. All Rights Reserved.</p></div>
+        <div><p className="policyText">- © Copyright Octafxt 2024</p></div>
     </footer>
     </>
   );
