@@ -2,6 +2,7 @@
 import "./style.css";
 import { Outlet, Link } from "react-router-dom";
 import Footer from "../addFooter";
+import Auth from "../propsAuthModal";
 
 import { useState } from "react";
 function Header() {
@@ -39,8 +40,10 @@ function Header() {
               </div>
             )}
           </li>
+          <li><Auth /></li>
         </ul>
       </nav>
+
       <Outlet />
 
       <Footer />

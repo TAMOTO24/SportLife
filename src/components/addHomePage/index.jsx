@@ -19,7 +19,7 @@ function Home() {
 
   const scrollTo = (ref) => {
     if (ref.current) {
-      const offset = -80; // Настройка смещения
+      const offset = -110; // Настройка смещения
       const targetPosition =
         ref.current.getBoundingClientRect().top + window.scrollY + offset;
       window.scrollTo({ top: targetPosition, behavior: "smooth" });
@@ -30,9 +30,9 @@ function Home() {
     <div>
       <div className="sectionNav">
         {/* <button onClick={scrollToTop}>1</button> */}
-        <button onClick={() => scrollTo(section1)}>2</button>
-        <button onClick={() => scrollTo(section2)}>3</button>
-        <button onClick={() => scrollTo(section3)}>4</button>
+        <button onClick={() => scrollTo(section1)}>1</button>
+        <button onClick={() => scrollTo(section2)}>2</button>
+        <button onClick={() => scrollTo(section3)}>3</button>
       </div>
       
       <div ref={section1} className="section">blockadqwqwdiqwdioqwdjioqwdjioqwdojiqwdoijdqwijodqwoijqwdioiqwdoijqwd</div>
