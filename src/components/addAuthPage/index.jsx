@@ -2,10 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { Modal, Form, Input, Button, message, Divider } from 'antd';
 import { GoogleOutlined, AppleOutlined, PhoneOutlined, LockOutlined, MailOutlined } from '@ant-design/icons';
 import { useNavigate } from "react-router-dom";
-import './style.css';
 import axios from "axios";
 
-const AuthModal = ({ visible, onCancel }) => {
+const AuthPage = ({ visible, onCancel }) => {
   const [email, setEmail] = useState("");
   // const [isEmailValid, setIsEmailValid] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -15,7 +14,7 @@ const AuthModal = ({ visible, onCancel }) => {
   useEffect(() => {
     axios.get("/api/email")
       .then(response => {
-        setEmailItem(response.data.map(item => item.email)); // Преобразуем массив объектов в массив email-ов
+        setEmailItem(response.data.map(item => item.email));
         console.log(response.data);
       })
       .catch(error => console.error(error));
@@ -26,7 +25,7 @@ const AuthModal = ({ visible, onCancel }) => {
    
     setTimeout(() => {
       if (emailItem.includes(email)) {
-        navigate("/authpage");
+        navigate("/infpage");
         message.success("Email found! Please enter your password."); 
         onCancel();
       } else {
@@ -42,7 +41,7 @@ const AuthModal = ({ visible, onCancel }) => {
   };
 
   return (
-    <Modal title="Authentication" visible={visible} onCancel={onCancel} footer={null} width={350}>
+    <>
       <div style={{ textAlign: "center" }}>
         <h1>Welcome back</h1>
       </div>
@@ -93,23 +92,12 @@ const AuthModal = ({ visible, onCancel }) => {
 
       <Divider>OR</Divider>
 
-      {/* Social login buttons */}
-      <Button icon={<GoogleOutlined />} block style={{ marginBottom: 10 }}>
-        Continue with Google
-      </Button>
-      <Button icon={<AppleOutlined />} block style={{ marginBottom: 10 }}>
-        Continue with Apple
-      </Button>
-      <Button icon={<PhoneOutlined />} block>
-        Continue with phone
-      </Button>
-
       {/* Terms and Privacy */}
       <p style={{ marginTop: 20, fontSize: 12, textAlign: "center" }}>
         <a href="#">Terms of Use</a> | <a href="#">Privacy Policy</a>
       </p>
-    </Modal>
+    </>
   );
 };
 
-export default AuthModal;
+export default AuthPage;

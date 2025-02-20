@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import InfPage from './components/addInfPage/index'; 
 import Home from './components/addHomePage/index'; 
 import Header from './components/addHeader/index'; 
-// import AuthModal from "./components/addAuthorizationModal";
+import AuthPage from "./components/addAuthPage/index";
 
 function App() {
   
@@ -13,6 +13,7 @@ function App() {
         <Route path="/" element={<Header />} >
           <Route index element={<Home />} />
           <Route path="infpage" element={<InfPage />} />
+          <Route path="authpage" element={<AuthPage />} />
           {/* <Route path="AuthModal" element={<AuthModal />} /> */}
         </Route>
       </Routes>
