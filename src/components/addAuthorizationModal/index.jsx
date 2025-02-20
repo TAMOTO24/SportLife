@@ -26,7 +26,7 @@ const AuthModal = ({ visible, onCancel }) => {
    
     setTimeout(() => {
       if (emailItem.includes(email)) {
-        navigate("/authpage");
+        navigate("/authpage?email=" + email);
         message.success("Email found! Please enter your password."); 
         onCancel();
       } else {
