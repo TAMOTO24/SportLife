@@ -8,6 +8,7 @@
     "@testing-library/user-event": "^13.5.0",
     "antd": "^5.24.1",
     "axios": "^1.7.9",
+    "bcryptjs": "^3.0.2",
     "concurrently": "^9.1.2",
     "mongodb": "^6.13.0",
     "mongoose": "^8.10.0",
@@ -22,7 +23,7 @@
     "client": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "server": "node ./src/api/server.js",
+    "server": "node ./src/api/server.cjs",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {

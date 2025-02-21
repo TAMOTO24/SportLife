@@ -1,17 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { Form, Input, Button, message, Divider } from "antd";
 import {
-  GoogleOutlined,
-  AppleOutlined,
-  PhoneOutlined,
   LockOutlined,
   MailOutlined,
   UserOutlined,
 } from "@ant-design/icons";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams, Link } from "react-router-dom";
 import axios from "axios";
 import "./style.css";
 import { set } from "mongoose";
+// import Password from "antd/es/input/Password";
 
 const AuthPage = () => {
   const [searchParams] = useSearchParams();
@@ -33,20 +31,47 @@ const AuthPage = () => {
     setEmail(searchParams.get("email"));
   }, []);
 
-  const handleCheck = (auth) => {
+  // const handleCheck = (auth) => {
+  //   setLoading(true);
+  //   // const values = form.getFieldsValue();
+
+  //   setTimeout(() => {
+  //     if (auth == "signin") { //Autherisation function
+  //       // if (emailItem.includes(email)) {
+  //       //   // navigate("/infpage");
+  //       //   message.success("Email found! Please enter your password.");
+  //       // } else {
+  //       //   message.error("Email not registered.");
+  //       // }
+
+  //     }else{
+
+  //     }
+  //     setLoading(false);
+  //   }, 1000);
+  // };
+  const handleCheck = async (auth) => {
     setLoading(true);
 
-    setTimeout(() => {
-      if (auth == "signin") { //Autherisation function
-        // if (emailItem.includes(email)) {
-        //   // navigate("/infpage");
-        //   message.success("Email found! Please enter your password.");
-        // } else {
-        //   message.error("Email not registered.");
-        // }
+    if (auth === "signin") {
+    } else {
+      const userData = {
+        email: "john.doe@example.com",
+        username: "JohnDoe",
+        password : "test1234" 
+      };
+
+      try {
+        const response = await axios.post("/api/newuser", userData);
+        console.log("Response:", response.data);
+        message.success("User registered successfully!");
+      } catch (error) {
+        console.error("Error sending POST request:", error);
+        message.error("Error during registration.");
       }
-      setLoading(false);
-    }, 1000);
+    }
+
+    setLoading(false);
   };
 
   const handleLogin = (values) => {
@@ -59,7 +84,7 @@ const AuthPage = () => {
       <div className="auth-container">
         <div>
           <div style={{ textAlign: "center" }}>
-            <h1>Log in</h1>
+            <h1>{authType ? "Log in" : "Register"}</h1>
           </div>
           <Form
             onFinish={handleLogin}
@@ -67,7 +92,7 @@ const AuthPage = () => {
             initialValues={{ email: searchParams.get("email") }}
           >
             {/* Email field */}
-            {authType == "signin" && (
+            {authType == "signup" && (
               <Form.Item
                 name="username"
                 rules={[
@@ -134,7 +159,7 @@ const AuthPage = () => {
         <div>
           {/* Terms and Privacy */}
           <p style={{ marginTop: 20, fontSize: 12, textAlign: "center" }}>
-            <a href="#">Terms of Use</a> | <a href="#">Privacy Policy</a>
+            <Link to="/authpage">Terms of Use</Link> | <Link href="#">Privacy Policy</Link>
           </p>
         </div>
       </div>
