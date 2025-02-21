@@ -6,7 +6,7 @@ import {
   PhoneOutlined,
   LockOutlined,
   MailOutlined,
-  UserOutlined
+  UserOutlined,
 } from "@ant-design/icons";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import axios from "axios";
@@ -19,7 +19,7 @@ const AuthPage = () => {
   const [loading, setLoading] = useState(false);
   const [emailItem, setEmailItem] = useState([]);
   const navigate = useNavigate();
-  const [currentAuth, setCurrentAuth] = useState(false);
+  const [authType, setAuthType] = useState("signin");
 
   useEffect(() => {
     axios
@@ -30,18 +30,20 @@ const AuthPage = () => {
       })
       .catch((error) => console.error(error));
 
-      setEmail(searchParams.get("email"));
+    setEmail(searchParams.get("email"));
   }, []);
 
-  const handleEmailCheck = () => {
+  const handleCheck = (auth) => {
     setLoading(true);
 
     setTimeout(() => {
-      if (emailItem.includes(email)) {
-        // navigate("/infpage");
-        message.success("Email found! Please enter your password.");
-      } else {
-        message.error("Email not registered.");
+      if (auth == "signin") { //Autherisation function
+        // if (emailItem.includes(email)) {
+        //   // navigate("/infpage");
+        //   message.success("Email found! Please enter your password.");
+        // } else {
+        //   message.error("Email not registered.");
+        // }
       }
       setLoading(false);
     }, 1000);
@@ -59,8 +61,22 @@ const AuthPage = () => {
           <div style={{ textAlign: "center" }}>
             <h1>Log in</h1>
           </div>
-          <Form onFinish={handleLogin} layout="vertical" initialValues={{ email: searchParams.get("email") }}>
+          <Form
+            onFinish={handleLogin}
+            layout="vertical"
+            initialValues={{ email: searchParams.get("email") }}
+          >
             {/* Email field */}
+            {authType == "signin" && (
+              <Form.Item
+                name="username"
+                rules={[
+                  { required: true, message: "Please enter your username" },
+                ]}
+              >
+                <Input prefix={<UserOutlined />} placeholder="username" />
+              </Form.Item>
+            )}
             <Form.Item
               name="email"
               rules={[
@@ -88,31 +104,30 @@ const AuthPage = () => {
               />
             </Form.Item>
 
-            <Form.Item
-              name="username"
-              rules={[
-                { required: true, message: "Please enter your username" },
-              ]}
-            >
-              <Input
-                prefix={<UserOutlined />}
-                placeholder="username"
-              />
-            </Form.Item>
-    
-
             {/* Continue button */}
-            {setCurrentAuth && (<Button
-              type="primary"
+            <Button
+              type={authType === "signin" ? "primary" : "default"}
               block
-              onClick={handleEmailCheck}
+              onClick={() =>
+                handleCheck(authType === "signin" ? "signin" : "signup")
+              }
               loading={loading}
             >
-              Continue
-            </Button>)}
+              {authType === "signin" ? "Log In" : "Sign Up"}
+            </Button>
           </Form>
           <p style={{ marginTop: 10, textAlign: "center" }}>
-            Don't have an account? <a href="#">Sign Up</a>
+            {authType === "signin"
+              ? "Don't have an account?"
+              : "Already have an account?"}{" "}
+            <a
+              href="#"
+              onClick={() =>
+                setAuthType(authType === "signin" ? "signup" : "signin")
+              }
+            >
+              {authType === "signin" ? "Sign Up" : "Sign In"}
+            </a>
           </p>
         </div>
 

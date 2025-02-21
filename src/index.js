@@ -6,6 +6,7 @@ import Header from "./components/addHeader/index";
 import AuthPage from "./components/addAuthPage/index";
 import { AuthProvider } from "./authprovider";
 import Footer from "./components/addFooter/index";
+import ProtectedRoute from "./protectedRoot";
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
         <Header /> 
         <Routes>
           <Route path="/" element={<Home />} />
+          {/* <Route path="/protected" element={<ProtectedRoute />} /> */}
           <Route path="/infpage" element={<InfPage />} />
           <Route path="/authpage" element={<AuthPage />} />
         </Routes>
