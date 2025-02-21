@@ -1,36 +1,45 @@
-import React, { useState, useEffect } from 'react';
-import { Modal, Form, Input, Button, message, Divider } from 'antd';
-import { GoogleOutlined, AppleOutlined, PhoneOutlined, LockOutlined, MailOutlined } from '@ant-design/icons';
+import React, { useState, useEffect } from "react";
+import { Modal, Form, Input, Button, message, Divider } from "antd";
+import {
+  GoogleOutlined,
+  AppleOutlined,
+  PhoneOutlined,
+  LockOutlined,
+  MailOutlined,
+} from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
-import './style.css';
+import "./style.css";
 import axios from "axios";
 
 const AuthModal = ({ visible, onCancel }) => {
   const [email, setEmail] = useState("");
   // const [isEmailValid, setIsEmailValid] = useState(false);
+  const [noAccout, setNoAccount] = useState(false);
   const [loading, setLoading] = useState(false);
   const [emailItem, setEmailItem] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
-    axios.get("/api/email")
-      .then(response => {
-        setEmailItem(response.data.map(item => item.email)); // Преобразуем массив объектов в массив email-ов
+    axios
+      .get("/api/email")
+      .then((response) => {
+        setEmailItem(response.data.map((item) => item.email)); // Преобразуем массив объектов в массив email-ов
         console.log(response.data);
       })
-      .catch(error => console.error(error));
+      .catch((error) => console.error(error));
   }, []);
 
   const handleEmailCheck = () => {
     setLoading(true);
-   
+
     setTimeout(() => {
       if (emailItem.includes(email)) {
         navigate("/authpage?email=" + email);
-        message.success("Email found! Please enter your password."); 
+        message.success("Email found! Please enter your password.");
         onCancel();
       } else {
         message.error("Email not registered.");
+        setNoAccount(true);
       }
       setLoading(false);
     }, 1000);
@@ -42,7 +51,13 @@ const AuthModal = ({ visible, onCancel }) => {
   };
 
   return (
-    <Modal title="Authentication" visible={visible} onCancel={onCancel} footer={null} width={350}>
+    <Modal
+      title="Authentication"
+      visible={visible}
+      onCancel={onCancel}
+      footer={null}
+      width={350}
+    >
       <div style={{ textAlign: "center" }}>
         <h1>Welcome back</h1>
       </div>
@@ -52,7 +67,7 @@ const AuthModal = ({ visible, onCancel }) => {
           name="email"
           rules={[
             { required: true, message: "Please enter your email!" },
-            { type: "email", message: "Invalid email format!" }
+            { type: "email", message: "Invalid email format!" },
           ]}
         >
           <Input
@@ -64,11 +79,22 @@ const AuthModal = ({ visible, onCancel }) => {
           />
         </Form.Item>
 
+        {/* Registration */}
+        {noAccout && (
+          <p style={{ textAlign: "center" }}>
+            Don't have an account? <a href="#">Sign Up</a>
+          </p>
+        )}
+
         {/* Continue button */}
-          <Button type="primary" block onClick={handleEmailCheck} loading={loading}>
-            Continue
-          </Button>
-        
+        <Button
+          type="primary"
+          block
+          onClick={handleEmailCheck}
+          loading={loading}
+        >
+          Continue
+        </Button>
 
         {/* Password field if email is found
         {isEmailValid && (
@@ -85,11 +111,6 @@ const AuthModal = ({ visible, onCancel }) => {
           </>
         )} */}
       </Form>
-
-      {/* Registration */}
-      <p style={{ marginTop: 10, textAlign: "center" }}>
-        Don't have an account? <a href="#">Sign Up</a>
-      </p>
 
       <Divider>OR</Divider>
 

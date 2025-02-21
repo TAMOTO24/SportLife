@@ -1,25 +1,27 @@
 import ReactDOM from "react-dom/client";
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import InfPage from './components/addInfPage/index'; 
-import Home from './components/addHomePage/index'; 
-import Header from './components/addHeader/index'; 
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import InfPage from "./components/addInfPage/index";
+import Home from "./components/addHomePage/index";
+import Header from "./components/addHeader/index";
 import AuthPage from "./components/addAuthPage/index";
+import { AuthProvider } from "./authprovider";
+import Footer from "./components/addFooter/index";
 
 function App() {
-  
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<Header />} >
-          <Route index element={<Home />} />
-          <Route path="infpage" element={<InfPage />} />
-          <Route path="authpage" element={<AuthPage />} />
-          {/* <Route path="AuthModal" element={<AuthModal />} /> */}
-        </Route>
-      </Routes>
-    </Router>
+    <AuthProvider>
+      <Router>
+        <Header /> 
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/infpage" element={<InfPage />} />
+          <Route path="/authpage" element={<AuthPage />} />
+        </Routes>
+        <Footer />
+      </Router>
+    </AuthProvider>
   );
 }
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
+const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(<App />);

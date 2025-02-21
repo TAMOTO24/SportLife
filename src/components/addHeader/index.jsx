@@ -45,8 +45,6 @@ function Header() {
       </nav>
 
       <Outlet />
-
-      <Footer />
     </div>
   );
 }

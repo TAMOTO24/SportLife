@@ -6,6 +6,7 @@ import {
   PhoneOutlined,
   LockOutlined,
   MailOutlined,
+  UserOutlined
 } from "@ant-design/icons";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import axios from "axios";
@@ -18,6 +19,7 @@ const AuthPage = () => {
   const [loading, setLoading] = useState(false);
   const [emailItem, setEmailItem] = useState([]);
   const navigate = useNavigate();
+  const [currentAuth, setCurrentAuth] = useState(false);
 
   useEffect(() => {
     axios
@@ -55,7 +57,7 @@ const AuthPage = () => {
       <div className="auth-container">
         <div>
           <div style={{ textAlign: "center" }}>
-            <h1>Welcome back</h1>
+            <h1>Log in</h1>
           </div>
           <Form onFinish={handleLogin} layout="vertical" initialValues={{ email: searchParams.get("email") }}>
             {/* Email field */}
@@ -86,15 +88,28 @@ const AuthPage = () => {
               />
             </Form.Item>
 
+            <Form.Item
+              name="username"
+              rules={[
+                { required: true, message: "Please enter your username" },
+              ]}
+            >
+              <Input
+                prefix={<UserOutlined />}
+                placeholder="username"
+              />
+            </Form.Item>
+    
+
             {/* Continue button */}
-            <Button
+            {setCurrentAuth && (<Button
               type="primary"
               block
               onClick={handleEmailCheck}
               loading={loading}
             >
               Continue
-            </Button>
+            </Button>)}
           </Form>
           <p style={{ marginTop: 10, textAlign: "center" }}>
             Don't have an account? <a href="#">Sign Up</a>
