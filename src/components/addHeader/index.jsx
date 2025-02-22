@@ -1,12 +1,21 @@
-// import logo from './logo.svg';
+import React, { useEffect } from "react";
 import "./style.css";
 import { Outlet, Link } from "react-router-dom";
-import Footer from "../addFooter";
 import Auth from "../propsAuthModal";
+import axios from "axios";
 
 import { useState } from "react";
 function Header() {
   const [isOpen, setIsOpen] = useState(false);
+
+  useEffect(() => {
+    axios
+    .get("/protected-route")
+    .then((response) => {
+      console.log(response.data);
+    })
+    .catch((error) => console.error(error));
+  }, []);
 
   return (
     <div>

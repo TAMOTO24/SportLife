@@ -14,9 +14,9 @@ export const AuthProvider = ({ children }) => {
     }
   }, []);
 
-  const login = async (email, password, navigate) => {
+  const login = async (email, password, navigate, message) => {
     try {
-      const response = await axios.post("https://your-api.com/login", {
+      const response = await axios.post("/login", {
         email,
         password,
       });
@@ -26,9 +26,35 @@ export const AuthProvider = ({ children }) => {
       axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
       setUser({ token });
 
-      navigate("/dashboard");
+      navigate("/");
     } catch (error) {
-      console.error("Ошибка авторизации:", error);
+      console.error("Authorisation error:", error);
+      message.error(error.response.data.message);
+    }
+  };
+  const signup = async (email, username, password, navigate, message) => {
+    logout(navigate);
+    const userData = {
+      email: email,
+      username: username,
+      password: password,
+    };
+
+    console.log("User data:", userData);
+
+    try {
+      const response = await axios.post("/newuser", userData);
+
+      const { token } = response.data;
+      localStorage.setItem("token", token);
+      axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+      setUser({ token });
+
+      console.log("Response:", response.data);
+      message.success("User registered successfully!");
+    } catch (error) {
+      console.error("Error sending POST request:", error);
+      message.error("Error during registration.");
     }
   };
 
@@ -36,11 +62,11 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem("token");
     delete axios.defaults.headers.common["Authorization"];
     setUser(null);
-    navigate("/login");
+    navigate("/");
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout }}>
+    <AuthContext.Provider value={{ user, login, signup, logout }}>
       {children}
     </AuthContext.Provider>
   );

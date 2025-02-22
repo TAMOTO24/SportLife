@@ -4,7 +4,6 @@ import {
   GoogleOutlined,
   AppleOutlined,
   PhoneOutlined,
-  LockOutlined,
   MailOutlined,
 } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
@@ -23,8 +22,7 @@ const AuthModal = ({ visible, onCancel }) => {
     axios
       .get("/api/email")
       .then((response) => {
-        setEmailItem(response.data.map((item) => item.email)); // Преобразуем массив объектов в массив email-ов
-        console.log(response.data);
+        setEmailItem(response.data.map((item) => item.email));
       })
       .catch((error) => console.error(error));
   }, []);

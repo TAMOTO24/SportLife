@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { Form, Input, Button, message, Divider } from "antd";
+import React, { useState, useEffect, useContext } from "react";
+import { Form, Input, Button, message} from "antd";
 import {
   LockOutlined,
   MailOutlined,
@@ -8,75 +8,43 @@ import {
 import { useNavigate, useSearchParams, Link } from "react-router-dom";
 import axios from "axios";
 import "./style.css";
-import { set } from "mongoose";
-// import Password from "antd/es/input/Password";
+// import { set } from "mongoose";
+import AuthContext from "../../authprovider.js";
 
 const AuthPage = () => {
+  const [form] = Form.useForm();
+  const { login, signup } = useContext(AuthContext);
+  const navigate = useNavigate();
+
   const [searchParams] = useSearchParams();
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
-  const [emailItem, setEmailItem] = useState([]);
-  const navigate = useNavigate();
   const [authType, setAuthType] = useState("signin");
 
   useEffect(() => {
-    axios
-      .get("/api/email")
-      .then((response) => {
-        setEmailItem(response.data.map((item) => item.email));
-        console.log(response.data);
-      })
-      .catch((error) => console.error(error));
-
     setEmail(searchParams.get("email"));
   }, []);
 
-  // const handleCheck = (auth) => {
-  //   setLoading(true);
-  //   // const values = form.getFieldsValue();
 
-  //   setTimeout(() => {
-  //     if (auth == "signin") { //Autherisation function
-  //       // if (emailItem.includes(email)) {
-  //       //   // navigate("/infpage");
-  //       //   message.success("Email found! Please enter your password.");
-  //       // } else {
-  //       //   message.error("Email not registered.");
-  //       // }
-
-  //     }else{
-
-  //     }
-  //     setLoading(false);
-  //   }, 1000);
-  // };
-  const handleCheck = async (auth) => {
+  const onFinish = async (values) => {
     setLoading(true);
+    console.log("Received values of form:", values);
 
-    if (auth === "signin") {
-    } else {
-      const userData = {
-        email: "john.doe@example.com",
-        username: "JohnDoe",
-        password : "test1234" 
-      };
-
+    if (authType === "signin") { // Login user
       try {
-        const response = await axios.post("/api/newuser", userData);
-        console.log("Response:", response.data);
-        message.success("User registered successfully!");
-      } catch (error) {
-        console.error("Error sending POST request:", error);
-        message.error("Error during registration.");
+        await login(values.email, values.password, navigate, message);
+      } catch (err) {
+        message.error("Error during login.");
+      }
+    } else { // Register new user
+      try {
+        await signup(values.email, values.username, values.password, navigate, message);
+      } catch (err) {
+        message.error("Error during login.", err);
       }
     }
 
     setLoading(false);
-  };
-
-  const handleLogin = (values) => {
-    console.log("Login with data:", values);
-    message.success("Login successful!");
   };
 
   return (
@@ -87,7 +55,7 @@ const AuthPage = () => {
             <h1>{authType ? "Log in" : "Register"}</h1>
           </div>
           <Form
-            onFinish={handleLogin}
+            onFinish={onFinish}
             layout="vertical"
             initialValues={{ email: searchParams.get("email") }}
           >
@@ -133,9 +101,7 @@ const AuthPage = () => {
             <Button
               type={authType === "signin" ? "primary" : "default"}
               block
-              onClick={() =>
-                handleCheck(authType === "signin" ? "signin" : "signup")
-              }
+              htmlType="submit"
               loading={loading}
             >
               {authType === "signin" ? "Log In" : "Sign Up"}
