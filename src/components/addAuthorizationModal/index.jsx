@@ -6,7 +6,7 @@ import {
   PhoneOutlined,
   MailOutlined,
 } from "@ant-design/icons";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import "./style.css";
 import axios from "axios";
 
@@ -36,7 +36,7 @@ const AuthModal = ({ visible, onCancel }) => {
         message.success("Email found! Please enter your password.");
         onCancel();
       } else {
-        message.error("Email not registered.");
+        message.error("Email not found.");
         setNoAccount(true);
       }
       setLoading(false);
@@ -78,11 +78,9 @@ const AuthModal = ({ visible, onCancel }) => {
         </Form.Item>
 
         {/* Registration */}
-        {noAccout && (
-          <p style={{ textAlign: "center" }}>
-            Don't have an account? <a href="#">Sign Up</a>
-          </p>
-        )}
+        <p style={{ textAlign: "center" }}>
+          Don't have an account? <Link to="/authpage" onClick={onCancel}>Sign Up</Link>
+        </p>
 
         {/* Continue button */}
         <Button
@@ -94,20 +92,6 @@ const AuthModal = ({ visible, onCancel }) => {
           Continue
         </Button>
 
-        {/* Password field if email is found
-        {isEmailValid && (
-          <>
-            <Form.Item
-              name="password"
-              rules={[{ required: true, message: "Please enter your password!" }]}
-            >
-              <Input.Password prefix={<LockOutlined />} placeholder="Password" />
-            </Form.Item>
-            <Button type="primary" htmlType="submit" block>
-              Log in
-            </Button>
-          </>
-        )} */}
       </Form>
 
       <Divider>OR</Divider>

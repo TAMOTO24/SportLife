@@ -1,18 +1,21 @@
 import React, { useEffect } from "react";
 import "./style.css";
-import { Outlet, Link } from "react-router-dom";
+import { Outlet, Link, useNavigate } from "react-router-dom";
 import Auth from "../propsAuthModal";
 import axios from "axios";
 
 import { useState } from "react";
 function Header() {
   const [isOpen, setIsOpen] = useState(false);
+  const [user, setUser] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     axios
     .get("/protected-route")
     .then((response) => {
       console.log(response.data);
+      setUser(response.data.user);
     })
     .catch((error) => console.error(error));
   }, []);
@@ -43,13 +46,13 @@ function Header() {
             Больше {isOpen ? "▲" : "▼"}
             {isOpen && (
               <div className="dropdownBlock">
-                <Link to="#"><div id="DRPLink">Промокод</div></Link>
+                <Link to="#"><div id="DRPLink">codes</div></Link>
                 <Link to="#"><div id="DRPLink">Пополнение</div></Link>
                 <Link to="#"><div id="DRPLink">Руководство</div></Link>
               </div>
             )}
           </li>
-          <li><Auth /></li>
+          <li><Auth user={user}/></li>
         </ul>
       </nav>
 

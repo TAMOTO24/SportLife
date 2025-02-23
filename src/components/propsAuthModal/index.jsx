@@ -1,15 +1,17 @@
 import React, { useState } from 'react';
 import AuthModal from '../addAuthorizationModal';
+import {useNavigate } from "react-router-dom";
 
-const Auth = () => {
+const Auth = (user) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
 
   const showModal = () => setIsModalVisible(true);
   const hideModal = () => setIsModalVisible(false);
+  const navigate = useNavigate();
 
   return (
     <>
-      <a onClick={showModal}><img id="userIcon" src="./img-pack/user.png" alt="userImg"/></a>
+      <a onClick={() => (user === null ? showModal() : navigate("/account"))}><img id="userIcon" src="./img-pack/user.png" alt="userImg"/></a>
       <AuthModal visible={isModalVisible} onCancel={hideModal} />
     </>
   );
