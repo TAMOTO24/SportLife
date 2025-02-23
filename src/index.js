@@ -16,10 +16,12 @@ function App() {
         <Header /> 
         <Routes>
           <Route path="/" element={<Home />} />
-          {/* <Route path="/protected" element={<ProtectedRoute />} /> */}
+          {/* <Route path="/protected" element={<ProtectedRoute />} /> */} 
           <Route path="/infpage" element={<InfPage />} />
           <Route path="/authpage" element={<AuthPage />} />
-          <Route path="/account" element={<AccountPage />} />
+          <Route element={<ProtectedRoute />}>
+            <Route path="/account" element={<AccountPage />} />
+          </Route>
         </Routes>
         <Footer />
       </Router>
