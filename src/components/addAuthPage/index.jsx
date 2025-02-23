@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useContext } from "react";
-import { Form, Input, Button, message} from "antd";
+import { Form, Input, Button, message, Upload} from "antd";
 import {
   LockOutlined,
   MailOutlined,
   UserOutlined,
+  UploadOutlined,
 } from "@ant-design/icons";
 import { useNavigate, useSearchParams, Link } from "react-router-dom";
 import axios from "axios";
@@ -89,12 +90,30 @@ const AuthPage = () => {
               name="password"
               rules={[
                 { required: true, message: "Please enter your password!" },
+                { min: 6, message: "Password must be at least 6 characters!" }
               ]}
             >
               <Input.Password
                 prefix={<LockOutlined />}
                 placeholder="Password"
               />
+            </Form.Item>
+            <Form.Item name="profilePic" label="Profile Picture">
+              <Upload
+                name="file"
+                action="/upload"
+                listType="picture"
+                showUploadList={false}
+                // onChange={handleUploadChange}
+                beforeUpload={() => false} // Prevent auto-uploading
+              >
+                <Button
+                  icon={<UploadOutlined />}
+                  style={{ width: "100%", borderRadius: "8px" }}
+                >
+                  Upload Profile Picture
+                </Button>
+              </Upload>
             </Form.Item>
 
             {/* Continue button */}

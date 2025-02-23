@@ -11,7 +11,7 @@ const Auth = (user) => {
 
   return (
     <>
-      <a onClick={() => (user === null ? showModal() : navigate("/account"))}><img id="userIcon" src="./img-pack/user.png" alt="userImg"/></a>
+      <a onClick={() => (user.user === null ? showModal() : navigate("/account"))}><img id="userIcon" src="./img-pack/user.png" alt="userImg"/></a>
       <AuthModal visible={isModalVisible} onCancel={hideModal} />
     </>
   );

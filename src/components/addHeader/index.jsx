@@ -17,7 +17,8 @@ function Header() {
       console.log(response.data);
       setUser(response.data.user);
     })
-    .catch((error) => console.error(error));
+    .catch((error) => console.error("Auth error",error));
+    console.log(user);
   }, []);
 
   return (

@@ -66,3 +66,6 @@
     border-radius: 20px;
     background: GhostWhite;
 }
+.hidePage{
+    display: none;
+}
