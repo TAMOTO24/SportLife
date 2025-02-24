@@ -24,14 +24,13 @@ function Header() {
     <div>
       <nav className="nav">
         <ul>
-          <img src="./img-pack/logo_white.png" alt="Logo" />
+          <img src="./img-pack/logo_white.png" alt="Logo" id="Logo"/>
           {[
             { to: "/", label: "Homepage" },
             { to: "/infpage", label: "Trainers" },
             { to: "/news", label: "News & Info" },
             { to: "/layout", label: "Layout" },
             { to: "/clubs", label: "Clubs" },
-            { to: "", label: "More" },
           ].map((item) => (
             <Link to={item.to} id="navLink">
               <li id="navElement" key={item.label}>{item.label}</li>
@@ -43,7 +42,7 @@ function Header() {
             style={{ cursor: "pointer", paddingInline: "50px" }}
             id="moreBtn"
           >
-            Больше {isOpen ? "▲" : "▼"}
+            More {isOpen ? "▲" : "▼"}
             {isOpen && (
               <div className="dropdownBlock">
                 <Link to="#"><div id="DRPLink">codes</div></Link>
