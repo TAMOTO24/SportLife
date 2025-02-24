@@ -15,6 +15,7 @@ function Home() {
     "url(./img-pack/page1.jpg)",
     "url(./img-pack/page2.jpg)",
     "url(./img-pack/page3.jpg)",
+    "url(./img-pack/page4.png)",
   ];
 
   useEffect(() => {

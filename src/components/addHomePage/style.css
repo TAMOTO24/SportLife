@@ -65,30 +65,6 @@
 .card:hover ~ .card {
   transform: perspective(400px) rotateY(-30deg) scale(0.9);
 }
-/* #FPage img{
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 10px;
-} */
-/* #FPage{
-
-    background-image: url("../../../public/img-pack/page1.jpg");
-    background-size: cover;
-    background-repeat: no-repeat;
-    background-position: top;
-    padding-top: 100px;
-} */
-/* .first-page-wrapper{
-    color: whitesmoke;
-    display: flex;
-    flex-direction: column;
-    width: 1000px;
-    padding: 100px;
-    background-color: rgba(0, 0, 0, 0.6);
-    border-top-right-radius: 20px;
-    border-bottom-right-radius: 20px;
-} */
 
 #FPage {
   position: relative;
