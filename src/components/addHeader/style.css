@@ -39,7 +39,7 @@ body{
     width: 380px;
     transform: scale(0.8);
 }
-a{
+.nav a{
     color: gray;
     text-decoration: none;
     font-weight: bolder;

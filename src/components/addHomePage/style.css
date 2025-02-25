@@ -73,6 +73,7 @@
   background-size: cover;
   background-position: center;
   transition: background-image 0.5s ease-in-out;
+  padding-top: 50px;
 }
 
 .dots-container {
@@ -97,4 +98,15 @@
 
 .active{
   background-color: white;
+}
+.page-content{
+  display: flex;
+  flex-direction: column;
+  color: whitesmoke;
+  background: rgba(0, 0, 0, 0.6);
+  width: 1000px;
+  border-top-right-radius: 20px;
+  border-bottom-right-radius: 20px;
+  padding: 50px;
+  /* transition: position 0.3s ease-in-out; */
 }

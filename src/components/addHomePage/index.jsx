@@ -58,6 +58,10 @@ function Home() {
         id="FPage"
         style={{ backgroundImage: backgrounds[activeIndex] }}
       >{/*Background home swiper*/}
+        <div className="page-content">
+          <h1>Home</h1>
+          <div>Lorem ipsum dolor sit amet consectetur adipisicing elit. Obcaecati, cum quam, voluptate commodi error pariatur inventore sunt repellendus provident laborum doloribus, exercitationem tempora dolorum vitae magni quasi. Ullam, error? Laborum.</div>
+        </div>
         <div className="dots-container">
           {backgrounds.map((_, index) => (
             <div

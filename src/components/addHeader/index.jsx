@@ -27,8 +27,8 @@ function Header() {
           <img src="./img-pack/logo_white.png" alt="Logo" id="Logo"/>
           {[
             { to: "/", label: "Homepage" },
-            { to: "/infpage", label: "Trainers" },
-            { to: "/news", label: "News & Info" },
+            { to: "/trainers", label: "Trainers" },
+            { to: "/newsandinf", label: "News & Info" },
             { to: "/layout", label: "Layout" },
             { to: "/clubs", label: "Clubs" },
           ].map((item) => (

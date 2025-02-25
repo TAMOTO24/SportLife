@@ -8,6 +8,7 @@ import { AuthProvider } from "./authprovider";
 import Footer from "./components/addFooter/index";
 import ProtectedRoute from "./protectedRoot";
 import AccountPage from "./components/addAccountPage/index";
+import NewsInfoPage from "./components/addNewsInfoPage";
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
           {/* <Route path="/protected" element={<ProtectedRoute />} /> */} 
           <Route path="/infpage" element={<InfPage />} />
           <Route path="/authpage" element={<AuthPage />} />
+          <Route path="/newsandinf" element={<NewsInfoPage />} />
           <Route element={<ProtectedRoute />}>
             <Route path="/account" element={<AccountPage />} />
           </Route>
