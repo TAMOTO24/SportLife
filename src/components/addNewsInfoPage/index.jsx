@@ -18,6 +18,21 @@ function NewsInfoPage() {
     // return () => clearInterval(interval);
   }, []);
 
+  const calculateTimeAgo = (value) => { 
+    const now = new Date();
+
+    const diffMs = now - value;
+    const diffSec = Math.floor(diffMs / 1000);
+    const diffMin = Math.floor(diffSec / 60);
+    const diffHours = Math.floor(diffMin / 60);
+    const diffDays = Math.floor(diffHours / 24);
+
+    if (diffDays > 0) return `${diffDays} .d`;
+    if (diffHours > 0) return `${diffHours} .h`;
+    if (diffMin > 0) return `${diffMin} .m`;
+    return "just now";
+  };
+
   return (
     <div className="newsInfoPage">
       {[
@@ -25,7 +40,7 @@ function NewsInfoPage() {
           text: "Lorem ipsum, dolor sit amet consectetur adipisicing elit. Magni, qui? Ad quisquam aut iusto quia quas dolor cumque modi nam quos! Dolores reiciendis modi alias illum. Est, itaque! Culpa, non.",
           user: "User",
           username: "UserName",
-          date: "2h",
+          date: Date("1999-12-31T22:00:00.000+00:00"),
           gallery: [],
           userIcon: "./img-pack/user-blacktheme.png",
         },
@@ -48,7 +63,7 @@ function NewsInfoPage() {
               <div className="postUserContent">
                 <div className="postUser">{item.user}</div>
                 <div className="postUsername">@{item.username}</div>
-                <div className="postDate">.{item.date}</div>
+                <div className="postDate">{calculateTimeAgo(item.date)}</div>
               </div>
               <div className="postText">{item.text}</div>
             </div>
