@@ -8,6 +8,7 @@ const cookieParser = require("cookie-parser");
 
 // const Email = require("../models/email");
 const User = require("../models/user");
+const Post = require("../models/post");
 // const Item = require("../models/items");
 
 dotenv.config();
@@ -35,10 +36,19 @@ app.get("/api/items", async (req, res) => {
   }
 });
 
-app.get("/api/email", async (req, res) => {
+// app.get("/api/email", async (req, res) => {
+//   try {
+//     const email = await User.find();
+//     res.json(email);
+//   } catch (error) {
+//     res.status(500).send("Server error");
+//   }
+// });
+
+app.get("/api/getposts", async (req, res) => {
   try {
-    const email = await User.find();
-    res.json(email);
+    const post = await Post.find();
+    res.json(post);
   } catch (error) {
     res.status(500).send("Server error");
   }
