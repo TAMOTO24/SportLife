@@ -4,21 +4,15 @@ import axios from "axios";
 import "./style.css";
 
 function NewsInfoPage() {
-  const [items, setItems] = useState([]);
+  const [posts, setPosts] = useState([]);
   useEffect(() => {
     axios
-      .get("/api/items")
-      .then((response) => setItems(response.data))
+      .get("/api/getposts")
+      .then((response) => setPosts(response.data))
       .catch((error) => console.error(error));
-
-    // const interval = setInterval(() => {
-    //   setActiveIndex((prevIndex) => (prevIndex + 1) % backgrounds.length);
-    // }, 3000);
-
-    // return () => clearInterval(interval);
   }, []);
 
-  const calculateTimeAgo = (value) => { 
+  const calculateTimeAgo = (value) => {
     const now = new Date();
 
     const diffMs = now - value;
@@ -35,24 +29,7 @@ function NewsInfoPage() {
 
   return (
     <div className="newsInfoPage">
-      {[
-        {
-          text: "Lorem ipsum, dolor sit amet consectetur adipisicing elit. Magni, qui? Ad quisquam aut iusto quia quas dolor cumque modi nam quos! Dolores reiciendis modi alias illum. Est, itaque! Culpa, non.",
-          user: "User",
-          username: "UserName",
-          date: Date("1999-12-31T22:00:00.000+00:00"),
-          gallery: [],
-          userIcon: "./img-pack/user-blacktheme.png",
-        },
-        {
-          text: "Lorem ipsum, dolor sit amet consectetur adipisicing elit. Magni, qui? Ad quisquam aut iusto quia quas dolor cumque modi nam quos! Dolores reiciendis modi alias illum. Est, itaque! Culpa, non.",
-          user: "User",
-          username: "UserName",
-          date: "2h",
-          gallery: [],
-          userIcon: "./img-pack/user-blacktheme.png",
-        },
-      ].map((item) => (
+      {posts.map((item) => (
         <div className="post">
           <div className="postPhoto">
             <img src={item.userIcon} alt="UserIcon" />
@@ -68,7 +45,9 @@ function NewsInfoPage() {
               <div className="postText">{item.text}</div>
             </div>
             <div className="postGallery">
-              <img src="./img-pack/page1.jpg" alt="UserIcon" />
+              {item.gallery.map((image) => (
+                <img src={image} alt="Gallery" />
+              ))}
             </div>
             <div className="postPanel">
               <a className="postLike">Like</a>
