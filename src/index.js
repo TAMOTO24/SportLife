@@ -9,6 +9,7 @@ import Footer from "./components/addFooter/index";
 import ProtectedRoute from "./protectedRoot";
 import AccountPage from "./components/addAccountPage/index";
 import NewsInfoPage from "./components/addNewsInfoPage";
+import CreatePostPage from "./components/addCreatePostPage";
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
           <Route path="/newsandinf" element={<NewsInfoPage />} />
           <Route element={<ProtectedRoute />}>
             <Route path="/account" element={<AccountPage />} />
+            <Route path="/createpost" element={<CreatePostPage />} />
           </Route>
         </Routes>
         <Footer />

@@ -6,7 +6,7 @@ import { MailOutlined, UserOutlined, LockOutlined, UploadOutlined } from '@ant-d
 
 const AccountPage = () => {
   const [active, setActive] = useState(false);
-  const [selected, setSelected] = useState("Account info"); // Сохраняем выбранный элемент
+  const [selected, setSelected] = useState("Account info");
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
