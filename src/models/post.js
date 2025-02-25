@@ -10,6 +10,8 @@ const postSchema = new mongoose.Schema({
   },
   gallery: Array,
   userIcon: String,
+  comment: Array,
+  like: Array,
 });
 
 module.exports = mongoose.models.posts || mongoose.model("posts", postSchema);

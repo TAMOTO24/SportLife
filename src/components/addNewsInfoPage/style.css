@@ -52,3 +52,16 @@
 .postUsername, .postDate{
     color: gray;
 }
+.postLike, .postComment{
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+.postLike img, .postComment img, .postShare img, .postSave img{
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+}
+.postLike div, .postComment div{
+    font-size: 20px;
+}

@@ -69,10 +69,10 @@ function NewsInfoPage() {
               ))}
             </div>
             <div className="postPanel">
-              <a className="postLike">Like</a>
-              <a className="postComment">Comment</a>
-              <a className="postShare">Share</a>
-              <a className="postSave">Save</a>
+              <a className="postLike"><img src="./img-pack/like.png" alt="" /><div>{item.like.length}</div></a>
+              <a className="postComment"><img src="./img-pack/chat.png" alt="" /><div>{item.comment.length}</div></a>
+              <a className="postShare"><img src="./img-pack/share.png" alt="" /></a>
+              <a className="postSave"><img src="./img-pack/favorite.png" alt="" /></a>
             </div>
           </div>
         </div>
