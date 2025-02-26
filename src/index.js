@@ -24,7 +24,7 @@ function App() {
           <Route path="/newsandinf" element={<NewsInfoPage />} />
           <Route element={<ProtectedRoute />}>
             <Route path="/account" element={<AccountPage />} />
-            <Route path="/createpost" element={<CreatePostPage />} />
+            <Route path="/createpostpage" element={<CreatePostPage />} />
           </Route>
         </Routes>
         <Footer />

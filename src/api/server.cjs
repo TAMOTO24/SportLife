@@ -5,6 +5,7 @@ const dotenv = require("dotenv");
 const path = require("path");
 const jwt = require("jsonwebtoken");
 const cookieParser = require("cookie-parser");
+const multer = require("multer");
 
 // const Email = require("../models/email");
 const User = require("../models/user");
@@ -17,7 +18,23 @@ const app = express();
 app.use(cookieParser());
 app.use(express.json());
 
-// Подключение к MongoDB
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "./public/server-savings/"); //null - if error, "./server-savings/" - where to save files
+  },
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + path.extname(file.originalname)); //null - if error, Date.now() - unique name, path.extname - file extension
+  },
+});
+
+const upload = multer({
+  storage: storage, //Set current storage rules
+  limits: {
+    fileSize: 10 * 1024 * 1024, // Max size 10 MB
+  },
+});
+
+
 mongoose
   .connect(process.env.DB_CONNECTION_STRING, {
     useNewUrlParser: true,
@@ -36,14 +53,12 @@ app.get("/api/items", async (req, res) => {
   }
 });
 
-// app.get("/api/email", async (req, res) => {
-//   try {
-//     const email = await User.find();
-//     res.json(email);
-//   } catch (error) {
-//     res.status(500).send("Server error");
-//   }
-// });
+app.post("/upload", upload.array("image", 2), (req, res) => { //upload array of images where 2 is max value of images
+  if (!req.files) { //check if there are no files
+    return res.status(400).json({ message: "No files!" });
+  }
+  res.json({ success: true, message: "Files uploaded successfully!" }); //Success message
+});
 
 app.get("/api/getposts", async (req, res) => {
   try {
@@ -163,6 +178,5 @@ app.get("*", (req, res) => {
   res.sendFile(path.join(__dirname, "../../public/index.html"));
 });
 
-// Запуск сервера
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.SERVER_PORT || 5000;
 app.listen(PORT, () => console.log(`🚀 Server is running on port ${PORT}`));
