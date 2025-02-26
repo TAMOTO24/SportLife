@@ -34,7 +34,6 @@ const upload = multer({
   },
 });
 
-
 mongoose
   .connect(process.env.DB_CONNECTION_STRING, {
     useNewUrlParser: true,
@@ -53,11 +52,54 @@ app.get("/api/items", async (req, res) => {
   }
 });
 
-app.post("/upload", upload.array("image", 2), (req, res) => { //upload array of images where 2 is max value of images
-  if (!req.files) { //check if there are no files
+app.post("/createpagepost", async (req, res) => {
+  const { filePaths, description } = req.body;
+  console.log("data:", req.body);
+
+  const token =
+    req.cookies.token || req.header("Authorization")?.replace("Bearer ", "");
+
+  if (!token || token === undefined || token === "null") {
+    return res.status(500).json({ message: "Ur not logined yet" });
+  }
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const userId = decoded.id;
+
+    const answerUser = await User.findOne({ _id: userId });
+
+    console.log({
+      userId: userId,
+      description,              
+      user: answerUser.name,
+      username: answerUser.username,
+      gallery: filePaths,
+    })
+    
+    const newPost = new Post({
+      userId: userId,
+      description,              
+      user: answerUser.name,
+      username: answerUser.username,
+      gallery: filePaths,
+    });
+    await newPost.save();
+  } catch (error) {
+    console.error("Error creating post:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
+app.post("/upload", upload.array("image", 2), (req, res) => {
+  //upload array of images where 2 is max value of images
+  if (!req.files) {
+    //check if there are no files
     return res.status(400).json({ message: "No files!" });
   }
-  res.json({ success: true, message: "Files uploaded successfully!" }); //Success message
+  const filePaths = req.files.map(file => `./public/server-savings/${file.filename}`);
+
+  res.json({ filePaths });
 });
 
 app.get("/api/getposts", async (req, res) => {
@@ -100,10 +142,10 @@ app.post("/newuser", async (req, res) => {
       expiresIn: "7d",
     });
     res.cookie("token", token, {
-        httpOnly: true,    
-        secure: true,      
-        sameSite: 'Strict', 
-        maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+      httpOnly: true,
+      secure: true,
+      sameSite: "Strict",
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     });
 
     res.json({ token });
@@ -136,10 +178,10 @@ app.post("/login", async (req, res) => {
       expiresIn: "7d",
     });
     res.cookie("token", token, {
-        httpOnly: true,    
-        secure: true,      
-        sameSite: 'Strict', 
-        maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+      httpOnly: true,
+      secure: true,
+      sameSite: "Strict",
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     });
 
     //Return Tokin
@@ -150,7 +192,8 @@ app.post("/login", async (req, res) => {
   }
 });
 app.get("/protected-route", async (req, res) => {
-  const token = req.cookies.token || req.header("Authorization")?.replace("Bearer ", "");
+  const token =
+    req.cookies.token || req.header("Authorization")?.replace("Bearer ", "");
 
   if (!token || token === undefined || token === "null") {
     return res.status(500).json({ message: "Ur not logined yet" });

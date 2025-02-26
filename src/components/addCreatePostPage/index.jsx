@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Form, Input, Button, Upload, Image, Divider, message } from "antd";
 import { PictureFilled } from "@ant-design/icons";
 import "./style.css";
@@ -6,29 +6,44 @@ import axios from "axios";
 
 const CreatePostPage = () => {
   const [loading, setLoading] = useState(false);
-  const [images, setImages] = useState([]);
-  const [files, setFile] = useState([]);
+  const [images, setImages] = useState([]); //Saves uploaded files to use them in axios upload api
+  const [files, setFile] = useState([]); // Saves url's to files to show them in gallery of chosen files to create post
+  const [postData, setPostData] = useState({
+    filePaths: [],
+    description: "",
+  });
+
+  useEffect(() => {
+    if (!postData.description) return
+    if (!postData.filePaths) return
+    axios
+    .post("/createpagepost", postData).then((response) => {
+      console.log(response.data);
+    })
+    .catch((error) => console.error("Auth error", error));
+  }, [postData]);
 
   const handleSave = async (file) => {
-    const isLt5M = file.size / 1024 / 1024 < 5; // Check file size
-    if (!isLt5M) return message.error("Image must smaller than 5MB!");
     if (!file) return message.error("Please upload an image!");
-    if (images.length >= 2) return message.error("You can upload up to 2 images!");
-
-    // const formData = new FormData();
-    // formData.append("image", file);
+    if (images.length >= 2)
+      return message.error("You can upload up to 2 images!");
 
     setFile((prevImages) => [...prevImages, file]);
 
     const reader = new FileReader();
-    reader.onloadend = () => { //Fill array of images to show up in gallery
+    reader.onloadend = () => {
+      // Fill array of images to show up in gallery
       const imageUrl = reader.result;
-      setImages((prevImages) => [...prevImages, imageUrl]);
+      setImages((prevImages) => [...prevImages, imageUrl]); // add this URL to array
     };
-    reader.readAsDataURL(file);
+    reader.readAsDataURL(file); // make file readable as a URL
   };
-  const handleSubmit = async () => {
-    if (images.length === 0) return message.error("Please upload at least one image.");
+
+  const handleSubmit = async (values) => {
+    // main handlesubmit that saves files using api construct and create post in MongoDB
+    // if (images.length === 0) return message.error("Please upload at least one image.");
+    if (!values.description)
+      return message.error("Please write some text in description.");
 
     const formData = new FormData();
     files.forEach((image, index) => {
@@ -36,13 +51,18 @@ const CreatePostPage = () => {
     });
 
     try {
+      // api to ave files(images) to special folder
       setLoading(true);
       const response = await axios.post("/upload", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
       });
-      message.success("Images uploaded successfully!");
+      // message.success("Images uploaded successfully!");
+      setPostData({
+        filePaths: response.data.filePaths,
+        description: values.description,
+      });
     } catch (error) {
       message.error("Upload error!");
       console.error(error);
@@ -56,17 +76,9 @@ const CreatePostPage = () => {
         <Form
           layout="vertical"
           style={{ width: "800px" }}
+          onFinish={handleSubmit}
         >
-          <Form.Item
-            name="profileDescription"
-            label="Profile Description"
-            rules={[
-              {
-                required: true,
-                message: "Please enter your description!",
-              },
-            ]}
-          >
+          <Form.Item name="description" label="Post Description">
             <Input.TextArea
               placeholder="Have to share something..."
               rows={4}
@@ -97,7 +109,7 @@ const CreatePostPage = () => {
               type="primary"
               block
               loading={loading}
-              onClick={handleSubmit}
+              htmlType="submit"
               style={{
                 backgroundColor: "#1890ff",
                 borderRadius: "8px",
