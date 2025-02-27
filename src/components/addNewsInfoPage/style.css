@@ -1,67 +1,143 @@
-.post{
-    display: flex;
-    border-top: 1px solid gray;
-    padding: 10px;
-    width: 800px;
+.post {
+  display: flex;
+  border-top: 1px solid gray;
+  padding: 10px;
+  width: 800px;
 
-    max-width: 900px;
-    max-height: 900px;
-    margin-bottom: 100%;
+  max-width: 900px;
+  max-height: 900px;
+  margin-bottom: 50px;
 }
-.postPhoto img{
+.postPhoto img {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  padding: 5px;
+}
+.newsInfoPage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 20px;
+  min-height: 1400px;
+  margin-bottom: 50px;
+}
+.postUserContent,
+.postPanel {
+  display: flex;
+  gap: 10px;
+}
+.postPanel {
+  justify-content: space-between;
+  align-items: center;
+}
+.postContent {
+  width: auto;
+}
+.postGallery {
+  display: flex;
+  border: 1px solid gray;
+  border-radius: 10px;
+  gap: 2px;
+  width: 738px;
+  grid-auto-flow: dense;
+  overflow: hidden;
+  margin-block: 10px;
+  height: 600px;
+  flex-direction: column;
+}
+.postGallery img {
+  flex: 1;
+  width: 100%;
+  height: 50%;
+  object-fit: cover;
+  cursor: pointer;
+}
+.postUsername,
+.postDate {
+  color: gray;
+}
+.postLike,
+.postComment {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+.postLike img,
+.postComment img,
+.postShare img,
+.postSave img {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+}
+.postLike div,
+.postComment div {
+  font-size: 20px;
+}
+.addPostButton {
+  position: fixed;
+  right: 20px;
+  top: 100px;
+  color: whitesmoke;
+  font-size: 20px;
+  font-weight: bolder;
+  padding-block: 15px;
+  padding-inline: 10px;
+  border-radius: 50%;
+  text-decoration: none;
+  border: 1px solid rgb(163, 163, 255);
+  background: black;
+  transition: width 0.4s ease-in-out, padding 0.4s ease-in-out, border-radius 0.4s ease-in-out;
+  width: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+.addPostButton::before {
+  content: "+";
+  display: block;
+  text-align: center;
+  opacity: 1;
+  font-size: 30px;
+  white-space: nowrap;
+}
+
+.addPostButton:hover {
+  width: 200px;
+  padding-inline: 30px;
+  border-radius: 25px;
+  background: rgb(100, 100, 255);
+}
+.addPostButton:active{
     width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    padding: 5px;
+    background: gray;
 }
-.newsInfoPage{
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-top: 20px;
+.addPostButton:active::before{
+    color: black;
 }
-.postUserContent, .postPanel{
-    display: flex;
-    gap: 10px;
+
+.addPostButton:hover::before {
+  content: "Add new post";
+  opacity: 1;
+  animation: textAppear 0.5s ease-in-out forwards;
 }
-.postPanel{
-    justify-content: space-between;
-    align-items: center;
+
+.addPostButton::before {
+  animation: textDisappear 0.5s ease-in-out forwards;
 }
-.postContent{
-    width: auto;
+
+@keyframes textAppear {
+  0% {
+    opacity: 0;
+    transform: translateX(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
-.postGallery{
-    display: flex;
-    border: 1px solid gray;
-    border-radius: 10px;
-    gap: 2px;
-    grid-auto-flow: dense;
-    overflow: hidden;
-    margin-block: 10px;
-    height: 600px;
-    flex-direction: column;
-}
-.postGallery img{
-    flex: 1;
-    width: 100%;
-    height: 50%;
-    object-fit: cover;
-    cursor: pointer;
-}
-.postUsername, .postDate{
-    color: gray;
-}
-.postLike, .postComment{
-    display: flex;
-    gap: 10px;
-    align-items: center;
-}
-.postLike img, .postComment img, .postShare img, .postSave img{
-    width: 20px;
-    height: 20px;
-    cursor: pointer;
-}
-.postLike div, .postComment div{
-    font-size: 20px;
-}
+
+  

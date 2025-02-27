@@ -53,11 +53,10 @@ app.get("/api/items", async (req, res) => {
 });
 
 app.post("/createpagepost", async (req, res) => {
-  const { filePaths, description } = req.body;
-  console.log("data:", req.body);
+  const { filePaths, description } = req.body; //Take data post img paths and description
 
   const token =
-    req.cookies.token || req.header("Authorization")?.replace("Bearer ", "");
+    req.cookies.token || req.header("Authorization")?.replace("Bearer ", ""); //Verify user JWT token
 
   if (!token || token === undefined || token === "null") {
     return res.status(500).json({ message: "Ur not logined yet" });
@@ -65,24 +64,24 @@ app.post("/createpagepost", async (req, res) => {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const userId = decoded.id;
+    const userId = decoded.id; // Decode tokin to get user id from it
 
-    const answerUser = await User.findOne({ _id: userId });
+    const answerUser = await User.findOne({ _id: userId }); //Find user by id
 
-    console.log({
-      userId: userId,
-      description,              
-      user: answerUser.name,
-      username: answerUser.username,
-      gallery: filePaths,
-    })
-    
+    // console.log({
+    //   userId: userId,
+    //   description,              
+    //   user: answerUser.name,
+    //   username: answerUser.username,
+    //   gallery: filePaths,
+    // })
     const newPost = new Post({
       userId: userId,
-      description,              
-      user: answerUser.name,
+      text: description,              
+      user: answerUser.name || "",
       username: answerUser.username,
       gallery: filePaths,
+      userIcon: answerUser.icon || "",
     });
     await newPost.save();
   } catch (error) {
@@ -97,7 +96,7 @@ app.post("/upload", upload.array("image", 2), (req, res) => {
     //check if there are no files
     return res.status(400).json({ message: "No files!" });
   }
-  const filePaths = req.files.map(file => `./public/server-savings/${file.filename}`);
+  const filePaths = req.files.map(file => `./server-savings/${file.filename}`);
 
   res.json({ filePaths });
 });

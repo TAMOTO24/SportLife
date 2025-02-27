@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "./style.css";
 import { Modal } from "antd";
+import { Outlet, Link, useNavigate } from "react-router-dom";
 
 function NewsInfoPage() {
   const [posts, setPosts] = useState([]);
@@ -29,6 +30,12 @@ function NewsInfoPage() {
     if (diffHours > 0) return `${diffHours} h`;
     if (diffMin > 0) return `${diffMin} m`;
     if (diffSec > 0) return `${diffSec} s`;
+
+    console.log(diffDays);
+    console.log(diffHours);
+    console.log(diffMin);
+    console.log(diffSec);
+    console.log(value)
     return "just now";
   };
 
@@ -43,16 +50,17 @@ function NewsInfoPage() {
 
   return (
     <div className="newsInfoPage">
+      <Link to="/createpostpage" className="addPostButton"><div></div></Link>
       {posts.map((item) => (
         <div className="post" key={item.id}>
           <div className="postPhoto">
-            <img src={item.userIcon} alt="UserIcon" />
+            <img src={item.userIcon || "./img-pack/user-blacktheme.png"} alt="UserIcon" />
           </div>
 
           <div className="postContent">
             <div>
               <div className="postUserContent">
-                <div className="postUser">{item.user}</div>
+                <div className="postUser">{item.user || "unknown user"}</div>
                 <div className="postUsername">@{item.username}</div>
                 <div className="postDate">{calculateTimeAgo(item.date)}</div>
               </div>

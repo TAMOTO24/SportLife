@@ -5,7 +5,7 @@ const postSchema = new mongoose.Schema({
   text: String,
   user: String,
   username: String,
-  data: {
+  date: {
     type: Date,
     default: Date.now,
   },
