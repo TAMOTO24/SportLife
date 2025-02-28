@@ -11,6 +11,7 @@ import AccountPage from "./components/addAccountPage/index";
 import NewsInfoPage from "./components/addNewsInfoPage";
 import CreatePostPage from "./components/addCreatePostPage";
 import WorkoutPage from "./components/addWorkoutPage";
+import ClassPage from "./components/addClassPage";
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
           <Route path="/authpage" element={<AuthPage />} />
           <Route path="/newsandinf" element={<NewsInfoPage />} />
           <Route path="/workoutpage" element={<WorkoutPage />} />
+          <Route path="/classpage" element={<ClassPage />} />
           <Route element={<ProtectedRoute />}>
             <Route path="/account" element={<AccountPage />} />
             <Route path="/createpostpage" element={<CreatePostPage />} />

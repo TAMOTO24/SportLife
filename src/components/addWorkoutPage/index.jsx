@@ -1,15 +1,14 @@
 import React, { useState } from "react";
 import "./style.css";
-import { Outlet, Link, useNavigate } from "react-router-dom";
+// import { Outlet, Link, useNavigate } from "react-router-dom";
 
 const WorkoutPage = () => {
   const [activeIndex, setActiveIndex] = useState(0);
-  const navigate = useNavigate();
   const handleClick = (index) => {
     setActiveIndex(index);
   };
   const navigateToWorkoutPage = (id) => {
-    navigate("/");
+    
   };
 
   return (

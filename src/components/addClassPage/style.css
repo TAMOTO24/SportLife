@@ -1,0 +1,15 @@
+.classPage{
+    height: 100vh;
+    background-image: url("../../../public/img-pack/page1.jpg");
+    background-size: cover;
+    filter: brightness(50%);
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.classBlock{
+    background-color: rgb(34, 37, 41);
+    width: 60%;
+    height: 90%;
+}
