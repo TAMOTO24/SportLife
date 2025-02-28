@@ -3,6 +3,7 @@ import axios from "axios";
 import "./style.css";
 import { Modal } from "antd";
 import { Outlet, Link, useNavigate } from "react-router-dom";
+import Cookies from 'js-cookie';
 
 function NewsInfoPage() {
   const [posts, setPosts] = useState([]);
@@ -50,7 +51,7 @@ function NewsInfoPage() {
 
   return (
     <div className="newsInfoPage">
-      <Link to="/createpostpage" className="addPostButton"><div></div></Link>
+      {Cookies.get('token') && (<Link to="/createpostpage" className="addPostButton"><div></div></Link>)}
       {posts.map((item) => (
         <div className="post" key={item.id}>
           <div className="postPhoto">

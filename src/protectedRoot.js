@@ -7,10 +7,11 @@ const ProtectedRoute = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    if (user !== null) {
+    const timer = setTimeout(() => {
       setIsLoading(false);
-    }
-  }, [user]);
+    }, 5000);
+    return () => clearTimeout(timer);
+  }, []);
 
   if (isLoading) {
     return <div>Loading...</div>;

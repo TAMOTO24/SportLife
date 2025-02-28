@@ -6,7 +6,7 @@ body{
     padding-top: 80px;
 }
 .nav {
-    background-color: black;
+    background-color: rgb(24, 26, 29);;
     position: fixed;
     top: 0;
     left: 0;
@@ -75,7 +75,7 @@ body{
     z-index: 100;
     justify-items: center;
     text-align: center;
-    background-color: black;
+    background-color: rgb(24, 26, 29);;
     left: 0;
     width: 100%;
     padding-bottom: 10px;

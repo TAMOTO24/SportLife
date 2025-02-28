@@ -10,6 +10,7 @@ import ProtectedRoute from "./protectedRoot";
 import AccountPage from "./components/addAccountPage/index";
 import NewsInfoPage from "./components/addNewsInfoPage";
 import CreatePostPage from "./components/addCreatePostPage";
+import WorkoutPage from "./components/addWorkoutPage";
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
           <Route path="/infpage" element={<InfPage />} />
           <Route path="/authpage" element={<AuthPage />} />
           <Route path="/newsandinf" element={<NewsInfoPage />} />
+          <Route path="/workoutpage" element={<WorkoutPage />} />
           <Route element={<ProtectedRoute />}>
             <Route path="/account" element={<AccountPage />} />
             <Route path="/createpostpage" element={<CreatePostPage />} />

@@ -30,7 +30,7 @@ function Header() {
             { to: "/trainers", label: "Trainers" },
             { to: "/newsandinf", label: "News & Info" },
             { to: "/layout", label: "Layout" },
-            { to: "/clubs", label: "Clubs" },
+            { to: "/workoutpage", label: "Workout" },
           ].map((item) => (
             <Link to={item.to} id="navLink">
               <li id="navElement" key={item.label}>{item.label}</li>
