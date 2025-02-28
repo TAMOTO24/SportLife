@@ -84,7 +84,7 @@ function Home() {
           ))}
         </ul>
       </div>
-      <div ref={section3} className="section">
+      {/* <div ref={section3} className="section">
         <div className="wrapper">
           <div className="gallery">
             <div className="card">1</div>
@@ -93,7 +93,7 @@ function Home() {
             <div className="card">4</div>
           </div>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 }

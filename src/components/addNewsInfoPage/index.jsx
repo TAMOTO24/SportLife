@@ -15,6 +15,8 @@ function NewsInfoPage() {
       .get("/api/getposts")
       .then((response) => setPosts(response.data))
       .catch((error) => console.error(error));
+
+      console.log(Cookies.get('token'))
   }, []);
 
   const calculateTimeAgo = (value) => {
@@ -31,12 +33,6 @@ function NewsInfoPage() {
     if (diffHours > 0) return `${diffHours} h`;
     if (diffMin > 0) return `${diffMin} m`;
     if (diffSec > 0) return `${diffSec} s`;
-
-    console.log(diffDays);
-    console.log(diffHours);
-    console.log(diffMin);
-    console.log(diffSec);
-    console.log(value)
     return "just now";
   };
 

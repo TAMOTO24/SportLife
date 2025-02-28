@@ -10,6 +10,7 @@ const multer = require("multer");
 // const Email = require("../models/email");
 const User = require("../models/user");
 const Post = require("../models/post");
+const Workouts = require("../models/workouts");
 // const Item = require("../models/items");
 
 dotenv.config();
@@ -46,6 +47,25 @@ app.get("/api/items", async (req, res) => {
   // Take all items from member Collection
   try {
     const items = await User.find();
+    res.json(items);
+  } catch (error) {
+    res.status(500).send("Server error");
+  }
+});
+app.get("/api/email", async (req, res) => {
+  // Take all emails from member Collection
+  try {
+    const email = await User.find();
+    res.json(email);
+  } catch (error) {
+    res.status(500).send("Server error");
+  }
+});
+app.post("/api/workouts", async (req, res) => {
+  // Take all workouts from Collection
+  const { type } = req.body;
+  try {
+    const items = await Workouts.find({ type: type  });
     res.json(items);
   } catch (error) {
     res.status(500).send("Server error");
@@ -141,7 +161,7 @@ app.post("/newuser", async (req, res) => {
       expiresIn: "7d",
     });
     res.cookie("token", token, {
-      httpOnly: true,
+      httpOnly: false,
       secure: true,
       sameSite: "Strict",
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
