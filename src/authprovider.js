@@ -26,6 +26,7 @@ export const AuthProvider = ({ children }) => {
       axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
       setUser({ token });
 
+      window.location.reload();
       navigate("/");
     } catch (error) {
       console.error("Authorisation error:", error);
