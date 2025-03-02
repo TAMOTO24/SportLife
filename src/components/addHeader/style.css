@@ -86,6 +86,8 @@ body{
 #moreBtn{
     cursor: pointer;
     transition: 1s ease, border 0.5s ease-in-out;
+    padding-inline: 50px;
+    /* margin-right: 50px; */
 }
 
 #moreBtn:hover{
@@ -142,5 +144,5 @@ a > #DRPLink{
     height: 30px;
 } */
 #Logo{
-    margin-right: 400px;
+    margin-right: 300px;
 }

@@ -1,5 +1,6 @@
 import { createContext, useState, useEffect } from "react";
 import axios from "axios";
+import Cookies from "js-cookie";
 
 const AuthContext = createContext();
 
@@ -26,8 +27,8 @@ export const AuthProvider = ({ children }) => {
       axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
       setUser({ token });
 
-      window.location.reload();
       navigate("/");
+      window.location.reload();
     } catch (error) {
       console.error("Authorisation error:", error);
       message.error(error.response.data.message);
@@ -62,8 +63,11 @@ export const AuthProvider = ({ children }) => {
   const logout = (navigate) => {
     localStorage.removeItem("token");
     delete axios.defaults.headers.common["Authorization"];
+    Cookies.remove("token");
     setUser(null);
+
     navigate("/");
+    window.location.reload();
   };
 
   return (
