@@ -1,8 +1,53 @@
 import React, { useState, useEffect } from "react";
 import "./style.css";
-import { Form, Input, Button, Upload, message } from 'antd';
-import { MailOutlined, UserOutlined, LockOutlined, UploadOutlined } from '@ant-design/icons';
+import { Form, Input, Button, Upload, message } from "antd";
+import {
+  MailOutlined,
+  UserOutlined,
+  LockOutlined,
+  UploadOutlined,
+} from "@ant-design/icons";
+import {
+  ResponsiveContainer,
+  Radar,
+  RadarChart,
+  PolarGrid,
+  PolarAngleAxis,
+  PolarRadiusAxis,
+} from "recharts";
 
+const data = [
+  {
+    subject: "Math",
+    A: 120,
+    fullMark: 150,
+  },
+  {
+    subject: "Chinese",
+    A: 98,
+    fullMark: 150,
+  },
+  {
+    subject: "English",
+    A: 86,
+    fullMark: 150,
+  },
+  {
+    subject: "Geography",
+    A: 99,
+    fullMark: 150,
+  },
+  {
+    subject: "Physics",
+    A: 85,
+    fullMark: 150,
+  },
+  {
+    subject: "History",
+    A: 65,
+    fullMark: 150,
+  },
+];
 
 const AccountPage = () => {
   const [active, setActive] = useState(false);
@@ -14,10 +59,10 @@ const AccountPage = () => {
   }, [selected]);
 
   const handleUploadChange = (info) => {
-    if (info.file.status === 'done') {
-      message.success('Profile picture uploaded successfully!');
-    } else if (info.file.status === 'error') {
-      message.error('Upload failed.');
+    if (info.file.status === "done") {
+      message.success("Profile picture uploaded successfully!");
+    } else if (info.file.status === "error") {
+      message.error("Upload failed.");
     }
   };
 
@@ -51,8 +96,10 @@ const AccountPage = () => {
       </div>
       <div id="pages">
         <h1>{selected}</h1>
-        <div id="Account info" className={selected === "Account info" ? "" : "hidePage"}>
-          
+        <div
+          id="Account info"
+          className={selected === "Account info" ? "" : "hidePage"}
+        >
           <Form layout="vertical" style={{ maxWidth: "95%", margin: "auto" }}>
             {/* Email field */}
             <Form.Item
@@ -151,13 +198,37 @@ const AccountPage = () => {
                   fontSize: "16px",
                   fontWeight: "600",
                   padding: "10px 0",
-                  width: "10%"
+                  width: "10%",
                 }}
               >
                 Edit profile
               </Button>
             </Form.Item>
           </Form>
+        </div>
+        <div
+          id="Workout statistic"
+          className={selected === "Workout statistic" ? "" : "hidePage"}
+        >
+          <RadarChart
+            cx="50%"
+            cy="50%"
+            outerRadius={300}
+            width={900}
+            height={900}
+            data={data}
+          >
+            <PolarGrid stroke="#8884d8" />
+            <PolarAngleAxis dataKey="subject" fill="#ccc" stroke="#8884d8" />
+            <PolarRadiusAxis stroke="#ccc" />
+            <Radar
+              name="Mike"
+              dataKey="A"
+              stroke="#8884d8"
+              fill="#8884d8"
+              fillOpacity={0.4}
+            />
+          </RadarChart>
         </div>
       </div>
     </div>

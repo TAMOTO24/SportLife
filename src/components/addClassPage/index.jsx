@@ -2,13 +2,15 @@ import React from "react";
 import { useLocation } from "react-router-dom";
 import { Card, Typography, Row, Col, Image, Button } from "antd";
 import "./style.css";
+import { PieChart, Pie } from "recharts";
 
 const { Title, Paragraph } = Typography;
 
 const ClassPage = () => {
   const location = useLocation();
   const { workout } = location.state || {};
-  console.log(workout);
+
+  console.log(workout.body_activity);
 
   return (
     <div
@@ -28,7 +30,7 @@ const ClassPage = () => {
           </div>
         </div>
         <hr />
-        
+
         <div className="textSection">
           <Title level={2} style={{ color: "white" }}>
             {workout.title}
@@ -49,10 +51,14 @@ const ClassPage = () => {
             {workout.type.map((type, index) => (
               <Col span={8} key={index}>
                 <Card
-                  title={type}
-                  bordered={false}
+                  title={
+                    <span style={{ color: "white", fontSize: "25px" }}>
+                      {type}
+                    </span>
+                  }
                   style={{
                     backgroundColor: "rgba(0, 0, 0, 0.7)",
+                    border: "none",
                     color: "white",
                     padding: "20px",
                     borderRadius: "10px",
@@ -91,11 +97,29 @@ const ClassPage = () => {
             Additional Details
           </Title>
           <Paragraph style={{ color: "#a8acb1", fontSize: "18px" }}>
-            <strong>Duration:</strong> {workout.workoutplan["Upper body"]} min
+            <strong>Warm up Duration:</strong> {workout.workoutplan["Warm up"]}{" "}
+            min
           </Paragraph>
           <Paragraph style={{ color: "#a8acb1", fontSize: "18px" }}>
-            <strong>Exercise Machines:</strong> {workout.exercise_machines.join(", ")}
+            <strong>Exercise Machines: </strong>
+            {""}
+            {workout.exercise_machines.join(", ")}
           </Paragraph>
+          <hr />
+          <div style={{display: "flex", justifyContent: "center"}}>
+            <PieChart width={800} height={400}>
+              <Pie
+                dataKey="A"
+                data={workout.body_activity}
+                cx="50%"
+                cy="50%"
+                outerRadius={80}
+                fill="#8884d8"
+                label={({ name }) => name} // Отображение name вместо value
+              />
+            </PieChart>
+          </div>
+
           <Button type="primary" style={{ backgroundColor: "#f56a00" }}>
             Book Now
           </Button>

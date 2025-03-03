@@ -6,6 +6,7 @@ import AuthContext from "../../authprovider.js";
 import "./style.css";
 import axios from "axios";
 
+
 const Auth = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
@@ -31,12 +32,15 @@ const Auth = () => {
   return (
     <>
       <div id="authblockdropdown">
-        <a
-          onClick={() =>
-            !user ? setIsModalVisible(!isModalVisible) : setIsOpen(!isOpen)
-          }
-        >
-          <img id="userIcon" src="./img-pack/user.png" alt="userImg" />
+        <a>
+          <img
+            id="userIcon"
+            onClick={() =>
+              !user ? setIsModalVisible(!isModalVisible) : setIsOpen(!isOpen)
+            }
+            src="./img-pack/user.png"
+            alt="userImg"
+          />
           {isOpen && (
             <div className="dropdownAuthBlock">
               <p>@{user.username}</p>

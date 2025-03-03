@@ -24,7 +24,7 @@
   align-items: center;
 }
 .dropdownAuthBlock > a {
-  width: 95%;
+  width: 90%;
   background-color: #3d3d3d;
   border-radius: 12px;
 }
@@ -33,17 +33,10 @@
   background-color: whitesmoke;
   color: black;
 }
-#DPAuthLink::before {
-  content: "";
-  position: absolute;
-  right: 8px;
-  background-image: url("../../../public/img-pack/text_content.png");
-  background-size: 100% 100%;
-  color: #787878;
-  width: 20px;
-  height: 20px;
-}
 .dropdownAuthBlock > p {
   color: whitesmoke;
   font-size: 20px;
+}
+.classPage hr{
+  width: 100% !important;
 }
