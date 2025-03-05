@@ -7,7 +7,7 @@ import Auth from "../propsAuthModal";
 import { useState } from "react";
 function Header() {
   const [isOpen, setIsOpen] = useState(false);
-  // const location = useLocation();
+  const location = useLocation();
 
   // if (location.pathname === "/protectedroute") {
   //   return <Outlet />;
@@ -52,7 +52,7 @@ function Header() {
             )}
           </li>
           <li>
-            <Auth />
+            {location.pathname !== "/authpage" && <Auth />}
           </li>
         </ul>
       </nav>

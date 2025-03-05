@@ -1,5 +1,14 @@
 import React, { useState, useEffect, useContext } from "react";
-import { Form, Input, Button, message, Upload} from "antd";
+import {
+  Button,
+  Form,
+  Input,
+  Select,
+  Space,
+  message,
+  Upload,
+  Checkbox,
+} from "antd";
 import {
   LockOutlined,
   MailOutlined,
@@ -12,6 +21,8 @@ import "./style.css";
 // import { set } from "mongoose";
 import AuthContext from "../../authprovider.js";
 
+const { Option } = Select;
+
 const AuthPage = () => {
   const [form] = Form.useForm();
   const { login, signup } = useContext(AuthContext);
@@ -21,25 +32,40 @@ const AuthPage = () => {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [authType, setAuthType] = useState("signin");
+  const prefixSelector = (
+    <Form.Item name="prefix" noStyle>
+      <Select style={{ width: 70 }}>
+        <Option value="86">+86</Option>
+        <Option value="87">+87</Option>
+      </Select>
+    </Form.Item>
+  );
 
   useEffect(() => {
     setEmail(searchParams.get("email"));
   }, []);
 
-
   const onFinish = async (values) => {
     setLoading(true);
     console.log("Received values of form:", values);
 
-    if (authType === "signin") { // Login user
+    if (authType === "signin") {
+      // Login user
       try {
         await login(values.email, values.password, navigate, message);
       } catch (err) {
         message.error("Error during login.");
       }
-    } else { // Register new user
+    } else {
+      // Register new user
       try {
-        await signup(values.email, values.username, values.password, navigate, message);
+        await signup(
+          values.email,
+          values.username,
+          values.password,
+          navigate,
+          message
+        );
       } catch (err) {
         message.error("Error during login.", err);
       }
@@ -59,19 +85,27 @@ const AuthPage = () => {
             onFinish={onFinish}
             layout="vertical"
             initialValues={{ email: searchParams.get("email") }}
+            style={{ width: "600px" }}
           >
             {/* Email field */}
             {authType == "signup" && (
               <Form.Item
+                label="Nickname"
                 name="username"
+                tooltip="What do you want others to call you?"
                 rules={[
-                  { required: true, message: "Please enter your username" },
+                  {
+                    required: true,
+                    message: "Please input your nickname!",
+                    whitespace: true,
+                  },
                 ]}
               >
                 <Input prefix={<UserOutlined />} placeholder="username" />
               </Form.Item>
             )}
             <Form.Item
+              label="Email"
               name="email"
               rules={[
                 { required: true, message: "Please enter your email!" },
@@ -87,10 +121,11 @@ const AuthPage = () => {
               />
             </Form.Item>
             <Form.Item
+              label="Password"
               name="password"
               rules={[
                 { required: true, message: "Please enter your password!" },
-                { min: 6, message: "Password must be at least 6 characters!" }
+                { min: 6, message: "Password must be at least 6 characters!" },
               ]}
             >
               <Input.Password
@@ -98,23 +133,110 @@ const AuthPage = () => {
                 placeholder="Password"
               />
             </Form.Item>
-            <Form.Item name="profilePic" label="Profile Picture">
-              <Upload
-                name="file"
-                action="/upload"
-                listType="picture"
-                showUploadList={false}
-                // onChange={handleUploadChange}
-                beforeUpload={() => false} // Prevent auto-uploading
-              >
-                <Button
-                  icon={<UploadOutlined />}
-                  style={{ width: "100%", borderRadius: "8px" }}
+            {authType == "signup" && (
+              <>
+                <Form.Item
+                  label="Confirm Password"
+                  name="password2"
+                  tooltip="Enter same password twice to comfirm ur password"
+                  dependencies={["password"]}
+                  rules={[
+                    {
+                      required: true,
+                    },
+                    ({ getFieldValue }) => ({
+                      validator(_, value) {
+                        if (!value || getFieldValue("password") === value) {
+                          return Promise.resolve();
+                        }
+                        return Promise.reject(
+                          new Error(
+                            "The new password that you entered do not match!"
+                          )
+                        );
+                      },
+                    }),
+                  ]}
                 >
-                  Upload Profile Picture
-                </Button>
-              </Upload>
-            </Form.Item>
+                  <Input />
+                </Form.Item>
+
+                <Form.Item
+                  name="phone"
+                  label="Phone Number"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Please input your phone number!",
+                    },
+                  ]}
+                >
+                  <Input
+                    addonBefore={prefixSelector}
+                    style={{ width: "100%" }}
+                  />
+                </Form.Item>
+                <Form.Item name="profilePic" label="Profile Picture">
+                  <Upload
+                    name="file"
+                    action="/upload"
+                    listType="picture"
+                    showUploadList={false}
+                    // onChange={handleUploadChange}
+                    beforeUpload={() => false} // Prevent auto-uploading
+                  >
+                    <Button
+                      icon={<UploadOutlined />}
+                      style={{ width: "100%", borderRadius: "8px" }}
+                    >
+                      Upload Profile Picture
+                    </Button>
+                  </Upload>
+                </Form.Item>
+                <Form.Item
+                  name="gender"
+                  label="Gender"
+                  rules={[{ required: true }]}
+                >
+                  <Select placeholder="Pick optional human gender" allowClear>
+                    <Option value="male">male</Option>
+                    <Option value="female">female</Option>
+                    <Option value="other">other</Option>
+                  </Select>
+                </Form.Item>
+
+                <Form.Item
+                  name="role"
+                  label="Gym role"
+                  rules={[{ required: true }]}
+                >
+                  <Select placeholder="Select you'r gym role" allowClear>
+                    <Option value="trainer">trainer</Option>
+                    <Option value="visiter">visiter</Option>
+                    <Option value="online-visiter">online visiter</Option>
+                  </Select>
+                </Form.Item>
+
+                <Form.Item
+                  name="agreement"
+                  valuePropName="checked"
+                  rules={[
+                    {
+                      validator: (_, value) =>
+                        value
+                          ? Promise.resolve()
+                          : Promise.reject(
+                              new Error("Should accept agreement")
+                            ),
+                    },
+                  ]}
+                >
+                  <Checkbox>
+                    I have read the <a href="">agreement</a>
+                  </Checkbox>
+                </Form.Item>
+              </>
+            )}
 
             {/* Continue button */}
             <Button
@@ -122,6 +244,11 @@ const AuthPage = () => {
               block
               htmlType="submit"
               loading={loading}
+              disabled={
+                !form.isFieldsTouched(true) ||
+                !!form.getFieldsError().filter(({ errors }) => errors.length)
+                  .length
+              }
             >
               {authType === "signin" ? "Log In" : "Sign Up"}
             </Button>
@@ -142,9 +269,9 @@ const AuthPage = () => {
         </div>
 
         <div>
-          {/* Terms and Privacy */}
           <p style={{ marginTop: 20, fontSize: 12, textAlign: "center" }}>
-            <Link to="/authpage">Terms of Use</Link> | <Link href="#">Privacy Policy</Link>
+            <Link to="/authpage">Terms of Use</Link> |{" "}
+            <Link href="#">Privacy Policy</Link>
           </p>
         </div>
       </div>

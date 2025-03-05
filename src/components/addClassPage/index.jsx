@@ -103,10 +103,14 @@ const ClassPage = () => {
           <Paragraph style={{ color: "#a8acb1", fontSize: "18px" }}>
             <strong>Exercise Machines: </strong>
             {""}
-            <div className="">{workout.exercise_machines.join(", ")}</div>
+            {workout.exercise_machines.join(", ")}
           </Paragraph>
           <hr />
-          <div style={{display: "flex", justifyContent: "center"}}>
+          <Paragraph style={{ color: "#a8acb1", fontSize: "30px" }}>
+            <strong>Body activity: </strong>
+          </Paragraph>
+          <div style={{ display: "flex", justifyContent: "center" }}>
+            
             <PieChart width={800} height={400}>
               <Pie
                 dataKey="A"
