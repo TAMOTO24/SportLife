@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Form, Input, Button, Upload, Image, Divider, message } from "antd";
-import { PictureFilled } from "@ant-design/icons";
+import { PictureFilled, InboxOutlined } from "@ant-design/icons";
 import "./style.css";
 import axios from "axios";
 
@@ -14,13 +14,14 @@ const CreatePostPage = () => {
   });
 
   useEffect(() => {
-    if (!postData.description) return
-    if (!postData.filePaths) return
+    if (!postData.description) return;
+    if (!postData.filePaths) return;
     axios
-    .post("/createpagepost", postData).then((response) => {
-      console.log(response.data);
-    })
-    .catch((error) => console.error("Auth error", error));
+      .post("/createpagepost", postData)
+      .then((response) => {
+        console.log(response.data);
+      })
+      .catch((error) => console.error("Auth error", error));
   }, [postData]);
 
   const handleSave = async (file) => {
@@ -102,6 +103,26 @@ const CreatePostPage = () => {
                 style={{ width: "50px", borderRadius: "8px", height: "50px" }}
               />
             </Upload>
+          </Form.Item>
+          <Form.Item label="Dragger">
+            <Form.Item
+              name="dragger"
+              valuePropName="fileList"
+              // getValueFromEvent={normFile}
+              noStyle
+            >
+              <Upload.Dragger name="files" action="/upload.do">
+                <p className="ant-upload-drag-icon">
+                  <InboxOutlined />
+                </p>
+                <p className="ant-upload-text">
+                  Click or drag file to this area to upload
+                </p>
+                <p className="ant-upload-hint">
+                  Support for a single or bulk upload.
+                </p>
+              </Upload.Dragger>
+            </Form.Item>
           </Form.Item>
 
           <Form.Item>

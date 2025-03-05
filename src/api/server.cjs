@@ -235,7 +235,7 @@ app.get("/protected-route", async (req, res) => {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     const userId = decoded.id;
 
-    const user = await User.findOne({ _id: userId });
+    const user = await User.findOne({ _id: userId }).select('-password -phone -email');
 
     if (!user) {
       return res
