@@ -62,7 +62,13 @@ const AuthPage = () => {
         await signup(
           values.email,
           values.username,
+          values.name,
+          values.lastname,
           values.password,
+          values.prefix + values.phone,
+          "path",
+          values.gender,
+          values.role,
           navigate,
           message
         );
@@ -79,7 +85,7 @@ const AuthPage = () => {
       <div className="auth-container">
         <div>
           <div style={{ textAlign: "center" }}>
-            <h1>{authType ? "Log in" : "Register"}</h1>
+            <h1>{authType !== "signup" ? "Log in" : "Register"}</h1>
           </div>
           <Form
             onFinish={onFinish}
@@ -89,20 +95,47 @@ const AuthPage = () => {
           >
             {/* Email field */}
             {authType == "signup" && (
-              <Form.Item
-                label="Nickname"
-                name="username"
-                tooltip="What do you want others to call you?"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input your nickname!",
-                    whitespace: true,
-                  },
-                ]}
-              >
-                <Input prefix={<UserOutlined />} placeholder="username" />
-              </Form.Item>
+              <>
+                {" "}
+                <Form.Item
+                  label="Nickname"
+                  name="username"
+                  tooltip="What do you want others to call you?"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Please input your nickname!",
+                      whitespace: true,
+                    },
+                  ]}
+                >
+                  <Input prefix={<UserOutlined />} placeholder="username" />
+                </Form.Item>
+                <Form.Item
+                  name="name"
+                  label="Name"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Please input your name!",
+                    },
+                  ]}
+                >
+                  <Input style={{ width: "100%" }} placeholder="name"/>
+                </Form.Item>
+                <Form.Item
+                  name="lastname"
+                  label="Last Name"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Please input your last name!",
+                    },
+                  ]}
+                >
+                  <Input style={{ width: "100%" }} placeholder="lastname"/>
+                </Form.Item>
+              </>
             )}
             <Form.Item
               label="Email"
@@ -143,6 +176,7 @@ const AuthPage = () => {
                   rules={[
                     {
                       required: true,
+                      message: "Please enter your password again!",
                     },
                     ({ getFieldValue }) => ({
                       validator(_, value) {
@@ -158,7 +192,7 @@ const AuthPage = () => {
                     }),
                   ]}
                 >
-                  <Input />
+                  <Input.Password placeholder="Password" />
                 </Form.Item>
 
                 <Form.Item
@@ -174,6 +208,7 @@ const AuthPage = () => {
                   <Input
                     addonBefore={prefixSelector}
                     style={{ width: "100%" }}
+                    placeholder="phone number"
                   />
                 </Form.Item>
                 <Form.Item name="profilePic" label="Profile Picture">
@@ -198,7 +233,7 @@ const AuthPage = () => {
                   label="Gender"
                   rules={[{ required: true }]}
                 >
-                  <Select placeholder="Pick optional human gender" allowClear>
+                  <Select placeholder="Pick optional human gender">
                     <Option value="male">male</Option>
                     <Option value="female">female</Option>
                     <Option value="other">other</Option>

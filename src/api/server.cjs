@@ -65,7 +65,7 @@ app.post("/api/workouts", async (req, res) => {
   // Take all workouts from Collection
   const { type } = req.body;
   try {
-    const items = await Workouts.find({ type: type  });
+    const items = await Workouts.find({ type: type });
     res.json(items);
   } catch (error) {
     res.status(500).send("Server error");
@@ -90,14 +90,14 @@ app.post("/createpagepost", async (req, res) => {
 
     // console.log({
     //   userId: userId,
-    //   description,              
+    //   description,
     //   user: answerUser.name,
     //   username: answerUser.username,
     //   gallery: filePaths,
     // })
     const newPost = new Post({
       userId: userId,
-      text: description,              
+      text: description,
       user: answerUser.name || "",
       username: answerUser.username,
       gallery: filePaths,
@@ -116,7 +116,9 @@ app.post("/upload", upload.array("image", 2), (req, res) => {
     //check if there are no files
     return res.status(400).json({ message: "No files!" });
   }
-  const filePaths = req.files.map(file => `./server-savings/${file.filename}`);
+  const filePaths = req.files.map(
+    (file) => `./server-savings/${file.filename}`
+  );
 
   res.json({ filePaths });
 });
@@ -134,7 +136,8 @@ app.get("/api/getposts", async (req, res) => {
 // app.use(express.static(path.join(__dirname, "client/build")));
 
 app.post("/newuser", async (req, res) => {
-  const { username, email, password } = req.body;
+  const { username, name, lastname, email, password, gender, role, phone, profile_picture } =
+    req.body;
   console.log("User data:", req.body);
 
   try {
@@ -153,7 +156,17 @@ app.post("/newuser", async (req, res) => {
     }
 
     // Create a new user
-    const newUser = new User({ username, email, password: hashedPassword });
+    const newUser = new User({
+      username: username,
+      name: name,
+      last_name: lastname,
+      email: email,
+      password: hashedPassword,
+      gender: gender,
+      role: role,
+      phone: phone,
+      profile_picture: profile_picture
+    });
     await newUser.save();
 
     //  Create JWT token

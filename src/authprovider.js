@@ -34,12 +34,18 @@ export const AuthProvider = ({ children }) => {
       message.error(error.response.data.message);
     }
   };
-  const signup = async (email, username, password, navigate, message) => {
+  const signup = async (email, username, name, lastname, password, phone, profile, gender, role, navigate, message) => {
     logout(navigate);
     const userData = {
       email: email,
       username: username,
+      name: name,
+      last_name: lastname,
       password: password,
+      phone: phone,
+      profile_picture: profile,
+      gender: gender,
+      role: role
     };
 
     console.log("User data:", userData);
