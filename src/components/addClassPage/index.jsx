@@ -103,7 +103,7 @@ const ClassPage = () => {
           <Paragraph style={{ color: "#a8acb1", fontSize: "18px" }}>
             <strong>Exercise Machines: </strong>
             {""}
-            {workout.exercise_machines.join(", ")}
+            <div className="">{workout.exercise_machines.join(", ")}</div>
           </Paragraph>
           <hr />
           <div style={{display: "flex", justifyContent: "center"}}>
@@ -115,7 +115,7 @@ const ClassPage = () => {
                 cy="50%"
                 outerRadius={80}
                 fill="#8884d8"
-                label={({ name }) => name} // Отображение name вместо value
+                label={({ name }) => name}
               />
             </PieChart>
           </div>
