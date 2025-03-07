@@ -31,11 +31,11 @@ const WorkoutPage = () => {
     <div id="workoutpage">
       <div className="navWorkout">
         {[
-          { to: "", label: "Running", src: "./img-pack/running.png" },
-          { to: "", label: "Stretching", src: "./img-pack/stretch.png" },
-          { to: "", label: "Yoga", src: "./img-pack/yoga.png" },
-          { to: "", label: "Strength", src: "./img-pack/strength.png" },
-          { to: "", label: "Cardio", src: "./img-pack/cardiology.png" },
+          { to: "", label: "Running", src: "./img-pack/icons/running.png" },
+          { to: "", label: "Stretching", src: "./img-pack/icons/stretch.png" },
+          { to: "", label: "Yoga", src: "./img-pack/icons/yoga.png" },
+          { to: "", label: "Strength", src: "./img-pack/icons/strength.png" },
+          { to: "", label: "Cardio", src: "./img-pack/icons/cardiology.png" },
         ].map((item) => (
           <a
             className={`navElements ${

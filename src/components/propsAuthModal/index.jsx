@@ -38,7 +38,7 @@ const Auth = () => {
             onClick={() =>
               !user ? setIsModalVisible(!isModalVisible) : setIsOpen(!isOpen)
             }
-            src="./img-pack/user.png"
+            src="./img-pack/icons/user.png"
             alt="userImg"
           />
           {isOpen && (

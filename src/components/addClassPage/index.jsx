@@ -24,7 +24,7 @@ const ClassPage = () => {
     >
       <div className="classBlock">
         <div className="classUpperPanel">
-          <img src="./img-pack/logo2_white.png" alt="Logo" id="logo" />
+          <img src="./img-pack/logo/logo2_white.png" alt="Logo" id="logo" />
           <div id="login-text">
             Don't have an account? <a href="#">Register</a>!
           </div>

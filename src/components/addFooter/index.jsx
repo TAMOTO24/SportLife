@@ -7,7 +7,7 @@ function Footer() {
   return (
     <>
      <footer className="footer">
-       <div><img src='./img-pack/logo2_white.png' style={{width: "10%"}} alt="Logo" />
+       <div><img src='./img-pack/logo/logo2_white.png' style={{width: "10%"}} alt="Logo" />
         <div className="buttonBlock">
             <button >Privacy Policy</button>
             <button >Terms of Service</button>
@@ -15,7 +15,7 @@ function Footer() {
             <button >Contact Us</button>
             <button >Help Center</button>
         </div>
-        </div> <div><img src='./img-pack/logo_white.png' alt="Logo" /></div>
+        </div> <div><img src='./img-pack/logo/logo_white.png' alt="Logo" /></div>
         <div>
             <p className='description'>
                 The "SportLife" add-on provides a wide range of options for athletes and coaches. 

@@ -117,7 +117,7 @@ a > #DRPLink{
     content: "";
     position: absolute;
     right: 8px;
-    background-image: url("../../../public/img-pack/text_content.png");
+    background-image: url("../../../public/img-pack/icons/text_content.png");
     background-size: 100% 100%;
     color: #787878;
     width: 20px;

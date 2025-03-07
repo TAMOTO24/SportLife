@@ -71,16 +71,16 @@ const AccountPage = () => {
       <div className={`accountNavBlock ${active ? "activeBlock" : ""}`}>
         <a className="menuBlock" onClick={() => setActive(!active)}>
           <img
-            src={active ? "./img-pack/close.png" : "./img-pack/menu.png"}
+            src={active ? "./img-pack/icons/close.png" : "./img-pack/icons/menu.png"}
             id="menu"
           />
         </a>
         {[
-          { img: "./img-pack/profile-user.png", label: "Account info" },
-          { img: "./img-pack/dumbbell.png", label: "Current workout plan" },
-          { img: "./img-pack/statistical.png", label: "Workout statistic" },
-          { img: "./img-pack/gym-station.png", label: "Current Trainer" },
-          { img: "./img-pack/fitness.png", label: "Favorite workouts" },
+          { img: "./img-pack/icons/profile-user.png", label: "Account info" },
+          { img: "./img-pack/icons/dumbbell.png", label: "Current workout plan" },
+          { img: "./img-pack/icons/statistical.png", label: "Workout statistic" },
+          { img: "./img-pack/icons/gym-station.png", label: "Current Trainer" },
+          { img: "./img-pack/icons/fitness.png", label: "Favorite workouts" },
         ].map((item, index) => (
           <a
             key={index}

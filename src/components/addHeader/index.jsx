@@ -17,7 +17,7 @@ function Header() {
     <div>
       <nav className="nav">
         <ul>
-          <img src="./img-pack/logo_white.png" alt="Logo" id="Logo" />
+          <img src="./img-pack/logo/logo_white.png" alt="Logo" id="Logo" />
           {[
             { to: "/", label: "Homepage" },
             { to: "/trainers", label: "Trainers" },

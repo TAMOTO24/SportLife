@@ -51,7 +51,7 @@ function NewsInfoPage() {
       {posts.map((item) => (
         <div className="post" key={item.id}>
           <div className="postPhoto">
-            <img src={item.userIcon || "./img-pack/user-blacktheme.png"} alt="UserIcon" />
+            <img src={item.userIcon || "./img-pack/icons/user-blacktheme.png"} alt="UserIcon" />
           </div>
 
           <div className="postContent">
@@ -74,10 +74,10 @@ function NewsInfoPage() {
               ))}
             </div>
             <div className="postPanel">
-              <a className="postLike"><img src="./img-pack/like.png" alt="" /><div>{item.like.length}</div></a>
-              <a className="postComment"><img src="./img-pack/chat.png" alt="" /><div>{item.comment.length}</div></a>
-              <a className="postShare"><img src="./img-pack/share.png" alt="" /></a>
-              <a className="postSave"><img src="./img-pack/favorite.png" alt="" /></a>
+              <a className="postLike"><img src="./img-pack/icons/like.png" alt="" /><div>{item.like.length}</div></a>
+              <a className="postComment"><img src="./img-pack/icons/chat.png" alt="" /><div>{item.comment.length}</div></a>
+              <a className="postShare"><img src="./img-pack/icons/share.png" alt="" /></a>
+              <a className="postSave"><img src="./img-pack/icons/favorite.png" alt="" /></a>
             </div>
           </div>
         </div>
