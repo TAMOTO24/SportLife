@@ -18,6 +18,10 @@ const app = express();
 
 app.use(cookieParser());
 app.use(express.json());
+app.use(express.static('public', {
+  maxAge: '1y',
+  immutable: true
+}));
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -50,6 +54,23 @@ app.get("/api/items", async (req, res) => {
     res.json(items);
   } catch (error) {
     res.status(500).send("Server error");
+  }
+});
+app.post("/userbyid", async (req, res) => {
+  const { id } = req.body;
+
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res.status(400).json({ message: "Invalid user ID format!" });
+  }
+  try {
+    const userbyid = await User.findOne({_id: id}).select('-password');
+    console.log("awdawd", userbyid);
+    if (!userbyid) {
+      return res.status(400).json({ message: "There are no account with such id!" });
+    }
+    res.json(userbyid);
+  } catch (error) {
+    res.status(500).send(`Server error ${error}`);
   }
 });
 app.get("/api/email", async (req, res) => {
@@ -235,7 +256,7 @@ app.get("/protected-route", async (req, res) => {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     const userId = decoded.id;
 
-    const user = await User.findOne({ _id: userId }).select('-password -phone -email');
+    const user = await User.findOne({ _id: userId }).select('-password');
 
     if (!user) {
       return res

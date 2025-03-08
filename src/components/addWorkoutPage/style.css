@@ -65,6 +65,18 @@
 a {
   cursor: pointer;
 }
+#workout-id {
+  background: gray;
+  color: whitesmoke;
+  border-radius: 5px;
+  padding: 8px;
+  font-weight: bold;
+  margin-block: 10px;
+}
+.tag-block {
+  display: flex;
+  gap: 5px;
+}
 
 .workoutTable {
   display: grid;
@@ -107,5 +119,5 @@ a {
   filter: brightness(100%);
 }
 .activeEl div {
-    color: white;
+  color: white;
 }

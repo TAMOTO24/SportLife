@@ -51,7 +51,7 @@ function NewsInfoPage() {
       {posts.map((item) => (
         <div className="post" key={item.id}>
           <div className="postPhoto">
-            <img src={item.userIcon || "./img-pack/icons/user-blacktheme.png"} alt="UserIcon" />
+            <img loading="lazy" src={item.userIcon || "./img-pack/icons/user-blacktheme.png"} alt="UserIcon" />
           </div>
 
           <div className="postContent">
@@ -69,15 +69,16 @@ function NewsInfoPage() {
                   key={index}
                   src={image}
                   alt="Gallery"
+                  loading="lazy"
                   onClick={() => showModal(image)}
                 />
               ))}
             </div>
             <div className="postPanel">
-              <a className="postLike"><img src="./img-pack/icons/like.png" alt="" /><div>{item.like.length}</div></a>
-              <a className="postComment"><img src="./img-pack/icons/chat.png" alt="" /><div>{item.comment.length}</div></a>
-              <a className="postShare"><img src="./img-pack/icons/share.png" alt="" /></a>
-              <a className="postSave"><img src="./img-pack/icons/favorite.png" alt="" /></a>
+              <a className="postLike"><img src="./img-pack/icons/like.png" loading="lazy" alt="" /><div>{item.like.length}</div></a>
+              <a className="postComment"><img src="./img-pack/icons/chat.png" loading="lazy" alt="" /><div>{item.comment.length}</div></a>
+              <a className="postShare"><img src="./img-pack/icons/share.png" loading="lazy" alt="" /></a>
+              <a className="postSave"><img src="./img-pack/icons/favorite.png" loading="lazy" alt="" /></a>
             </div>
           </div>
         </div>
@@ -91,7 +92,7 @@ function NewsInfoPage() {
         width="60%"
         style={{ top: 20 }}  
       >
-        <img src={currentImage} alt="Selected" style={{ width: "100%", height: "100%", paddingTop: "40px"}} />
+        <img loading="lazy" src={currentImage} alt="Selected" style={{ width: "100%", height: "100%", paddingTop: "40px"}} />
       </Modal>
     </div>
   );
