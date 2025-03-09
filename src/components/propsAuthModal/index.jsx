@@ -6,7 +6,6 @@ import AuthContext from "../../authprovider.js";
 import "./style.css";
 import axios from "axios";
 
-
 const Auth = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
@@ -38,7 +37,7 @@ const Auth = () => {
             onClick={() =>
               !user ? setIsModalVisible(!isModalVisible) : setIsOpen(!isOpen)
             }
-            src="./img-pack/icons/user.png"
+            src={user?.profile_picture ? user.profile_picture : "./img-pack/icons/user.png"}
             alt="userImg"
           />
           {isOpen && (

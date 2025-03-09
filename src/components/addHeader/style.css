@@ -129,6 +129,7 @@ a > #DRPLink{
     border-radius: 40%;
     /* border-bottom: 7px solid whitesmoke; */
     padding: 3px;
+    background-color: whitesmoke;
     transition:  0.3s ease-in-out, box-shadow 0.3s ease;
 }
 #userIcon:hover{
