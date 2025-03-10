@@ -48,8 +48,6 @@ export const AuthProvider = ({ children }) => {
       role: role
     };
 
-    console.log("User data:", userData);
-
     try {
       const response = await axios.post("/newuser", userData);
 

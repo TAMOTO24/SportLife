@@ -1,13 +1,10 @@
 import React, { useState, useEffect } from "react";
 import "./style.css";
-import {
-  Form,
-  message,
-} from "antd";
+import { Form, message } from "antd";
 import axios from "axios";
 import Loading from "../addLoadingElement";
-import AccountInfoSection from "../addAccountInfoSection"
-import WorkoutStatisticSection from "../addWorkoutStatisticSection"
+import AccountInfoSection from "../addAccountInfoSection";
+import WorkoutStatisticSection from "../addWorkoutStatisticSection";
 
 const AccountPage = () => {
   const [form] = Form.useForm();
@@ -78,7 +75,7 @@ const AccountPage = () => {
           id="Account info"
           className={selected === "Account info" ? "" : "hidePage"}
         >
-          <AccountInfoSection user={user}/>
+          <AccountInfoSection />
         </div>
         <div
           id="Workout statistic"

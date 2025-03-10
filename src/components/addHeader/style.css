@@ -34,10 +34,12 @@ body{
     display: flex; 
     align-items: center;
 }
-.nav img{
+.nav #Logo{
     margin: 0;
-    width: 380px;
     transform: scale(0.8);
+}
+.nav img{
+    width: 380px;
 }
 .nav a{
     color: gray;
@@ -124,16 +126,15 @@ a > #DRPLink{
     height: 20px;
 }
 #userIcon{
-    width: 60px;
-    height: 60px;
-    border-radius: 40%;
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
     /* border-bottom: 7px solid whitesmoke; */
-    padding: 3px;
-    background-color: whitesmoke;
+    border: none;
     transition:  0.3s ease-in-out, box-shadow 0.3s ease;
 }
 #userIcon:hover{
-    box-shadow: 0 0 25px 5px gray;
+    box-shadow: 0 0 15px 2px gray;
 }
 /* .secondNav{
     background-color: Tomato;

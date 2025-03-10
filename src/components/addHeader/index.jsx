@@ -52,7 +52,7 @@ function Header() {
             )}
           </li>
           <li>
-            {location.pathname !== "/authpage" && <Auth />}
+            {(location.pathname !== "/authpage" && location.pathname !== "/account")  && <Auth />}
           </li>
         </ul>
       </nav>

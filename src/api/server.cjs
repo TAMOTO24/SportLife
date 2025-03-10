@@ -18,10 +18,12 @@ const app = express();
 
 app.use(cookieParser());
 app.use(express.json());
-app.use(express.static('public', {
-  maxAge: '1y',
-  immutable: true
-}));
+app.use(
+  express.static("public", {
+    maxAge: "1y",
+    immutable: true,
+  })
+);
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -63,10 +65,11 @@ app.post("/userbyid", async (req, res) => {
     return res.status(400).json({ message: "Invalid user ID format!" });
   }
   try {
-    const userbyid = await User.findOne({_id: id}).select('-password');
-    console.log("awdawd", userbyid);
+    const userbyid = await User.findOne({ _id: id }).select("-password");
     if (!userbyid) {
-      return res.status(400).json({ message: "There are no account with such id!" });
+      return res
+        .status(400)
+        .json({ message: "There are no account with such id!" });
     }
     res.json(userbyid);
   } catch (error) {
@@ -109,13 +112,6 @@ app.post("/createpagepost", async (req, res) => {
 
     const answerUser = await User.findOne({ _id: userId }); //Find user by id
 
-    // console.log({
-    //   userId: userId,
-    //   description,
-    //   user: answerUser.name,
-    //   username: answerUser.username,
-    //   gallery: filePaths,
-    // })
     const newPost = new Post({
       userId: userId,
       text: description,
@@ -132,15 +128,13 @@ app.post("/createpagepost", async (req, res) => {
 });
 
 app.post("/upload", upload.array("image", 2), (req, res) => {
-  //upload array of images where 2 is max value of images
   if (!req.files) {
-    //check if there are no files
     return res.status(400).json({ message: "No files!" });
   }
-  const filePaths = req.files.map(
-    (file) => `./server-savings/${file.filename}`
-  );
 
+  const filePaths = Array.isArray(req.files)
+    ? req.files.map((file) => `./server-savings/${file.filename}`)
+    : [`./server-savings/${req.files.filename}`];
   res.json({ filePaths });
 });
 
@@ -157,9 +151,17 @@ app.get("/api/getposts", async (req, res) => {
 // app.use(express.static(path.join(__dirname, "client/build")));
 
 app.post("/newuser", async (req, res) => {
-  const { username, name, lastname, email, password, gender, role, phone, profile_picture } =
-    req.body;
-  console.log("User data:", req.body);
+  const {
+    username,
+    name,
+    lastname,
+    email,
+    password,
+    gender,
+    role,
+    phone,
+    profile_picture,
+  } = req.body;
 
   try {
     // Hash the password
@@ -186,7 +188,7 @@ app.post("/newuser", async (req, res) => {
       gender: gender,
       role: role,
       phone: phone,
-      profile_picture: profile_picture
+      profile_picture: profile_picture,
     });
     await newUser.save();
 
@@ -256,7 +258,7 @@ app.get("/protected-route", async (req, res) => {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     const userId = decoded.id;
 
-    const user = await User.findOne({ _id: userId }).select('-password');
+    const user = await User.findOne({ _id: userId }).select("-password");
 
     if (!user) {
       return res
@@ -267,6 +269,76 @@ app.get("/protected-route", async (req, res) => {
     res.json({ message: "Access given", user });
   } catch (error) {
     return res.status(401).json({ message: "Token error" });
+  }
+});
+
+app.post("/updateuser", upload.single("image"), async (req, res) => {
+  try {
+    const {
+      id,
+      username,
+      name,
+      lastname,
+      email,
+      role,
+      phone,
+      profileDescription,
+    } = req.body;
+
+    if (!id) {
+      return res.status(400).json({ message: "User ID is required" });
+    }
+
+    const existingUser = await User.findById(id).select("-password");
+    if (!existingUser) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const [checkUsername, checkEmail, checkPhone] = await Promise.all([
+      //Check user's data if it's repeats or not
+      User.findOne({ username }).select("-password"),
+      User.findOne({ email }).select("-password"),
+      User.findOne({ phone }).select("-password"),
+    ]);
+
+    if (checkUsername && checkUsername.id !== id) {
+      //check username
+      return res.status(400).json({ message: "Username already exists" });
+    }
+    if (checkEmail && checkEmail.id !== id) {
+      //check email
+      return res.status(400).json({ message: "Email already exists" });
+    }
+    if (checkPhone && checkPhone.id !== id) {
+      // check email
+      return res.status(400).json({ message: "Phone number already exists" });
+    }
+
+    let picture = existingUser.profile_picture; //if new picture didn't loaded
+    if (req.file) {
+      picture = `./server-savings/${req.file.filename}`; //if loaded change it to new server's storage path
+    }
+
+    const updatedUser = await User.findByIdAndUpdate(
+      // find user by his id and update data to new that was inputed
+      id,
+      {
+        username,
+        name,
+        last_name: lastname,
+        email,
+        role,
+        phone,
+        profile_picture: picture,
+        profileDescription,
+      },
+      { new: true }
+    ).select("-password");
+
+    res.status(200).json(updatedUser);
+  } catch (error) {
+    console.error("Error updating user:", error);
+    res.status(500).json({ message: "Internal server error" });
   }
 });
 

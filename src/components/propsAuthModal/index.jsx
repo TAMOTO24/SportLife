@@ -5,6 +5,7 @@ import { Link, useNavigate } from "react-router-dom";
 import AuthContext from "../../authprovider.js";
 import "./style.css";
 import axios from "axios";
+import { Avatar } from "antd";
 
 const Auth = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -32,23 +33,25 @@ const Auth = () => {
     <>
       <div id="authblockdropdown">
         <a>
-          <img
+          <Avatar
             id="userIcon"
             onClick={() =>
               !user ? setIsModalVisible(!isModalVisible) : setIsOpen(!isOpen)
             }
-            src={user?.profile_picture ? user.profile_picture : "./img-pack/icons/user.png"}
+            src={user?.profile_picture || "./img-pack/icons/user.png"}
             alt="userImg"
+            size={60} // Можно задать размер аватара, если нужно
+            style={{ cursor: "pointer" }} // Для добавления курсора при наведении
           />
           {isOpen && (
             <div className="dropdownAuthBlock">
               <p>@{user.username}</p>
-              <a onClick={handleAuthClick}>
-                <div id="DPAuthLink">Exit</div>
-              </a>
               <Link to="/account">
                 <div id="DPAuthLink">Account</div>
               </Link>
+              <a onClick={handleAuthClick}>
+                <div id="DPAuthLink">Exit</div>
+              </a>
             </div>
           )}
         </a>

@@ -15,7 +15,8 @@ const userSchema = new mongoose.Schema({
   last_name: String,
   phone: String,
   profile_picture: String,
-  role: String
+  role: String,
+  profileDescription: String
 });
 
 module.exports = mongoose.models.accounts || mongoose.model('accounts', userSchema);
