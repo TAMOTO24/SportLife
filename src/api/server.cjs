@@ -25,21 +25,22 @@ app.use(
   })
 );
 
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, "./public/server-savings/"); //null - if error, "./server-savings/" - where to save files
-  },
-  filename: (req, file, cb) => {
-    cb(null, Date.now() + path.extname(file.originalname)); //null - if error, Date.now() - unique name, path.extname - file extension
-  },
-});
+// TODO: Delete all multer functionality. 
+// const storage = multer.diskStorage({
+//   destination: (req, file, cb) => {
+//     cb(null, "./public/server-savings/"); //null - if error, "./server-savings/" - where to save files
+//   },
+//   filename: (req, file, cb) => {
+//     cb(null, Date.now() + path.extname(file.originalname)); //null - if error, Date.now() - unique name, path.extname - file extension
+//   },
+// });
 
-const upload = multer({
-  storage: storage, //Set current storage rules
-  limits: {
-    fileSize: 10 * 1024 * 1024, // Max size 10 MB
-  },
-});
+// const upload = multer({
+//   storage: storage, //Set current storage rules
+//   limits: {
+//     fileSize: 10 * 1024 * 1024, // Max size 10 MB
+//   },
+// });
 
 mongoose
   .connect(process.env.DB_CONNECTION_STRING, {
@@ -127,16 +128,16 @@ app.post("/createpagepost", async (req, res) => {
   }
 });
 
-app.post("/upload", upload.array("image", 2), (req, res) => {
-  if (!req.files) {
-    return res.status(400).json({ message: "No files!" });
-  }
+// app.post("/upload", upload.array("image", 2), (req, res) => {
+//   if (!req.files) {
+//     return res.status(400).json({ message: "No files!" });
+//   }
 
-  const filePaths = Array.isArray(req.files)
-    ? req.files.map((file) => `./server-savings/${file.filename}`)
-    : [`./server-savings/${req.files.filename}`];
-  res.json({ filePaths });
-});
+//   const filePaths = Array.isArray(req.files)
+//     ? req.files.map((file) => `./server-savings/${file.filename}`)
+//     : [`./server-savings/${req.files.filename}`];
+//   res.json({ filePaths });
+// });
 
 app.get("/api/getposts", async (req, res) => {
   try {
@@ -272,7 +273,7 @@ app.get("/protected-route", async (req, res) => {
   }
 });
 
-app.post("/updateuser", upload.single("image"), async (req, res) => {
+app.post("/updateuser", async (req, res) => {
   try {
     const {
       id,
@@ -283,7 +284,9 @@ app.post("/updateuser", upload.single("image"), async (req, res) => {
       role,
       phone,
       profileDescription,
+      picture,
     } = req.body;
+    console.log(req.body);
 
     if (!id) {
       return res.status(400).json({ message: "User ID is required" });
@@ -312,11 +315,6 @@ app.post("/updateuser", upload.single("image"), async (req, res) => {
     if (checkPhone && checkPhone.id !== id) {
       // check email
       return res.status(400).json({ message: "Phone number already exists" });
-    }
-
-    let picture = existingUser.profile_picture; //if new picture didn't loaded
-    if (req.file) {
-      picture = `./server-savings/${req.file.filename}`; //if loaded change it to new server's storage path
     }
 
     const updatedUser = await User.findByIdAndUpdate(

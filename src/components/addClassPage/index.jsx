@@ -1,6 +1,6 @@
 import React from "react";
 import { useLocation } from "react-router-dom";
-import { Card, Typography, Row, Col, Image, Button } from "antd";
+import { Card, Typography, Row, Col, Image, Button, Space } from "antd";
 import "./style.css";
 import { PieChart, Pie } from "recharts";
 
@@ -110,7 +110,6 @@ const ClassPage = () => {
             <strong>Body activity: </strong>
           </Paragraph>
           <div style={{ display: "flex", justifyContent: "center" }}>
-            
             <PieChart width={800} height={400}>
               <Pie
                 dataKey="A"
@@ -124,9 +123,14 @@ const ClassPage = () => {
             </PieChart>
           </div>
 
-          <Button type="primary" style={{ backgroundColor: "#f56a00" }}>
-            Book Now
-          </Button>
+          <Space>
+            <Button type="primary" style={{ backgroundColor: "#f56a00" }}>
+              Book Now
+            </Button>
+            <Button type="primary">
+              Start workout
+            </Button>
+          </Space>
         </div>
       </div>
     </div>

@@ -40,8 +40,8 @@ const Auth = () => {
             }
             src={user?.profile_picture || "./img-pack/icons/user.png"}
             alt="userImg"
-            size={60} // Можно задать размер аватара, если нужно
-            style={{ cursor: "pointer" }} // Для добавления курсора при наведении
+            size={60} 
+            style={{ cursor: "pointer" }}
           />
           {isOpen && (
             <div className="dropdownAuthBlock">

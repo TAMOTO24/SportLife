@@ -21,6 +21,7 @@ import {
 } from "@ant-design/icons";
 import axios from "axios";
 import Loading from "../addLoadingElement";
+import {uploadFileToCloudinary} from "../../uploadFile"
 
 const AccountInfoSection = () => {
   const [form] = Form.useForm();
@@ -66,26 +67,22 @@ const AccountInfoSection = () => {
   const handleSubmit = async (values) => {
     // main handlesubmit that saves files using api construct and create post in MongoDB
     // if (images.length === 0) return message.error("Please upload at least one image.");
-
-    const formData = new FormData();
-    formData.append("id", user._id);
-    formData.append("username", values?.username);
-    formData.append("name", values?.name);
-    formData.append("lastname", values?.last_name);
-    formData.append("email", values?.email);
-    formData.append("phone", values?.phone);
-    formData.append("profileDescription", values?.profileDescription);
+    const data = {
+      id: user?._id,
+      username: values?.username,
+      name: values?.name,
+      lastname: values?.last_name,
+      email: values?.email,
+      phone: values?.phone,
+      profileDescription: values?.profileDescription,
+    };
     if (uploadFile) {
-      formData.append("image", uploadFile?.file);
-    }
-
-    try {
       setLoading(true);
-      const response = await axios.post("/updateuser", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
+      const url = await uploadFileToCloudinary(uploadFile?.file);
+      data.picture =  url;
+    }
+    try {
+      const response = await axios.post("/updateuser", data);
       message.success("Profile updated successfully!");
 
       if (setUser) {

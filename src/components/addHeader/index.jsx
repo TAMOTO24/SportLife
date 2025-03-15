@@ -42,12 +42,6 @@ function Header() {
                 <Link to="#">
                   <div id="DRPLink">codes</div>
                 </Link>
-                <Link to="#">
-                  <div id="DRPLink">Пополнение</div>
-                </Link>
-                <Link to="#">
-                  <div id="DRPLink">Руководство</div>
-                </Link>
               </div>
             )}
           </li>
