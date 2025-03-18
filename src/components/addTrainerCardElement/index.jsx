@@ -1,33 +1,51 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import "./style.css";
+import axios from "axios";
+import Loading from "../addLoadingElement";
 
 const TrainerCardElement = () => {
-  const galleryItems = [
-    { to: "", label: "Running", src: "./img-pack/page1.jpg" },
-    { to: "", label: "Stretching", src: "./img-pack/stretch.jpg" },
-    { to: "", label: "Yoga", src: "./img-pack/page2.jpg" },
-    { to: "", label: "Strength", src: "./img-pack/page3.jpg" },
-    { to: "", label: "Cardio", src: "./img-pack/page4.png" },
-  ];
+  const [trainers, setTrainers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  useEffect(() => {
+    const fetchTrainers = async () => {
+      try {
+        const response = await axios.get("/trainers");
+        setTrainers(response.data);
+        console.log(response.data);
+      } catch (error) {
+        console.error("Auth error", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTrainers(); 
+  }, []);
 
   return (
     <div className="trainer-element">
       <div>
         <div className="wrapper">
-          <div className="gallery">
-            {galleryItems.map((item, index) => (
-              <div className="card-container" key={index}>
-                <div
-                  className="card"
-                  style={{ backgroundImage: `url(${item.src})` }}
-                ></div>
-                <div className="content">
-                  <h2>{item.title}</h2>
-                  <p>{item.title}</p>
+          {loading ? (
+            <Loading />
+          ) : trainers.length === 0 ? (
+            <p>No trainers available</p>
+          ) :  (
+            <div className="gallery">
+              {trainers.map((item, index) => (
+                <div className="card-container" key={index}>
+                  <div
+                    className="card"
+                    style={{ backgroundImage: `url(${item.profile_img})` }}
+                  ></div>
+                  <div className="content">
+                    <h2>{item.title}</h2>
+                    <p>{item.info}</p>
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </div>

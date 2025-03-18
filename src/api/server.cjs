@@ -5,12 +5,14 @@ const dotenv = require("dotenv");
 const path = require("path");
 const jwt = require("jsonwebtoken");
 const cookieParser = require("cookie-parser");
-const multer = require("multer");
+// const multer = require("multer");
+
 
 // const Email = require("../models/email");
 const User = require("../models/user");
 const Post = require("../models/post");
 const Workouts = require("../models/workouts");
+const Trainers = require("../models/trainers")
 // const Item = require("../models/items");
 
 dotenv.config();
@@ -82,6 +84,15 @@ app.get("/api/email", async (req, res) => {
   try {
     const email = await User.find();
     res.json(email);
+  } catch (error) {
+    res.status(500).send("Server error");
+  }
+});
+app.get("/trainers", async (req, res) => {
+  // Take all trainers data from member Collection
+  try {
+    const trainers = await Trainers.find();
+    res.json(trainers);
   } catch (error) {
     res.status(500).send("Server error");
   }

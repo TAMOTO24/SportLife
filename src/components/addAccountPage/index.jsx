@@ -42,6 +42,7 @@ const AccountPage = () => {
                 : "./img-pack/icons/menu.png"
             }
             id="menu"
+            img loading="lazy"
           />
         </a>
         {[
