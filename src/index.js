@@ -12,6 +12,7 @@ import NewsInfoPage from "./components/addNewsInfoPage";
 import CreatePostPage from "./components/addCreatePostPage";
 import WorkoutPage from "./components/addWorkoutPage";
 import ClassPage from "./components/addClassPage";
+import WorkoutProgressPage from "./components/AddWorkoutProgressPage";
 
 function App() {
   return (
@@ -27,6 +28,7 @@ function App() {
           <Route path="/workoutpage" element={<WorkoutPage />} />
           <Route path="/classpage" element={<ClassPage />} />
           <Route element={<ProtectedRoute />}>
+            <Route path="/workoutprogress" element={<WorkoutProgressPage />} />
             <Route path="/account" element={<AccountPage />} />
             <Route path="/createpostpage" element={<CreatePostPage />} />
           </Route>

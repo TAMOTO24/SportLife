@@ -15,7 +15,7 @@ function Header() {
 
   return (
     <div>
-      <nav className="nav">
+      { location.pathname !== "/workoutprogress" && (<nav className="nav">
         <ul>
           <img src="./img-pack/logo/logo_white.png" alt="Logo" id="Logo" />
           {[
@@ -49,7 +49,7 @@ function Header() {
             {(location.pathname !== "/authpage" && location.pathname !== "/account")  && <Auth />}
           </li>
         </ul>
-      </nav>
+      </nav>)}
 
       <Outlet />
     </div>

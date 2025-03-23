@@ -1,12 +1,12 @@
-// import logo from './logo.svg';
 import './style.css';
-// import { Outlet, Link } from "react-router-dom";
-// import "../../img-pack/logo-white.png";
+import { Outlet, Link, useLocation } from "react-router-dom";
+
 
 function Footer() {
+  const location = useLocation();
   return (
     <>
-     <footer className="footer">
+     {location.pathname !== "/workoutprogress" && (<footer className="footer">
        <div><img src='./img-pack/logo/logo2_white.png' style={{width: "10%"}} alt="Logo" />
         <div className="buttonBlock">
             <button >Privacy Policy</button>
@@ -26,7 +26,7 @@ function Footer() {
         </div>
         
         <div><p className="policyText">- © Copyright Octafxt 2024</p></div>
-    </footer>
+    </footer>)}
     </>
   );
 }

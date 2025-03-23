@@ -1,0 +1,95 @@
+.progressBlock {
+  display: flex;
+  justify-content: center;
+  gap: 10%;
+  height: 80px;
+  align-items: center;
+  background-color: white;
+}
+.progressBlock img {
+  margin: 0;
+  /* transform: scale(0.8); */
+  width: 400px;
+  height: 95%;
+  margin-right: 10%;
+}
+body {
+  background: #f2f2f2;
+}
+.progress-workout-statistic {
+  display: flex;
+  justify-content: center;
+  z-index: 100;
+  gap: 100px;
+  height: 200px;
+  justify-content: center;
+  align-items: center;
+  background-color: white;
+}
+.progress-nav-block {
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 100;
+}
+.progress-nav-block hr {
+  margin: 0;
+  height: 10px;
+  background-color: #f2f2f2;
+  border: none;
+}
+.progressBlock .ant-progress-steps-item {
+  border-radius: 20px;
+  height: 20px !important;
+}
+/* .progress-page {
+  margin-top: 210px;
+} */
+.progress-workout-item {
+  display: flex;
+  border-radius: 20px;
+  background-color: white;
+  margin-inline: 20%;
+  overflow: hidden;
+  gap: 30px;
+  padding-right: 2%;
+}
+.progress-workout-item img {
+  width: 100%;
+  max-width: 30vw;
+  height: auto;
+  object-fit: cover;
+  display: block;
+}
+
+.workout-title {
+  font-size: 2vw;
+  font-weight: bold;
+}
+.progress-workout-block {
+  padding-top: 10px;
+}
+
+.progress-workout-item {
+  margin-top: 50px;
+}
+.item-content {
+  padding-block: 2%;
+  width: 100%;
+}
+.progress-workout-item #icon{
+    width: 10%;
+    height: 10%;
+}
+.progress-block{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.bloked{
+    filter: brightness(40%) blur(3px);
+    transition: filter 0.7s ease;
+}

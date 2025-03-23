@@ -1,6 +1,7 @@
 import React from "react";
 import { useLocation } from "react-router-dom";
 import { Card, Typography, Row, Col, Image, Button, Space } from "antd";
+import { Link} from "react-router-dom";
 import "./style.css";
 import { PieChart, Pie } from "recharts";
 
@@ -128,7 +129,7 @@ const ClassPage = () => {
               Book Now
             </Button>
             <Button type="primary">
-              Start workout
+              <Link to="/workoutprogress">Start workout</Link>
             </Button>
           </Space>
         </div>
