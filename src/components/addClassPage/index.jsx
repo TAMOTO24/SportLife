@@ -11,8 +11,6 @@ const ClassPage = () => {
   const location = useLocation();
   const { workout } = location.state || {};
 
-  console.log(workout.body_activity);
-
   return (
     <div
       className="classPage"
@@ -20,7 +18,6 @@ const ClassPage = () => {
         backgroundImage: `url(${workout.img[0]})`,
         backgroundSize: "cover",
         backgroundPosition: "center",
-        paddingBottom: "50px",
       }}
     >
       <div className="classBlock">
@@ -129,7 +126,7 @@ const ClassPage = () => {
               Book Now
             </Button>
             <Button type="primary">
-              <Link to="/workoutprogress">Start workout</Link>
+              <Link to="/workoutprogress" state={{ currentWorkout: workout }}>Start workout</Link>
             </Button>
           </Space>
         </div>

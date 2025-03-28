@@ -1,7 +1,8 @@
 .progressBlock {
   display: flex;
   justify-content: center;
-  gap: 10%;
+  gap: 2%;
+  overflow: hidden;
   height: 80px;
   align-items: center;
   background-color: white;

@@ -1,6 +1,8 @@
-import React, { useState } from "react";
-import { Progress, Divider, Button } from "antd";
+import React, { useState, useEffect } from "react";
+import { Progress, Divider, Button, Statistic } from "antd";
+import { useLocation } from "react-router-dom";
 import "./style.css";
+import Loading from "../addLoadingElement/index";
 
 // ! EXAMPLE VARIABLE
 const workouts = [
@@ -100,12 +102,35 @@ const workouts = [
 ];
 
 const WorkoutProgressPage = () => {
+  const [time, setTime] = useState(0);
+  const [loading, setIsLoading] = useState(false);
   const [workoutStatuses, setWorkoutStatuses] = useState(
     workouts.map((_, index) => (index === 0 ? "WorkingOn" : "Waiting"))
   );
   const [currentIndex, setCurrentIndex] = useState(0);
+  const location = useLocation();
+  const { currentWorkout } = location.state || {};
+
+  useEffect(() => {
+    if(!loading){
+      const interval = setInterval(() => {
+      setTime((prev) => prev + 1);
+    }, 1000);
+  
+    return () => clearInterval(interval);
+    }
+  }, [loading]);
+  useEffect(() => {
+    if(currentIndex >= workouts.length){
+      // TODO handle workout finisher, maybe create new page with info about passed workout
+    }
+  }, [currentIndex]);
 
   const handleNextExercise = (index) => {
+    if (index >= workouts.length) {
+      console.log("Workout finished");
+      return;
+    }
     setCurrentIndex(index);
     setWorkoutStatuses((prevStatuses) =>
       prevStatuses.map((status, i) =>
@@ -113,12 +138,24 @@ const WorkoutProgressPage = () => {
       )
     );
   };
+  const formatTime = (seconds) => {
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    const sec = seconds % 60;
+
+    return `${hours}:${minutes < 10 ? "0" : ""}${minutes}:${sec < 10 ? "0" : ""}${sec}`;
+  };
+
+  if (loading) {
+    return <Loading />;
+  }
+
   return (
     <div className="progress-page">
       <div className="progress-nav-block">
         <div className="progressBlock">
           <img src="./img-pack/logo/logo_black2.png" alt="logo" />
-          <h1>Workout name</h1>
+          <h1>{currentWorkout?.title}</h1>
           <Progress
             steps={10}
             percent={(currentIndex / workouts.length) * 100}
@@ -220,6 +257,15 @@ const WorkoutProgressPage = () => {
                   <li key={index}>{tip}</li>
                 ))}
               </ul>
+
+              <Divider style={{ background: "#ddd" }} />
+
+              <h4 style={{ color: "#222" }}>Equipment</h4>
+              <ul style={{ color: "#555" }}>
+                {item.equipment.map((tip, index) => (
+                  <li key={index}>{tip}</li>
+                ))}
+              </ul>
               <Divider style={{ background: "#ddd" }} />
               <div className="progress-block">
                 <Button
@@ -250,15 +296,19 @@ const WorkoutProgressPage = () => {
         style={{
           position: "fixed",
           bottom: 0,
+          display: "flex",
           left: 0,
           width: "100%",
           background: "#f8f8f8",
-          textAlign: "center",
+          alignItems: "center",
           padding: "10px",
           borderTop: "1px solid #ddd",
+          justifyContent: "space-evenly"
         }}
       >
-        © 2025 Sportlife. All rights reserved.
+        <Statistic value={formatTime(time)} />
+        <div>Sets: {currentIndex} / {workouts.length}</div>
+        <div>© 2025 Sportlife. All rights reserved.</div>
       </footer>
     </div>
   );

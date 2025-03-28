@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import "./style.css";
 import axios from "axios";
 import Loading from "../addLoadingElement";
+import { Link } from "react-router-dom";
 
 const TrainerCardElement = () => {
   const [trainers, setTrainers] = useState([]);
@@ -19,37 +20,40 @@ const TrainerCardElement = () => {
       }
     };
 
-    fetchTrainers(); 
+    fetchTrainers();
   }, []);
 
   return (
-    <div className="trainer-element">
-      <div>
-        <div className="wrapper">
-          {loading ? (
-            <Loading />
-          ) : trainers.length === 0 ? (
-            <p>No trainers available</p>
-          ) :  (
-            <div className="gallery">
-              {trainers.map((item, index) => (
-                <div className="card-container" key={index}>
-                  <div
-                    className="card"
-                    style={{ backgroundImage: `url(${item.profile_img})` }}
-                  ></div>
-                  <div className="content">
-                    <h2>{item.title}</h2>
-                    <p>{item.info}</p>
-                  </div>
-                  
-                </div>
-              ))}
-            </div>
-          )}
+    <>
+      <div className="trainer-element">
+        <div>
+          <div className="wrapper">
+            {loading ? (
+              <Loading />
+            ) : trainers.length === 0 ? (
+              <p>No trainers available</p>
+            ) : (
+              <div className="gallery">
+                {trainers.map((item, index) => (
+                  <Link to="info" className="card-container" state={{ trainer_info: item }}>
+                    <div key={index}>
+                      <div
+                        className="card"
+                        style={{ backgroundImage: `url(${item.profile_img})` }}
+                      ></div>
+                      <div className="content">
+                        <h2>{item.title}</h2>
+                        <p>{item.info}</p>
+                      </div>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

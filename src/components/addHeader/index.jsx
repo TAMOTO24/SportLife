@@ -1,6 +1,6 @@
 import React from "react";
 import "./style.css";
-import { Outlet, Link, useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import Auth from "../propsAuthModal";
 // import axios from "axios";
 
@@ -17,10 +17,10 @@ function Header() {
     <div>
       { location.pathname !== "/workoutprogress" && (<nav className="nav">
         <ul>
-          <img src="./img-pack/logo/logo_white.png" alt="Logo" id="Logo" />
+          <img src="/img-pack/logo/logo_white.png" alt="Logo" id="Logo" />
           {[
             { to: "/", label: "Homepage" },
-            { to: "/trainers", label: "Trainers" },
+            { to: "/trainerspage", label: "Trainers" },
             { to: "/newsandinf", label: "News & Info" },
             { to: "/layout", label: "Layout" },
             { to: "/workoutpage", label: "Workout" },
@@ -51,7 +51,7 @@ function Header() {
         </ul>
       </nav>)}
 
-      <Outlet />
+      {/* <Outlet /> */}
     </div>
   );
 }

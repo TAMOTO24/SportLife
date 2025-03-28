@@ -54,7 +54,6 @@
   border: 5px solid;
   border-image: linear-gradient(45deg, #3494e6, #ec6ead) 1;
   border-radius: 10px;
-  /* max-width: 1000px; */
   max-height: 20%;
   overflow: hidden;
   width: 15%;

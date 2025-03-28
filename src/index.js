@@ -13,20 +13,24 @@ import CreatePostPage from "./components/addCreatePostPage";
 import WorkoutPage from "./components/addWorkoutPage";
 import ClassPage from "./components/addClassPage";
 import WorkoutProgressPage from "./components/AddWorkoutProgressPage";
+import TrainersPage from "./components/addTrainersPage";
+import InfoTrainerPage from "./components/addInfoTrainerPage";
 
 function App() {
   return (
     <AuthProvider>
       <Router>
-        <Header /> 
+        <Header />
         <Routes>
           <Route path="/" element={<Home />} />
-          {/* <Route path="/protected" element={<ProtectedRoute />} /> */} 
+          {/* <Route path="/protected" element={<ProtectedRoute />} /> */}
           <Route path="/infpage" element={<InfPage />} />
           <Route path="/authpage" element={<AuthPage />} />
           <Route path="/newsandinf" element={<NewsInfoPage />} />
           <Route path="/workoutpage" element={<WorkoutPage />} />
           <Route path="/classpage" element={<ClassPage />} />
+          <Route path="/trainerspage" element={<TrainersPage />} />
+          <Route path="/trainerspage/info" element={<InfoTrainerPage />} />
           <Route element={<ProtectedRoute />}>
             <Route path="/workoutprogress" element={<WorkoutProgressPage />} />
             <Route path="/account" element={<AccountPage />} />
