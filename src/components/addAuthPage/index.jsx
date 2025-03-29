@@ -47,7 +47,6 @@ const AuthPage = () => {
 
   const onFinish = async (values) => {
     setLoading(true);
-    console.log("Received values of form:", values);
 
     if (authType === "signin") {
       // Login user

@@ -108,6 +108,36 @@ app.post("/api/workouts", async (req, res) => {
   }
 });
 
+app.post("/api/like", async (req, res) => {
+  const { userid, id } = req.body;
+
+  if (!userid || !id) {
+    return res.status(400).json({ message: "User ID and Post ID are required" });
+  }
+
+  try {
+    const post = await Post.findById(id);
+    if (!post) {
+      return res.status(404).json({ message: "Post not found" });
+    }
+
+    const likes = post.like || [];
+
+    if (post.like.includes(userid)) {
+      post.like = likes.filter(uid => uid !== userid);
+    } else {
+      post.like.push(userid);
+    }
+
+    await post.save();
+    res.json({ message: "Post liked/unliked successfully", likeCount: post.like.length });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Server error");
+  }
+});
+
+
 app.post("/createpagepost", async (req, res) => {
   const { filePaths, description } = req.body; //Take data post img paths and description
 
@@ -297,7 +327,6 @@ app.post("/updateuser", async (req, res) => {
       profileDescription,
       picture,
     } = req.body;
-    console.log(req.body);
 
     if (!id) {
       return res.status(400).json({ message: "User ID is required" });

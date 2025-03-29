@@ -1,18 +1,17 @@
 .post {
   display: flex;
-  border-top: 1px solid gray;
+  /* border-top: 1px solid gray; */
   padding: 10px;
   width: 800px;
 
   max-width: 900px;
   max-height: 900px;
-  margin-bottom: 50px;
 }
 .postPhoto img {
-  width: 50px;
-  height: 50px;
+  width: 60px;
+  height: 60px;
   border-radius: 50%;
-  padding: 5px;
+  margin: 10px;
 }
 .newsInfoPage {
   display: flex;
@@ -32,19 +31,29 @@
   align-items: center;
 }
 .postContent {
-  width: auto;
+  width: 100%;
 }
 .postGallery {
   display: flex;
   border: 1px solid gray;
   border-radius: 10px;
   gap: 2px;
-  width: 738px;
+  width: 100%;
   grid-auto-flow: dense;
   overflow: hidden;
   margin-block: 10px;
   height: 600px;
   flex-direction: column;
+}
+.postText{
+  font-size: 20px;
+  margin: 10px;
+  color: black;
+}
+.postUser{
+  font-size: 15px;
+  font-weight: bolder;
+  color: black;
 }
 .postGallery img {
   flex: 1;

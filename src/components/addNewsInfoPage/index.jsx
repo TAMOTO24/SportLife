@@ -1,99 +1,36 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import "./style.css";
-import { Modal } from "antd";
+// import "./style.css";
+import { Modal, message } from "antd";
 import { Outlet, Link, useNavigate } from "react-router-dom";
-import Cookies from 'js-cookie';
+import Cookies from "js-cookie";
+import PostElement from "../addPostElement";
 
 function NewsInfoPage() {
   const [posts, setPosts] = useState([]);
-  const [isModalVisible, setIsModalVisible] = useState(false);
-  const [currentImage, setCurrentImage] = useState("");
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    setLoading(true);
     axios
       .get("/api/getposts")
       .then((response) => setPosts(response.data))
-      .catch((error) => console.error(error));
+      .catch((error) => console.error(error))
+      .finally(() => setLoading(false));
 
-      console.log(Cookies.get('token'))
   }, []);
 
-  const calculateTimeAgo = (value) => {
-    const now = new Date();
-    const date = new Date(value);
-
-    const diffMs = now - date;
-    const diffSec = Math.floor(diffMs / 1000);
-    const diffMin = Math.floor(diffSec / 60);
-    const diffHours = Math.floor(diffMin / 60);
-    const diffDays = Math.floor(diffHours / 24);
-
-    if (diffDays > 0) return `${diffDays} d`;
-    if (diffHours > 0) return `${diffHours} h`;
-    if (diffMin > 0) return `${diffMin} m`;
-    if (diffSec > 0) return `${diffSec} s`;
-    return "just now";
-  };
-
-  const showModal = (image) => {
-    setCurrentImage(image);
-    setIsModalVisible(true);
-  };
-
-  const handleCancel = () => {
-    setIsModalVisible(false);
-  };
 
   return (
     <div className="newsInfoPage">
-      {Cookies.get('token') && (<Link to="/createpostpage" className="addPostButton"><div></div></Link>)}
+      {Cookies.get("token") && (
+        <Link to="/createpostpage" className="addPostButton">
+          <div></div>
+        </Link>
+      )}
       {posts.map((item) => (
-        <div className="post" key={item.id}>
-          <div className="postPhoto">
-            <img loading="lazy" src={item.userIcon || "./img-pack/icons/user-blacktheme.png"} alt="UserIcon" />
-          </div>
-
-          <div className="postContent">
-            <div>
-              <div className="postUserContent">
-                <div className="postUser">{item.user || "unknown user"}</div>
-                <div className="postUsername">@{item.username}</div>
-                <div className="postDate">{calculateTimeAgo(item.date)}</div>
-              </div>
-              <div className="postText">{item.text}</div>
-            </div>
-            <div className="postGallery">
-              {item.gallery.map((image, index) => (
-                <img
-                  key={index}
-                  src={image}
-                  alt="Gallery"
-                  loading="lazy"
-                  onClick={() => showModal(image)}
-                />
-              ))}
-            </div>
-            <div className="postPanel">
-              <a className="postLike"><img src="./img-pack/icons/like.png" loading="lazy" alt="" /><div>{item.like.length}</div></a>
-              <a className="postComment"><img src="./img-pack/icons/chat.png" loading="lazy" alt="" /><div>{item.comment.length}</div></a>
-              <a className="postShare"><img src="./img-pack/icons/share.png" loading="lazy" alt="" /></a>
-              <a className="postSave"><img src="./img-pack/icons/favorite.png" loading="lazy" alt="" /></a>
-            </div>
-          </div>
-        </div>
+        <PostElement item={item} hoverable={true}/>
       ))}
-
-      <Modal
-        visible={isModalVisible}
-        footer={null}
-        onCancel={handleCancel}
-        centered
-        width="60%"
-        style={{ top: 20 }}  
-      >
-        <img loading="lazy" src={currentImage} alt="Selected" style={{ width: "100%", height: "100%", paddingTop: "40px"}} />
-      </Modal>
     </div>
   );
 }

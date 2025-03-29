@@ -128,7 +128,6 @@ const WorkoutProgressPage = () => {
 
   const handleNextExercise = (index) => {
     if (index >= workouts.length) {
-      console.log("Workout finished");
       return;
     }
     setCurrentIndex(index);

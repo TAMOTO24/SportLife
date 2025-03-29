@@ -56,7 +56,6 @@ export const AuthProvider = ({ children }) => {
       axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
       setUser({ token });
 
-      console.log("Response:", response.data);
       message.success("User registered successfully!");
     } catch (error) {
       console.error("Error sending POST request:", error);

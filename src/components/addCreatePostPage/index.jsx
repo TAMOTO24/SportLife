@@ -18,9 +18,6 @@ const CreatePostPage = () => {
     if (!postData.filePaths) return;
     axios
       .post("/createpagepost", postData)
-      .then((response) => {
-        console.log(response.data);
-      })
       .catch((error) => console.error("Auth error", error));
   }, [postData]);
 

@@ -12,7 +12,6 @@ const TrainerCardElement = () => {
       try {
         const response = await axios.get("/trainers");
         setTrainers(response.data);
-        console.log(response.data);
       } catch (error) {
         console.error("Auth error", error);
       } finally {

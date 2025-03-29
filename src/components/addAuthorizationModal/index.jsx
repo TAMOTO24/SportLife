@@ -44,7 +44,6 @@ const AuthModal = ({ visible, onCancel }) => {
   };
 
   const handleLogin = (values) => {
-    console.log("Login with data:", values);
     message.success("Login successful!");
   };
 
