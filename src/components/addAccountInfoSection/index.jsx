@@ -11,6 +11,8 @@ import {
   Col,
   Space,
   Tag,
+  Image,
+  Modal
 } from "antd";
 import {
   MailOutlined,
@@ -21,7 +23,7 @@ import {
 } from "@ant-design/icons";
 import axios from "axios";
 import Loading from "../addLoadingElement";
-import {uploadFileToCloudinary} from "../../uploadFile"
+import { uploadFileToCloudinary } from "../../uploadFile";
 
 const AccountInfoSection = () => {
   const [form] = Form.useForm();
@@ -29,6 +31,7 @@ const AccountInfoSection = () => {
   const [uploadFile, setUploadedFile] = useState(undefined);
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState(undefined);
+  const [previewOpen, setPreviewOpen] = useState(false);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -79,7 +82,7 @@ const AccountInfoSection = () => {
     if (uploadFile) {
       setLoading(true);
       const url = await uploadFileToCloudinary(uploadFile?.file);
-      data.picture =  url;
+      data.picture = url;
     }
     try {
       const response = await axios.post("/updateuser", data);
@@ -148,6 +151,7 @@ const AccountInfoSection = () => {
               <Button icon={<DeleteOutlined />} danger>
                 Remove
               </Button>
+              <Button type="primary"  onClick={() => setPreviewOpen(true)}>Preview</Button>
             </Space>
           </Col>
         </Row>
@@ -205,6 +209,18 @@ const AccountInfoSection = () => {
             </Row>
           </Form.Item>
         </Form>
+        <Modal
+          open={previewOpen}
+          footer={null}
+          onCancel={() => setPreviewOpen(false)}
+          width={"60%"}
+        >
+          <img
+            src={uploadedPhoto || user.profile_picture}
+            alt="Profile"
+            style={{ width: "99%" }}
+          />
+        </Modal>
       </Card>
     </>
   );

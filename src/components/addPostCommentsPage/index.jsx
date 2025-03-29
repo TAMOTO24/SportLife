@@ -1,9 +1,11 @@
-import React, { useState } from "react";
-import { Modal, Image, message, Input, Divider, Button, Avatar } from "antd";
+import React, { useState, useEffect } from "react";
+import { Input, Empty, Typography } from "antd";
 import { useLocation } from "react-router-dom";
 import { UserOutlined } from "@ant-design/icons";
 import "./style.css";
 import PostElement from "../addPostElement";
+import axios from "axios";
+import CommentElement from "../addCommentElement";
 
 const { TextArea } = Input;
 
@@ -16,21 +18,25 @@ const CommentsPage = () => {
       <div className="commentsPage">
         <PostElement item={post} hoverable={false} />
         <div className="commentBlock">
-          {post.comment.map((item) => (
-            <div key={item._id} className="commentContainer">
-              <Avatar size={64} icon={<UserOutlined />} />
-              <div className="commentContent">
-                {" "}
-                {/* TODO: make id recognision comment user */}
-                <div className="postUserContent">
-                  <div className="postUser">{post.user || "unknown user"}</div>
-                  <div className="postUsername">@{post.username}</div>
-                  <div className="postDate">{date}</div>
-                </div>
-                <div>{item.text}</div>
-              </div>
-            </div>
-          ))}
+          {post.comment.length === 0 ? (
+            <Empty
+              style={{ height: "50vh", display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column" }}
+              description={
+                <Typography.Text>
+                  No comments yet. Be the first to comment!
+                </Typography.Text>
+              }
+            />
+          ) : (
+            post.comment.map((item) => (
+              <CommentElement
+                key={item._id}
+                id={item.id}
+                date={date}
+                text={item.text}
+              />
+            ))
+          )}
         </div>
       </div>
     </>

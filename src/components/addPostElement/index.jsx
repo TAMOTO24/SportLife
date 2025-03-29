@@ -26,9 +26,8 @@ const PostElement = ({ item, hoverable }) => {
     };
     fetchUserData();
   }, []);
-  console.log("awdawd", hoverable);
 
-  const postLike = (userid, id) => {
+  const postLike = (userid, id) => { // ! BAG: in comment page likes after reload didn't change
     const token = Cookies.get("token");
     setLoading(true);
     if (!token) {
@@ -81,7 +80,7 @@ const PostElement = ({ item, hoverable }) => {
   };
   return (
     <>
-      <Divider style={{ background: "#ddd" }} />
+     {hoverable && ( <Divider style={{ background: "#ddd" }} />)}
       <Card
         hoverable={hoverable}
         onClick={() => {
@@ -99,7 +98,7 @@ const PostElement = ({ item, hoverable }) => {
           <div className="postPhoto">
             <img
               loading="lazy"
-              src={item.userIcon || "./img-pack/icons/user-blacktheme.png"}
+              src={item.userIcon || "/img-pack/icons/user-blacktheme.png"}
               alt="UserIcon"
             />
           </div>
@@ -124,7 +123,7 @@ const PostElement = ({ item, hoverable }) => {
                 />
               ))}
             </div>
-            <div className="postPanel">
+            <div className="postPanel"> // ! BAG: is not clickable when hoverable is true
               <a
                 className="postLike"
                 onClick={() => {

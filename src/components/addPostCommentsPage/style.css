@@ -20,3 +20,8 @@
     width: 100%;
     background-color: white;
 }
+.commentText{
+    font-size: 20px;
+    color: black;
+    margin-top: 10px;
+}

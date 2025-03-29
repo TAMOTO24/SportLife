@@ -24,6 +24,7 @@
 .postUserContent,
 .postPanel {
   display: flex;
+  z-index: 100;
   gap: 10px;
 }
 .postPanel {
