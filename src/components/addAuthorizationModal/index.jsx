@@ -99,9 +99,6 @@ const AuthModal = ({ visible, onCancel }) => {
       <Button icon={<GoogleOutlined />} block style={{ marginBottom: 10 }}>
         Continue with Google
       </Button>
-      <Button icon={<AppleOutlined />} block style={{ marginBottom: 10 }}>
-        Continue with Apple
-      </Button>
       <Button icon={<PhoneOutlined />} block>
         Continue with phone
       </Button>

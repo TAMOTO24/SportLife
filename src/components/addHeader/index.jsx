@@ -22,7 +22,8 @@ function Header() {
             { to: "/", label: "Homepage" },
             { to: "/trainerspage", label: "Trainers" },
             { to: "/newsandinf", label: "News & Info" },
-            { to: "/layout", label: "Layout" },
+            { to: "", label: "Reviews" },
+            { to: "", label: "Plans" },
             { to: "/workoutpage", label: "Workout" },
           ].map((item) => (
             <Link to={item.to} id="navLink">

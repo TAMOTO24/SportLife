@@ -34,12 +34,12 @@ const TrainerCardElement = () => {
             ) : (
               <div className="gallery">
                 {trainers.map((item, index) => (
-                  <Link to="info" className="card-container" state={{ trainer_info: item }}>
+                  <Link to="/trainerspage/info" className="card-container" state={{ trainer_info: item }}>
                     <div key={index}>
                       <div
                         className="card"
                         style={{ backgroundImage: `url(${item.profile_img})` }}
-                      ></div>
+                      />
                       <div className="content">
                         <h2>{item.title}</h2>
                         <p>{item.info}</p>

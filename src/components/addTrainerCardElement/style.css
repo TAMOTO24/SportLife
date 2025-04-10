@@ -52,8 +52,8 @@
   position: relative;
   transition: 0.4s;
   border: 5px solid;
-  border-image: linear-gradient(45deg, #3494e6, #ec6ead) 1;
-  border-radius: 10px;
+  /* border-image: linear-gradient(45deg, #3494e6, #ec6ead) 1; */
+  border-color: #e35454;
   max-height: 20%;
   overflow: hidden;
   width: 15%;
@@ -69,7 +69,7 @@
   transform: translate(-50%, -50%);
   color: white;
   text-align: center;
-  padding: 10px;
+  padding: 5px;
   transition: 0.5s;
   border: 2px solid;
 }

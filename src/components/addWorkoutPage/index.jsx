@@ -34,7 +34,7 @@ const WorkoutPage = () => {
 
     setLoading(true);
     try {
-      const response = await axios.post("/api/workouts", { type: index });
+      const response = await axios.get(`/api/workouts/${encodeURIComponent(index)}`);
       setWorkouts(response.data);
       setCachedWorkouts((prev) => ({
         ...prev,

@@ -5,25 +5,27 @@ import { Link, useNavigate } from "react-router-dom";
 import AuthContext from "../../authprovider.js";
 import "./style.css";
 import axios from "axios";
-import { Avatar } from "antd";
+import { Avatar, Spin } from "antd";
 
 const Auth = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [user, setUser] = useState(undefined);
   const { logout } = useContext(AuthContext);
+  const [loading, setLoading] = useState(true);
 
-  // const showModal = () => setIsModalVisible(true);
   const hideModal = () => setIsModalVisible(false);
   const navigate = useNavigate();
 
   useEffect(() => {
+    setLoading(true);
     axios
       .get("/protected-route")
       .then((response) => {
         setUser(response.data.user);
       })
-      .catch((error) => console.error("Auth error", error));
+      .catch((error) => console.error("Auth error", error))
+      .finally(() => {setLoading(false)});
   }, []);
   const handleAuthClick = async () => {
     await logout(navigate);
@@ -33,16 +35,18 @@ const Auth = () => {
     <>
       <div id="authblockdropdown">
         <a>
-          <Avatar
-            id="userIcon"
-            onClick={() =>
-              !user ? setIsModalVisible(!isModalVisible) : setIsOpen(!isOpen)
-            }
-            src={user?.profile_picture || "./img-pack/icons/user.png"}
-            alt="userImg"
-            size={60} 
-            style={{ cursor: "pointer" }}
-          />
+          <Spin spinning={loading}>
+            <Avatar
+              id="userIcon"
+              onClick={() =>
+                !user ? setIsModalVisible(!isModalVisible) : setIsOpen(!isOpen)
+              }
+              src={user?.profile_picture || "./img-pack/icons/user.png"}
+              alt="userImg"
+              size={60}
+              style={{ cursor: "pointer" }}
+            />
+          </Spin>
           {isOpen && (
             <div className="dropdownAuthBlock">
               <p>@{user.username}</p>

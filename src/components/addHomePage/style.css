@@ -1,10 +1,10 @@
+@import url('https://fonts.googleapis.com/css2?family=Anton&display=swap');
+
 .section {
-  height: 100vh;
-  display: "flex";
-  align-items: "center";
-  justify-content: "center";
-  font-size: "24px";
-  background: whitesmoke;
+  height: 120vh;
+  position: relative;
+  font-size: 24px;
+  /* background: whitesmoke; */
   border-bottom: 2px solid black;
 }
 .sectionNav {
@@ -75,7 +75,43 @@
   transition: background-image 0.5s ease-in-out;
   padding-top: 50px;
 }
+.section .background {
+  position: absolute;
+  inset: 0;
+  /* background-image: url("../../../public/img-pack/trainers/strong-man-pulling-rope_23-2147671924.jpg"); */
+  background-size: cover;
+  background-position: center;
+  filter: brightness(30%);
+  z-index: 0;
+}
+.blog-title {
+  /* font-family: 'Exo 2', sans-serif !important; */
+  font-weight: 400;
+  font-size: 32px;
+  color: #ffffff;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
 
+.blog-subtitle {
+  font-family: 'Anton', sans-serif !important;
+  font-size: 50px;
+  color: #e35454;
+  text-transform: uppercase;
+}
+
+.blog-section-block {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: white;
+  padding: 2rem;
+  padding-top: 5%;
+}
 .dots-container {
   position: absolute;
   right: 50px;
@@ -84,6 +120,10 @@
   flex-direction: column;
   gap: 10px;
 }
+.blog-section-block #titleItem{
+  font-family: 'Anton', sans-serif !important;
+  font-size: "5rem"
+}
 
 .dot {
   border: 2px solid whitesmoke;
@@ -91,20 +131,19 @@
   height: 30px;
   border-radius: 50%;
   background-color: #333;
-  
   cursor: pointer;
   transition: background-color 0.3s ease;
 }
 
-.active{
+.active {
   background-color: white;
 }
-.page-content{
+.page-content {
   display: flex;
   flex-direction: column;
   color: whitesmoke;
   background: rgba(0, 0, 0, 0.6);
-  width: 1000px;
+  width: 50%;
   border-top-right-radius: 20px;
   border-bottom-right-radius: 20px;
   padding: 50px;

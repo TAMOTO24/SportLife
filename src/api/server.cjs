@@ -97,18 +97,17 @@ app.get("/trainers", async (req, res) => {
     res.status(500).send("Server error");
   }
 });
-app.post("/api/workouts", async (req, res) => {
-  // Take all workouts from Collection
-  const { type } = req.body;
+app.get("/api/workouts/:type", async (req, res) => {
+  const { type } = req.params;
   try {
-    const items = await Workouts.find({ type: type });
+    const items = await Workouts.find({ type });
     res.json(items);
   } catch (error) {
     res.status(500).send("Server error");
   }
 });
 
-app.post("/api/like", async (req, res) => {
+app.put("/api/like", async (req, res) => {
   const { userid, id } = req.body;
 
   if (!userid || !id) {
@@ -314,7 +313,7 @@ app.get("/protected-route", async (req, res) => {
   }
 });
 
-app.post("/updateuser", async (req, res) => {
+app.put("/updateuser", async (req, res) => {
   try {
     const {
       id,

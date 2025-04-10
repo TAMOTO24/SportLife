@@ -5,7 +5,7 @@ import Cookies from "js-cookie";
 import "./style.css";
 import { Modal, message, Card, Divider } from "antd";
 
-const PostElement = ({ item, hoverable }) => {
+const PostElement = ({ item, hoverable,  theme }) => { // THEME - false ? black/red theme : white/black theme 
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [currentImage, setCurrentImage] = useState("");
   const [loading, setLoading] = useState(true);
@@ -80,9 +80,11 @@ const PostElement = ({ item, hoverable }) => {
   };
   return (
     <>
-     {hoverable && ( <Divider style={{ background: "#ddd" }} />)}
+     {/* {hoverable && ( <Divider style={{ background: "#ddd" }} />)} */}
       <Card
         hoverable={hoverable}
+        className={!theme && "black-theme-block"}
+        bordered={theme}
         onClick={() => {
           if (hoverable) {
             navigate("/newsandinf/comments", {
@@ -100,17 +102,18 @@ const PostElement = ({ item, hoverable }) => {
               loading="lazy"
               src={item.userIcon || "/img-pack/icons/user-blacktheme.png"}
               alt="UserIcon"
+              className={!theme ? "black-theme" : ""}
             />
           </div>
 
           <div className="postContent">
             <div>
               <div className="postUserContent">
-                <div className="postUser">{item.user || "unknown user"}</div>
+                <div className={`postUser ${!theme && "black-theme-title"}`}>{item.user || "unknown user"}</div>
                 <div className="postUsername">@{item.username}</div>
                 <div className="postDate">{calculateTimeAgo(item.date)}</div>
               </div>
-              <div className="postText">{item.text}</div>
+              <div className={`postText ${!theme && "black-theme-title"}`}>{item.text}</div>
             </div>
             <div className="postGallery">
               {item.gallery.map((image, index) => (
@@ -123,25 +126,26 @@ const PostElement = ({ item, hoverable }) => {
                 />
               ))}
             </div>
-            <div className="postPanel"> // ! BAG: is not clickable when hoverable is true
+            <div className={`postPanel ${!hoverable ? "disable-block" : ""}`}>
               <a
                 className="postLike"
-                onClick={() => {
+                onClick={(e) => {
+                  e.stopPropagation();
                   postLike(user?._id, item._id);
                 }}
               >
-                <img src="/img-pack/icons/like.png" loading="lazy" alt="" />
+                <img src="/img-pack/icons/like.png" className={!theme && "black-theme"} loading="lazy" alt="" />
                 <div>{likes}</div>
               </a>
-              <Link to="comments" className="postComment">
-                <img src="/img-pack/icons/chat.png" loading="lazy" alt="" />
+              <Link to="" className="postComment">
+                <img src="/img-pack/icons/chat.png"  className={!theme ? "black-theme" : ""} loading="lazy" alt="" />
                 <div>{item.comment.length}</div>
               </Link>
               <a className="postShare">
-                <img src="/img-pack/icons/share.png" loading="lazy" alt="" />
+                <img src="/img-pack/icons/share.png"  className={!theme ? "black-theme" : ""} loading="lazy" alt="" />
               </a>
               <a className="postSave">
-                <img src="/img-pack/icons/favorite.png" loading="lazy" alt="" />
+                <img src="/img-pack/icons/favorite.png"  className={!theme ? "black-theme" : ""} loading="lazy" alt="" />
               </a>
             </div>
           </div>

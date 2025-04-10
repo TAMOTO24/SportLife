@@ -16,7 +16,7 @@ const CommentsPage = () => {
   return (
     <>
       <div className="commentsPage">
-        <PostElement item={post} hoverable={false} />
+        <PostElement item={post} hoverable={false} theme={true} />
         <div className="commentBlock">
           {post.comment.length === 0 ? (
             <Empty
