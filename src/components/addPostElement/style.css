@@ -36,6 +36,7 @@
   align-items: center;
 }
 .postContent {
+  position: block;
   width: 100%;
 }
 .postGallery {
@@ -47,7 +48,8 @@
   grid-auto-flow: dense;
   overflow: hidden;
   margin-block: 10px;
-  height: 600px;
+  height: 100%;
+  max-height: 600px;
   flex-direction: column;
 }
 .postText{

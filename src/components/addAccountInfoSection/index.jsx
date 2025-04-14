@@ -85,7 +85,7 @@ const AccountInfoSection = () => {
       data.picture = url;
     }
     try {
-      const response = await axios.post("/updateuser", data);
+      const response = await axios.put("/updateuser", data);
       message.success("Profile updated successfully!");
 
       if (setUser) {

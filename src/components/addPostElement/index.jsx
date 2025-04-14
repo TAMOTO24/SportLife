@@ -14,12 +14,16 @@ const PostElement = ({ item, hoverable,  theme }) => { // THEME - false ? black/
   const navigate = useNavigate();
 
   useEffect(() => {
+    const token = Cookies.get("token");
+    if (!token){
+      return
+    }
     const fetchUserData = async () => {
       try {
         const response = await axios.get("/protected-route");
         setUser(response.data.user);
       } catch (error) {
-        message.error("Error retrieving user data");
+        message.error(error.response.data.message);
       } finally {
         setLoading(false);
       }

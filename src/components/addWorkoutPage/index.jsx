@@ -41,7 +41,7 @@ const WorkoutPage = () => {
         [index]: response.data,
       }));
     } catch (error) {
-      message.error("Error retrieving workouts data");
+      message.error(error);
     } finally {
       setLoading(false);
     }

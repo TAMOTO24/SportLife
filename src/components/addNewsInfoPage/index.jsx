@@ -29,7 +29,7 @@ function NewsInfoPage() {
         </Link>
       )}
       {posts.map((item) => (
-        <PostElement item={item} hoverable={true}/>
+        <PostElement item={item} hoverable={true} theme={true}/>
       ))}
     </div>
   );
