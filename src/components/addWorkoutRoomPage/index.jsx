@@ -3,15 +3,14 @@ import { useParams } from "react-router-dom";
 import { socket } from "../../function.js";
 import axios from "axios";
 import { Spin } from "antd";
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from "uuid";
 
 export default function RoomPage() {
-  const uniqueUIDV4Id = uuidv4();
+  const [uniqueUIDV4Id] = useState("74ae1ee7-7f0b-476d-93e8-f9975b494b72");
   const [user, setUser] = useState(undefined);
   const [loading, setLoading] = useState(true);
 
   const [messages, setMessages] = useState([]);
-  console.log("userId", user);
 
   useEffect(() => {
     setLoading(true);
@@ -27,25 +26,48 @@ export default function RoomPage() {
   }, []);
 
   useEffect(() => {
-    socket.connect();
+    if (!user) return;
 
-    socket.emit("joinRoom", { uniqueUIDV4Id, userId: user._id });
+    if (!socket.connected) {
+      socket.connect();
+    }
+
+    socket.on("connect", () => {
+      console.log("✅ Connected to socket.io server:", socket.id);
+
+      socket.emit("joinRoom", { roomId: uniqueUIDV4Id, userId: user._id });
+    });
+
+    socket.on("connect_error", (err) => {
+      console.error("❌ Socket.io connection error:", err.message);
+    });
+
+    socket.on('chatHistory', (history) => {
+      setMessages(history);
+    });
 
     socket.on("receiveUpdate", (data) => {
-      setMessages((prev) => [...prev, data]);
+      console.log("Received update:", data);
+      setMessages((prevMessages) => [...prevMessages, data]);
     });
 
     return () => {
+      socket.off("connect");
+      socket.off("connect_error");
       socket.off("receiveUpdate");
       socket.disconnect();
     };
-  }, [uniqueUIDV4Id]);
+  }, [user]);
 
   const sendUpdate = () => {
-    socket.emit("sendUpdate", {
-      uniqueUIDV4Id,
-      data: `Привіт з кімнати ${uniqueUIDV4Id} від ${user._id}`,
-    });
+    if (socket.connected) {
+      socket.emit("sendUpdate", {
+        roomId: uniqueUIDV4Id,
+        data: `Привіт з кімнати ${uniqueUIDV4Id} від ${user._id}`,
+      });
+    } else {
+      console.error("❌ Socket is not connected");
+    }
   };
 
   return (

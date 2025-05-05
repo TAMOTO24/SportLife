@@ -34,30 +34,38 @@ const server = http.createServer(app);
 const { Server } = require("socket.io");
 const io = new Server(server, {
   cors: {
-    origin: "*",
+    origin: '*',
     methods: ["GET", "POST"]
   }
 });
-
-const log = console.log
-console.log(log);
+const roomMessages = {};
 
 io.on('connection', socket => {
-  console.log('Клієнт підключився:', socket.id);
+  console.log('Клієнт підключився по SocketID:', socket.id);
 
   socket.on('joinRoom', ({ roomId, userId }) => {
     socket.join(roomId);
     console.log(`🧍‍♂️ ${userId} приєднався до кімнати ${roomId}`);
+
+    const history = roomMessages[roomId] || [];
+    socket.emit('chatHistory', history);
   });
 
   socket.on('sendUpdate', ({ roomId, data }) => {
-    console.log(`📤 Оновлення в ${roomId}:`, data);
-    socket.to(roomId).emit('receiveUpdate', data);
+    if (!roomMessages[roomId]) roomMessages[roomId] = [];
+    roomMessages[roomId].push(data);
+
+    io.to(roomId).emit('receiveUpdate', data);
   });
 
   socket.on('disconnect', () => {
+
     console.log('Клієнт відключився:', socket.id);
   });
+});
+
+server.on("error", (err) => {
+  console.error("❗ HTTP server error:", err);
 });
 
 
@@ -416,6 +424,8 @@ app.put("/updateuser", async (req, res) => {
 app.get("*", (req, res) => {
   res.sendFile(path.join(__dirname, "../../public/index.html"));
 });
-
 const PORT = process.env.SERVER_PORT || 5000;
-app.listen(PORT, () => console.log(`🚀 Server is running on port ${PORT}`));
+server.listen(5000, () => {
+  console.log(`🚀 Server is running on port ${PORT}`);
+});
+// app.listen(PORT, () => console.log(`🚀 Server is running on port ${PORT}`));
