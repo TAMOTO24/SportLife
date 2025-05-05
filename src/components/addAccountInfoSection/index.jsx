@@ -36,7 +36,7 @@ const AccountInfoSection = () => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await axios.get("/protected-route");
+        const response = await axios.get("/currentuserdata");
         setUser(response.data.user);
       } catch (error) {
         message.error("Error retrieving user data");

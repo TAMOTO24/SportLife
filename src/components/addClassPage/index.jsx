@@ -126,7 +126,8 @@ const ClassPage = () => {
               Book Now
             </Button>
             <Button type="primary">
-              <Link to="/workoutprogress" state={{ currentWorkout: workout }}>Start workout</Link>
+              {/* <Link to="/workoutprogress" state={{ currentWorkout: workout }}>Start workout</Link> */}
+              <Link to={`/workoutroom`} state={{ currentWorkout: workout }}>Start workout</Link>
             </Button>
           </Space>
         </div>

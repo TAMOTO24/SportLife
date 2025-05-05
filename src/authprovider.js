@@ -5,10 +5,10 @@ import Cookies from "js-cookie";
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState(undefined);
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
+    const token = Cookies.get("token");
     if (token) {
       axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
       setUser({ token });
@@ -23,7 +23,7 @@ export const AuthProvider = ({ children }) => {
       });
       const { token } = response.data;
 
-      localStorage.setItem("token", token);
+      Cookies.set("token", token, { expires: 1 });
       axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
       setUser({ token });
 
@@ -52,7 +52,7 @@ export const AuthProvider = ({ children }) => {
       const response = await axios.post("/newuser", userData);
 
       const { token } = response.data;
-      localStorage.setItem("token", token);
+      Cookies.set("token", token, { expires: 1 });
       axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
       setUser({ token });
 
@@ -64,7 +64,6 @@ export const AuthProvider = ({ children }) => {
   };
 
   const logout = (navigate) => {
-    localStorage.removeItem("token");
     delete axios.defaults.headers.common["Authorization"];
     Cookies.remove("token");
     setUser(null);

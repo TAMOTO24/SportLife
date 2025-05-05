@@ -6,6 +6,7 @@ const path = require("path");
 const jwt = require("jsonwebtoken");
 const cookieParser = require("cookie-parser");
 // const multer = require("multer");
+const cors = require("cors");
 
 
 // const Email = require("../models/email");
@@ -19,6 +20,7 @@ dotenv.config();
 const app = express();
 
 app.use(cookieParser());
+app.use(cors());
 app.use(express.json());
 app.use(
   express.static("public", {
@@ -26,6 +28,38 @@ app.use(
     immutable: true,
   })
 );
+const http = require("http");
+const server = http.createServer(app);
+
+const { Server } = require("socket.io");
+const io = new Server(server, {
+  cors: {
+    origin: "*",
+    methods: ["GET", "POST"]
+  }
+});
+
+const log = console.log
+console.log(log);
+
+io.on('connection', socket => {
+  console.log('Клієнт підключився:', socket.id);
+
+  socket.on('joinRoom', ({ roomId, userId }) => {
+    socket.join(roomId);
+    console.log(`🧍‍♂️ ${userId} приєднався до кімнати ${roomId}`);
+  });
+
+  socket.on('sendUpdate', ({ roomId, data }) => {
+    console.log(`📤 Оновлення в ${roomId}:`, data);
+    socket.to(roomId).emit('receiveUpdate', data);
+  });
+
+  socket.on('disconnect', () => {
+    console.log('Клієнт відключився:', socket.id);
+  });
+});
+
 
 // TODO: Delete all multer functionality. 
 // const storage = multer.diskStorage({
@@ -287,7 +321,7 @@ app.post("/login", async (req, res) => {
     res.status(500).json({ message: "Server Error" });
   }
 });
-app.get("/protected-route", async (req, res) => {
+app.get("/currentuserdata", async (req, res) => {
   const token =
     req.cookies.token || req.header("Authorization")?.replace("Bearer ", "");
 

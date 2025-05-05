@@ -2,10 +2,10 @@
   display: flex;
   /* border-top: 1px solid gray; */
   padding: 10px;
-  width: 800px;
+  width: 100%;
 
   max-width: 900px;
-  max-height: 900px;
+  /* max-height: 900px; */
 }
 .postPhoto img {
   width: 60px;

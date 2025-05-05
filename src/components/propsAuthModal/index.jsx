@@ -20,7 +20,7 @@ const Auth = () => {
   useEffect(() => {
     setLoading(true);
     axios
-      .get("/protected-route")
+      .get("/currentuserdata")
       .then((response) => {
         setUser(response.data.user);
       })

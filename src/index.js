@@ -16,6 +16,7 @@ import WorkoutProgressPage from "./components/AddWorkoutProgressPage";
 import TrainersPage from "./components/addTrainersPage";
 import InfoTrainerPage from "./components/addInfoTrainerPage";
 import CommentsPage from "./components/addPostCommentsPage";
+import RoomPage from "./components/addWorkoutRoomPage";
 
 function App() {
   return (
@@ -37,6 +38,7 @@ function App() {
             <Route path="/workoutprogress" element={<WorkoutProgressPage />} />
             <Route path="/account" element={<AccountPage />} />
             <Route path="/createpostpage" element={<CreatePostPage />} />
+            <Route path="/workoutroom" element={<RoomPage />} />
           </Route>
         </Routes>
         <Footer />
