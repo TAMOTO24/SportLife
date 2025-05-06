@@ -2,15 +2,29 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { socket } from "../../function.js";
 import axios from "axios";
-import { Spin } from "antd";
+import { Avatar, Button, List, Skeleton, Spin } from "antd";
+import { useNavigate, Link } from "react-router-dom";
 import { v4 as uuidv4 } from "uuid";
+import Cookies from "js-cookie";
 
 export default function RoomPage() {
-  const [uniqueUIDV4Id] = useState("74ae1ee7-7f0b-476d-93e8-f9975b494b72");
+  const [uniqueUIDV4Id, setUniqueUIDV4Id] = useState(uuidv4());
   const [user, setUser] = useState(undefined);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   const [messages, setMessages] = useState([]);
+  const [users, setUsers] = useState([]);
+  const [data, setData] = useState({});
+
+  useEffect(() => {
+    const existingRoomId = Cookies.get("roomId");
+    if (!existingRoomId) {
+      Cookies.set("roomId", uniqueUIDV4Id, { expires: 1 });
+    } else {
+      setUniqueUIDV4Id(existingRoomId);
+    }
+  }, []);
 
   useEffect(() => {
     setLoading(true);
@@ -42,13 +56,14 @@ export default function RoomPage() {
       console.error("❌ Socket.io connection error:", err.message);
     });
 
-    socket.on('chatHistory', (history) => {
-      setMessages(history);
+    socket.on("chatHistory", (user) => {
+      setUsers(user);
+      console.log("Chat history:", user);
     });
 
     socket.on("receiveUpdate", (data) => {
-      console.log("Received update:", data);
-      setMessages((prevMessages) => [...prevMessages, data]);
+      setData(data);
+      console.log("Chat history:", data);
     });
 
     return () => {
@@ -63,24 +78,65 @@ export default function RoomPage() {
     if (socket.connected) {
       socket.emit("sendUpdate", {
         roomId: uniqueUIDV4Id,
-        data: `Привіт з кімнати ${uniqueUIDV4Id} від ${user._id}`,
+        data: {},
       });
+    } else {
+      console.error("❌ Socket is not connected");
+    }
+  };
+  const disconnectSocket = () => {
+    if (socket.connected) {
+      socket.emit("disconnectData", {
+        roomId: uniqueUIDV4Id,
+        userId: user._id,
+      });
+      navigate("/");
+      console.log("Socket disconnected");
     } else {
       console.error("❌ Socket is not connected");
     }
   };
 
   return (
-    <Spin spinning={loading}>
-      <div>
-        <h2>Кімната: {uniqueUIDV4Id}</h2>
-        <button onClick={sendUpdate}>Надіслати повідомлення</button>
-        <ul>
-          {messages.map((msg, i) => (
-            <li key={i}>{msg}</li>
-          ))}
-        </ul>
-      </div>
-    </Spin>
+    <div>
+      <h2>Створення кімнати</h2>
+      <button onClick={sendUpdate}>Надіслати повідомлення</button>
+      <button
+        onClick={() => {
+          disconnectSocket();
+          navigate("/");
+        }}
+      >
+        Відключитися
+      </button>
+      <List
+        className="demo-loadmore-list"
+        loading={loading}
+        itemLayout="horizontal"
+        dataSource={users}
+        renderItem={(item) => (
+          <List.Item
+            actions={[
+              <a key="list-loadmore-edit">edit</a>,
+              <a key="list-loadmore-more">more</a>,
+            ]}
+          >
+            <Skeleton avatar title={false} loading={item.loading} active>
+              <List.Item.Meta
+                avatar={<Avatar src={item.avatar} />}
+                title={<a href="https://ant.design">{item.name}</a>}
+                description="Ant Design, a design language for background applications, is refined by Ant UED Team"
+              />
+              <div>content</div>
+            </Skeleton>
+          </List.Item>
+        )}
+      />
+      <ul>
+        {messages.map((msg, i) => (
+          <li key={i}>{msg}</li>
+        ))}
+      </ul>
+    </div>
   );
 }

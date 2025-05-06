@@ -34,8 +34,9 @@ export const AuthProvider = ({ children }) => {
       message.error(error.response.data.message);
     }
   };
-  const signup = async (email, username, name, lastname, password, phone, profile, gender, role, navigate, message) => {
-    logout(navigate);
+  //! AFTER Signup user should be logged in automatically
+  const signup = async (email, username, name, lastname, password, phone, profile, gender, role, navigate, message) => { 
+    // logout(navigate);
     const userData = {
       email: email,
       username: username,
@@ -55,7 +56,7 @@ export const AuthProvider = ({ children }) => {
       Cookies.set("token", token, { expires: 1 });
       axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
       setUser({ token });
-
+      navigate("/");
       message.success("User registered successfully!");
     } catch (error) {
       console.error("Error sending POST request:", error);

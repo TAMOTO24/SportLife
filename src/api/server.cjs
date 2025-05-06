@@ -8,12 +8,12 @@ const cookieParser = require("cookie-parser");
 // const multer = require("multer");
 const cors = require("cors");
 
-
 // const Email = require("../models/email");
 const User = require("../models/user");
 const Post = require("../models/post");
 const Workouts = require("../models/workouts");
-const Trainers = require("../models/trainers")
+const Trainers = require("../models/trainers");
+const Room = require("../models/room");
 // const Item = require("../models/items");
 
 dotenv.config();
@@ -34,33 +34,59 @@ const server = http.createServer(app);
 const { Server } = require("socket.io");
 const io = new Server(server, {
   cors: {
-    origin: '*',
-    methods: ["GET", "POST"]
-  }
+    origin: "*",
+    methods: ["GET", "POST"],
+  },
 });
-const roomMessages = {};
+// const roomMessages = {};
 
-io.on('connection', socket => {
-  console.log('Клієнт підключився по SocketID:', socket.id);
+io.on("connection", (socket) => {
+  console.log("Клієнт підключився по SocketID:", socket.id);
 
-  socket.on('joinRoom', ({ roomId, userId }) => {
+  socket.on("joinRoom", async ({ roomId, userId }) => {
     socket.join(roomId);
-    console.log(`🧍‍♂️ ${userId} приєднався до кімнати ${roomId}`);
+    const existingRoom = await Room.findOne({ roomId });
 
-    const history = roomMessages[roomId] || [];
-    socket.emit('chatHistory', history);
+    if (!existingRoom) {
+      const newRoom = new Room({
+        roomId: roomId,
+        createdAt: new Date(),
+        data: { "": "1" },
+        users: [userId],
+      });
+      await newRoom.save();
+
+      io.emit("chatHistory", newRoom.users);
+    } else {
+      if (!existingRoom.users.includes(userId)) {
+        existingRoom.users.push(userId);
+        await existingRoom.save();
+      }
+      io.emit("chatHistory", existingRoom.users);
+    }
   });
 
-  socket.on('sendUpdate', ({ roomId, data }) => {
-    if (!roomMessages[roomId]) roomMessages[roomId] = [];
-    roomMessages[roomId].push(data);
+  socket.on("sendUpdate", async ({ roomId, data }) => {
+    const existingRoom = await Room.findOne({ roomId });
+    if (existingRoom) {
+      existingRoom.data = data;
+      await existingRoom.save();
+    }
+    console.log("Отримано оновлення:", data);
+    io.to(roomId).emit("receiveUpdate", data);
+  });
+  socket.on("disconnectData", async ({ roomId, userId }) => {
+    const existingRoom = await Room.findOne({ roomId });
+    // * find and delete user from room if he disconnected
+    if (!existingRoom) return;
 
-    io.to(roomId).emit('receiveUpdate', data);
+    existingRoom.users = existingRoom.users.filter((user) => user !== userId);
+    await existingRoom.save();
+    io.emit("chatHistory", existingRoom.users);
   });
 
-  socket.on('disconnect', () => {
-
-    console.log('Клієнт відключився:', socket.id);
+  socket.on("disconnect", () => {
+    console.log("Клієнт відключився:", socket.id);
   });
 });
 
@@ -68,8 +94,7 @@ server.on("error", (err) => {
   console.error("❗ HTTP server error:", err);
 });
 
-
-// TODO: Delete all multer functionality. 
+// TODO: Delete all multer functionality.
 // const storage = multer.diskStorage({
 //   destination: (req, file, cb) => {
 //     cb(null, "./public/server-savings/"); //null - if error, "./server-savings/" - where to save files
@@ -153,7 +178,9 @@ app.put("/api/like", async (req, res) => {
   const { userid, id } = req.body;
 
   if (!userid || !id) {
-    return res.status(400).json({ message: "User ID and Post ID are required" });
+    return res
+      .status(400)
+      .json({ message: "User ID and Post ID are required" });
   }
 
   try {
@@ -165,19 +192,21 @@ app.put("/api/like", async (req, res) => {
     const likes = post.like || [];
 
     if (post.like.includes(userid)) {
-      post.like = likes.filter(uid => uid !== userid);
+      post.like = likes.filter((uid) => uid !== userid);
     } else {
       post.like.push(userid);
     }
 
     await post.save();
-    res.json({ message: "Post liked/unliked successfully", likeCount: post.like.length });
+    res.json({
+      message: "Post liked/unliked successfully",
+      likeCount: post.like.length,
+    });
   } catch (error) {
     console.error(error);
     res.status(500).send("Server error");
   }
 });
-
 
 app.post("/createpagepost", async (req, res) => {
   const { filePaths, description } = req.body; //Take data post img paths and description
@@ -354,6 +383,32 @@ app.get("/currentuserdata", async (req, res) => {
     return res.status(401).json({ message: "Token error" });
   }
 });
+
+// app.get("/getActiveRoom", async (req, res) => {
+//   const token =
+//     req.token
+
+//   if (!token || token === undefined || token === "null") {
+//     return res.status(500).json({ message: "Ur not logined yet" });
+//   }
+
+//   try {
+//     const decoded = jwt.verify(token, process.env.JWT_SECRET);
+//     const userId = decoded.id;
+
+//     const user = await User.findOne({ _id: userId }).select("-password");
+
+//     if (!user) {
+//       return res
+//         .status(400)
+//         .json({ message: "There is no such email, register first!" });
+//     }
+
+//     res.json({ message: "Access given", user });
+//   } catch (error) {
+//     return res.status(401).json({ message: "Token error" });
+//   }
+// });
 
 app.put("/updateuser", async (req, res) => {
   try {

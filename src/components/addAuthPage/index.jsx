@@ -16,7 +16,7 @@ import {
   UploadOutlined,
 } from "@ant-design/icons";
 import { useNavigate, useSearchParams, Link } from "react-router-dom";
-import axios from "axios";
+import Cookies from "js-cookie";
 import "./style.css";
 // import { set } from "mongoose";
 import AuthContext from "../../authprovider.js";
@@ -42,6 +42,11 @@ const AuthPage = () => {
   );
 
   useEffect(() => {
+    const existingToken = Cookies.get("token");
+    // Auth protection for the page
+    if (existingToken) {
+      navigate("/");
+    }
     setEmail(searchParams.get("email"));
   }, []);
 
@@ -120,7 +125,7 @@ const AuthPage = () => {
                     },
                   ]}
                 >
-                  <Input style={{ width: "100%" }} placeholder="name"/>
+                  <Input style={{ width: "100%" }} placeholder="name" />
                 </Form.Item>
                 <Form.Item
                   name="lastname"
@@ -132,7 +137,7 @@ const AuthPage = () => {
                     },
                   ]}
                 >
-                  <Input style={{ width: "100%" }} placeholder="lastname"/>
+                  <Input style={{ width: "100%" }} placeholder="lastname" />
                 </Form.Item>
               </>
             )}
