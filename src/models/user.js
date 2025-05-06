@@ -1,3 +1,4 @@
+const { notification } = require('antd');
 const mongoose = require('mongoose');
 
 const userSchema = new mongoose.Schema({
@@ -6,7 +7,7 @@ const userSchema = new mongoose.Schema({
   last_name: String,
   email: String,
   password: String,
-  data: {
+  date: {
     type: Date,
     default: Date.now
   },
@@ -16,7 +17,11 @@ const userSchema = new mongoose.Schema({
   phone: String,
   profile_picture: String,
   role: String,
-  profileDescription: String
+  profileDescription: String,
+  notifications: {
+    type: Array,
+    default: [],
+  }
 });
 
 module.exports = mongoose.models.accounts || mongoose.model('accounts', userSchema);
