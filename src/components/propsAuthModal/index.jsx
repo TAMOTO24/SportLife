@@ -41,7 +41,7 @@ const Auth = () => {
               onClick={() =>
                 !user ? setIsModalVisible(!isModalVisible) : setIsOpen(!isOpen)
               }
-              src={user?.profile_picture || "./img-pack/icons/user.png"}
+              src={user?.profile_picture || "/img-pack/icons/user.png"}
               alt="userImg"
               size={60}
               style={{ cursor: "pointer" }}

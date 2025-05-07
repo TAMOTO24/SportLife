@@ -14,6 +14,7 @@ const Post = require("../models/post");
 const Workouts = require("../models/workouts");
 const Trainers = require("../models/trainers");
 const Room = require("../models/room");
+const Notification = require("../models/notifications");
 // const Item = require("../models/items");
 
 dotenv.config();
@@ -384,31 +385,87 @@ app.get("/currentuserdata", async (req, res) => {
   }
 });
 
-// app.get("/getActiveRoom", async (req, res) => {
-//   const token =
-//     req.token
+app.post("/notification", async (req, res) => {
+  const { access, title, message, userId } = req.body;
 
-//   if (!token || token === undefined || token === "null") {
-//     return res.status(500).json({ message: "Ur not logined yet" });
-//   }
+  const newNotification = new Notification({
+    access: access === "all" ? "all" : userId,
+    title,
+    date: new Date(),
+    message,
+    readStatus: [],
+  });
+  await newNotification.save();
 
-//   try {
-//     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-//     const userId = decoded.id;
+  res
+    .status(201)
+    .json({ message: "Notification created successfully", newNotification });
+});
 
-//     const user = await User.findOne({ _id: userId }).select("-password");
+app.get("/notification/:userId", async (req, res) => {
+  const { userId } = req.params;
 
-//     if (!user) {
-//       return res
-//         .status(400)
-//         .json({ message: "There is no such email, register first!" });
-//     }
+  try {
+    const notifications = await Notification.findOne({
+      $or: [{ access: "all" }, { access: userId }],
+    }).sort({ date: -1 });
 
-//     res.json({ message: "Access given", user });
-//   } catch (error) {
-//     return res.status(401).json({ message: "Token error" });
-//   }
-// });
+    if (notifications.readStatus.includes(userId)) {
+      return res.status(204).json({ message: "Notification already read" });
+    }
+
+    res.status(200).json(notifications);
+  } catch (error) {
+    console.error("Error fetching notifications:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
+app.get("/allnotifications/:userId", async (req, res) => {
+  const { userId } = req.params;
+
+  try {
+    const notifications = await Notification.find({
+      $or: [{ access: "all" }, { access: userId }],
+    }).sort({ date: -1 });
+
+    if (!notifications) {
+      return res.status(404).json({ message: "No notifications found" });
+    }
+
+    res.status(200).json(notifications);
+  } catch (error) {
+    console.error("Error fetching notifications:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
+app.put("/notification/:userId", async (req, res) => {
+  const { userId } = req.params;
+  const { notificationId } = req.body;
+
+  try {
+    const notification = await Notification.findOne({
+      $or: [{ access: "all" },
+      { access: userId }],
+      _id: notificationId
+    });
+
+    if (!notification) {
+      return res.status(404).json({ message: "Notification not found" });
+    }
+    if (notification.readStatus.includes(userId)) {
+      return res.status(204).json({ message: "Notification already read" });
+    }
+    notification.readStatus.push(userId);
+    await notification.save();
+
+    res.status(200).json({ message: "Notification updated successfully", notification });
+  } catch (error) {
+    console.error("Error updating notification:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
 
 app.put("/updateuser", async (req, res) => {
   try {

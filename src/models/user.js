@@ -18,10 +18,10 @@ const userSchema = new mongoose.Schema({
   profile_picture: String,
   role: String,
   profileDescription: String,
-  notifications: {
-    type: Array,
-    default: [],
-  }
+  // notifications: {
+  //   type: Array,
+  //   default: [],
+  // }
 });
 
 module.exports = mongoose.models.accounts || mongoose.model('accounts', userSchema);
