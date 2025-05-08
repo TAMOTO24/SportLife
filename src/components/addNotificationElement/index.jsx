@@ -29,7 +29,7 @@ const NotificationElement = () => {
     if (!user) return;
     setLoading(true);
     axios
-      .get("/allnotifications/:userId")
+      .get(`/allnotifications/${user?._id}`)
       .then((response) => {
         setNotifications(response.data);
       })
@@ -48,6 +48,8 @@ const NotificationElement = () => {
       const data = res.data;
 
       if (!data) return; //if no new notifications then just exit
+      if (data.type === "error") return; //if error then just exit
+      if (!data.title) return; //if no title then just exit
 
       await axios.put(`/notification/${user?._id}`, {
         //mark notification as read for this user
