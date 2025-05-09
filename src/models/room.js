@@ -11,6 +11,10 @@ const roomSchema = new mongoose.Schema({
         default: () => ({}),
     },
     users: Array,
+    owner: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "accounts",
+    }
 });
 
 module.exports = mongoose.models.room || mongoose.model("room", roomSchema);

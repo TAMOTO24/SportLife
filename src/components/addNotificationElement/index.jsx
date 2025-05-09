@@ -1,6 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { Avatar, Badge, Drawer } from "antd";
-import { Notification } from "../../function";
+import { Avatar, Badge, Drawer, Space, Button } from "antd";
+import {
+  Notification,
+  deleteNotification,
+  setInvitedRoomId,
+} from "../../function";
 import axios from "axios";
 import "./style.css";
 
@@ -27,16 +31,22 @@ const NotificationElement = () => {
   useEffect(() => {
     // Get all notifications
     if (!user) return;
-    setLoading(true);
-    axios
-      .get(`/allnotifications/${user?._id}`)
-      .then((response) => {
-        setNotifications(response.data);
-      })
-      .catch((error) => console.error("Notification error", error))
-      .finally(() => {
-        setLoading(false);
-      });
+
+    const interval = setInterval(async () => {
+      setLoading(true);
+      axios
+        .get(`/allnotifications/${user?._id}`)
+        .then((response) => {
+          setNotifications(response.data);
+          console.log("Notifications:", response.data);
+        })
+        .catch((error) => console.error("Notification error", error))
+        .finally(() => {
+          setLoading(false);
+        });
+    }, 10000);
+
+    return () => clearInterval(interval);
   }, [user]);
 
   useEffect(() => {
@@ -55,8 +65,8 @@ const NotificationElement = () => {
         //mark notification as read for this user
         notificationId: data._id,
       });
-
-      Notification(data.message, data.title, data.type);
+      console.log("Notification:", data._id);
+      Notification(data.message, data.title, data.type, data._id, data.url);
     }, 10000);
 
     return () => clearInterval(interval);
@@ -93,7 +103,7 @@ const NotificationElement = () => {
         open={open}
         loading={loading}
         width={640}
-        bodyStyle={{ padding: 0, backgroundColor: "rgb(24, 26, 29)"}}
+        bodyStyle={{ padding: 0, backgroundColor: "rgb(24, 26, 29)" }}
       >
         {notifications.map((notification) => {
           return (
@@ -109,6 +119,27 @@ const NotificationElement = () => {
                 </div>
                 <p>{notification.message}</p>
               </div>
+              {notification.url && (
+                <Space>
+                  <Button
+                    type="link"
+                    size="small"
+                    onClick={() => deleteNotification(notification?._id)}
+                  >
+                    Destroy All
+                  </Button>
+                  <Button
+                    type="primary"
+                    size="small"
+                    onClick={() => {
+                      setInvitedRoomId(notification?.url);
+                      deleteNotification(notification?._id);
+                    }}
+                  >
+                    Confirm
+                  </Button>
+                </Space>
+              )}
             </div>
           );
         })}

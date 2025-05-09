@@ -1,3 +1,4 @@
+const { message } = require("antd");
 const mongoose = require("mongoose");
 
 const notificationSchema = new mongoose.Schema({
@@ -9,6 +10,12 @@ const notificationSchema = new mongoose.Schema({
     type: String,
   },
   description: {
+    type: String,
+  },
+  url: {
+    type: String,
+  },
+  message: {
     type: String,
   },
   date: {

@@ -54,17 +54,28 @@ io.on("connection", (socket) => {
         createdAt: new Date(),
         data: { "": "1" },
         users: [userId],
+        owner: userId,
       });
       await newRoom.save();
 
       io.emit("chatHistory", newRoom.users);
+      io.emit("roomOwner", newRoom.owner);
     } else {
       if (!existingRoom.users.includes(userId)) {
         existingRoom.users.push(userId);
         await existingRoom.save();
       }
       io.emit("chatHistory", existingRoom.users);
+      io.emit("roomOwner", existingRoom.owner);
     }
+  });
+
+  socket.on("getRoomOwner", async ({ roomId }) => {
+    const existingRoom = await Room.findOne({ roomId });
+
+    if (!existingRoom) return;
+
+    io.emit("roomOwner", existingRoom.owner);
   });
 
   socket.on("sendUpdate", async ({ roomId, data }) => {
@@ -78,12 +89,29 @@ io.on("connection", (socket) => {
   });
   socket.on("disconnectData", async ({ roomId, userId }) => {
     const existingRoom = await Room.findOne({ roomId });
-    // * find and delete user from room if he disconnected
+
     if (!existingRoom) return;
+
+    console.log(existingRoom.owner, userId);
+
+    if (existingRoom.owner.toString() === userId) {
+      await Room.deleteOne({ roomId });
+
+      console.log("owner disconnected, room deleted");
+
+      io.to(roomId).emit("roomClosed");
+      return;
+    }
 
     existingRoom.users = existingRoom.users.filter((user) => user !== userId);
     await existingRoom.save();
+
     io.emit("chatHistory", existingRoom.users);
+
+    if (existingRoom.users.length === 0) {
+      await Room.deleteOne({ roomId });
+    }
+    // * find and delete user from room if he disconnected
   });
 
   socket.on("disconnect", () => {
@@ -120,7 +148,7 @@ mongoose
   .then(() => console.log("✅ Connecting to MongoDB"))
   .catch((err) => console.error("❌ Connection error:", err));
 
-app.get("/api/items", async (req, res) => {
+app.get("/allusers", async (req, res) => {
   // Take all items from member Collection
   try {
     const items = await User.find();
@@ -129,8 +157,8 @@ app.get("/api/items", async (req, res) => {
     res.status(500).send("Server error");
   }
 });
-app.post("/userbyid", async (req, res) => {
-  const { id } = req.body;
+app.get("/userbyid/:id", async (req, res) => {
+  const { id } = req.params;
 
   if (!mongoose.Types.ObjectId.isValid(id)) {
     return res.status(400).json({ message: "Invalid user ID format!" });
@@ -386,13 +414,15 @@ app.get("/currentuserdata", async (req, res) => {
 });
 
 app.post("/notification", async (req, res) => {
-  const { access, title, message, userId } = req.body;
+  const { access, title, message, userId, url, type } = req.body;
 
   const newNotification = new Notification({
     access: access === "all" ? "all" : userId,
     title,
     date: new Date(),
     message,
+    url,
+    type,
     readStatus: [],
   });
   await newNotification.save();
@@ -400,6 +430,23 @@ app.post("/notification", async (req, res) => {
   res
     .status(201)
     .json({ message: "Notification created successfully", newNotification });
+});
+
+app.delete("/notification/:notificationId", async (req, res) => {
+  const { notificationId } = req.params;
+
+  try {
+    const notification = await Notification.findByIdAndDelete(notificationId);
+
+    if (!notification) {
+      return res.status(404).json({ message: "Notification not found" });
+    }
+
+    res.status(200).json({ message: "Notification deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting notification:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
 });
 
 app.get("/notification/:userId", async (req, res) => {

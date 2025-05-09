@@ -1,15 +1,27 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { Card, Typography, Row, Col, Image, Button, Space } from "antd";
-import { Link} from "react-router-dom";
+import { Link } from "react-router-dom";
 import "./style.css";
 import { PieChart, Pie } from "recharts";
+import { v4 as uuidv4 } from "uuid";
+import Cookies from "js-cookie";
 
 const { Title, Paragraph } = Typography;
 
 const ClassPage = () => {
   const location = useLocation();
   const { workout } = location.state || {};
+  const [uniqueUIDV4Id, setUniqueUIDV4Id] = useState(uuidv4());
+
+  useEffect(() => {
+    const existingRoomId = Cookies.get("roomId");
+    if (!existingRoomId) {
+      Cookies.set("roomId", uniqueUIDV4Id, { expires: 1 });
+    } else {
+      setUniqueUIDV4Id(existingRoomId);
+    }
+  }, []);
 
   return (
     <div
@@ -126,8 +138,10 @@ const ClassPage = () => {
               Book Now
             </Button>
             <Button type="primary">
-              {/* <Link to="/workoutprogress" state={{ currentWorkout: workout }}>Start workout</Link> */}
-              <Link to={`/workoutroom`} state={{ currentWorkout: workout }}>Start workout</Link>
+              {/*MAKE CONTINUE PREVIOUS ROOM AND CREATE NEW ROOM FUNCTIONALITY*/}
+              <Link to={`/workoutroom/${uniqueUIDV4Id}`} state={{ currentWorkout: workout }}>
+                Start workout
+              </Link>
             </Button>
           </Space>
         </div>

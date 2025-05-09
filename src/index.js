@@ -38,7 +38,7 @@ function App() {
             <Route path="/workoutprogress" element={<WorkoutProgressPage />} />
             <Route path="/account" element={<AccountPage />} />
             <Route path="/createpostpage" element={<CreatePostPage />} />
-            <Route path="/workoutroom" element={<RoomPage />} />
+            <Route path="/workoutroom/:roomId" element={<RoomPage />} />
           </Route>
         </Routes>
         <Footer />
