@@ -8,11 +8,9 @@ const CommentElement = ({ id, date, text }) => {
   const [user, setUser] = useState(undefined);
   const [loading, setLoading] = useState(true);
   useEffect(() => {
-		console.log("awdawd", id);
     axios
-      .post("/userbyid", { id: id })
+      .get(`/userbyid/${id}`)
       .then((response) => {
-        console.log("response", response.data);
         setUser(response.data);
       })
       .catch((error) => console.error(error))
@@ -27,7 +25,7 @@ const CommentElement = ({ id, date, text }) => {
         <Loading />
       ) : (
         <div className="commentContainer">
-          <Avatar size={84} icon={user.profile_picture ? <img src={user.profile_picture} alt="user" /> : <UserOutlined />} />
+          <Avatar size={84} icon={user?.profile_picture ? <img src={user?.profile_picture} alt="user" /> : <UserOutlined />} />
           <div className="commentContent">
             {/* TODO: make id recognision comment user */}
             <div className="postUserContent">

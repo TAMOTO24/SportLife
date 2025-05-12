@@ -44,7 +44,7 @@ const PostElement = ({ item, hoverable,  theme }) => { // THEME - false ? black/
     }
 
     axios
-      .post(
+      .put(
         "/api/like",
         { userid, id },
         { headers: { Authorization: `Bearer ${token}` } }

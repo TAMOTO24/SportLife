@@ -35,7 +35,7 @@ function App() {
           <Route path="/trainerspage/info" element={<InfoTrainerPage />} />
           <Route path="/newsandinf/comments" element={<CommentsPage />} />
           <Route element={<ProtectedRoute />}>
-            <Route path="/workoutprogress" element={<WorkoutProgressPage />} />
+            <Route path="/workoutprogress/:roomId" element={<WorkoutProgressPage />} />
             <Route path="/account" element={<AccountPage />} />
             <Route path="/createpostpage" element={<CreatePostPage />} />
             <Route path="/workoutroom/:roomId" element={<RoomPage />} />

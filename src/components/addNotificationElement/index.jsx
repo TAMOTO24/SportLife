@@ -38,7 +38,6 @@ const NotificationElement = () => {
         .get(`/allnotifications/${user?._id}`)
         .then((response) => {
           setNotifications(response.data);
-          console.log("Notifications:", response.data);
         })
         .catch((error) => console.error("Notification error", error))
         .finally(() => {

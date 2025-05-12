@@ -11,13 +11,14 @@ const { Title, Paragraph } = Typography;
 
 const ClassPage = () => {
   const location = useLocation();
+  const [ RoomId ] = useState(Cookies.get("roomId"));
   const { workout } = location.state || {};
   const [uniqueUIDV4Id, setUniqueUIDV4Id] = useState(uuidv4());
 
   useEffect(() => {
     const existingRoomId = Cookies.get("roomId");
     if (!existingRoomId) {
-      Cookies.set("roomId", uniqueUIDV4Id, { expires: 1 });
+      Cookies.set("roomId", uniqueUIDV4Id, { expires: 0.25 });
     } else {
       setUniqueUIDV4Id(existingRoomId);
     }
@@ -139,8 +140,8 @@ const ClassPage = () => {
             </Button>
             <Button type="primary">
               {/*MAKE CONTINUE PREVIOUS ROOM AND CREATE NEW ROOM FUNCTIONALITY*/}
-              <Link to={`/workoutroom/${uniqueUIDV4Id}`} state={{ currentWorkout: workout }}>
-                Start workout
+              <Link to={`/workoutroom/${uniqueUIDV4Id}`} state={{ workouts: workout }}>
+                {RoomId ? "Join created room" : "Create new room"}
               </Link>
             </Button>
           </Space>

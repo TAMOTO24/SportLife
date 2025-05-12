@@ -39,7 +39,7 @@ export function deleteNotification(notificationId) {
 }
 
 export function setInvitedRoomId(roomId) {
-  Cookies.set("roomId", roomId, { expires: 1 });
+  Cookies.set("roomId", roomId, { expires: 0.25 });
   socket.disconnect(); //Disconnect from previous room
   window.location.href = `/workoutroom/${roomId}`;
 }
@@ -83,3 +83,27 @@ export function Notification(
     ...(roomId ? {} : { btn: body }),
   });
 }
+
+export const formatTime = (time) => {
+  // const hours = Math.floor(seconds / 3600);
+  // const minutes = Math.floor((seconds % 3600) / 60);
+  // const sec = seconds % 60;
+  const date = new Date(time);
+  const hours = date.getUTCHours(); 
+  const minutes = date.getUTCMinutes();
+  const seconds = date.getUTCSeconds();
+
+  // return `${hours}:${minutes < 10 ? "0" : ""}${minutes}:${
+  //   sec < 10 ? "0" : ""
+  // }${sec}`;
+  return { hours, minutes, seconds };
+};
+
+export const timeString = (time) => {
+  const date = new Date(time);
+  const hours = date.getHours().toString().padStart(2, '0');
+  const minutes = date.getMinutes().toString().padStart(2, '0');
+  const seconds = date.getSeconds().toString().padStart(2, '0');
+
+  return `${hours}:${minutes}:${seconds}`;
+};

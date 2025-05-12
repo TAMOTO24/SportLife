@@ -14,6 +14,7 @@ const Post = require("../models/post");
 const Workouts = require("../models/workouts");
 const Trainers = require("../models/trainers");
 const Room = require("../models/room");
+const Exercises = require("../models/exercises");
 const Notification = require("../models/notifications");
 // const Item = require("../models/items");
 
@@ -42,7 +43,7 @@ const io = new Server(server, {
 // const roomMessages = {};
 
 io.on("connection", (socket) => {
-  console.log("Клієнт підключився по SocketID:", socket.id);
+  // console.log("Клієнт підключився по SocketID:", socket.id);
 
   socket.on("joinRoom", async ({ roomId, userId }) => {
     socket.join(roomId);
@@ -87,6 +88,41 @@ io.on("connection", (socket) => {
     console.log("Отримано оновлення:", data);
     io.to(roomId).emit("receiveUpdate", data);
   });
+
+  socket.on(
+    "updateData",
+    async ({
+      roomId,
+      userId,
+      data,
+      startTime = null,
+      finalTimeResult = null,
+      status,
+    }) => {
+      const existingRoom = await Room.findOne({ roomId });
+
+      if (!existingRoom || !data) return;
+
+      console.log("data:", userId, data);
+      if (!existingRoom.owner.toString() === userId) {
+        return;
+      }
+
+      existingRoom.data["exercises"] = data;
+      existingRoom.data["startTime"] = startTime;
+      existingRoom.data["finalTimeResult"] = finalTimeResult;
+      existingRoom.data["status"] = status;
+      existingRoom.markModified("data");
+      await existingRoom.save();
+
+      io.to(roomId).emit("receiveData", existingRoom.data);
+    }
+  );
+
+  socket.on("redirectAll", ({ roomId }) => {
+    socket.to(roomId).emit("redirect");
+  });
+
   socket.on("disconnectData", async ({ roomId, userId }) => {
     const existingRoom = await Room.findOne({ roomId });
 
@@ -99,7 +135,7 @@ io.on("connection", (socket) => {
 
       console.log("owner disconnected, room deleted");
 
-      io.to(roomId).emit("roomClosed");
+      socket.to(roomId).emit("roomClosed");
       return;
     }
 
@@ -115,7 +151,7 @@ io.on("connection", (socket) => {
   });
 
   socket.on("disconnect", () => {
-    console.log("Клієнт відключився:", socket.id);
+    // console.log("Клієнт відключився:", socket.id);
   });
 });
 
@@ -235,6 +271,19 @@ app.put("/api/like", async (req, res) => {
     console.error(error);
     res.status(500).send("Server error");
   }
+});
+
+app.get("/exercises/:id", async (req, res) => {
+  const { id } = req.params;
+
+  const exercises = await Exercises.findById(id);
+
+  if (!exercises) {
+    return res
+      .status(500)
+      .json({ message: "There are no such exercises by that id" });
+  }
+  res.json(exercises);
 });
 
 app.post("/createpagepost", async (req, res) => {

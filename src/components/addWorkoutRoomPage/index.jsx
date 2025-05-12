@@ -3,20 +3,23 @@ import { useParams } from "react-router-dom";
 import { socket } from "../../function.js";
 import axios from "axios";
 import { Avatar, List, message, Dropdown, Button, Spin } from "antd";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation, Link } from "react-router-dom";
 // import { v4 as uuidv4 } from "uuid";
 import { createNotification } from "../../function.js";
 import Cookies from "js-cookie";
 import "./style.css";
 
 export default function RoomPage() {
+  const location = useLocation();
   const [uniqueUIDV4Id] = useState(useParams().roomId);
   const [user, setUser] = useState(undefined);
   const [allUsers, setAllusers] = useState([]);
   const [loading, setLoading] = useState(true);
+
   const navigate = useNavigate();
 
-  // const [messages, setMessages] = useState([]);
+  const { workouts } = location.state || {};
+
   const [users, setUsers] = useState([]);
   const [data, setData] = useState({});
   const [isOwner, setOwner] = useState(false);
@@ -48,7 +51,7 @@ export default function RoomPage() {
         setLoading(false);
       });
   }, []);
-
+  // TODO Functionality to other sockets look for owner if he out of the room then all out if he out of the workoutpage then all out as usual
   useEffect(() => {
     if (!user) return;
 
@@ -68,7 +71,6 @@ export default function RoomPage() {
     });
 
     socket.on("roomClosed", () => {
-      console.log("⚠️ Room was closed by owner");
       message.error("Кімнату закрито — творець вийшов");
       navigate("/");
     });
@@ -79,11 +81,15 @@ export default function RoomPage() {
 
     socket.on("roomOwner", (ownerId) => {
       setOwner(ownerId === user._id);
-      console.log("Room owner ID:", ownerId === user._id);
     });
 
     socket.on("receiveUpdate", (data) => {
       setData(data);
+    });
+
+    socket.on("redirect", () => {
+      console.log("Redirect");
+      if(!isOwner) navigate(`/workoutprogress/${uniqueUIDV4Id}`);
     });
 
     return () => {
@@ -92,9 +98,8 @@ export default function RoomPage() {
       socket.off("chatHistory");
       socket.off("roomOwner");
       socket.off("receiveUpdate");
-      socket.disconnect();
     };
-  }, [user, uniqueUIDV4Id]);
+  }, [user, uniqueUIDV4Id, navigate]);
 
   const items = allUsers
     .filter((i) => i?._id !== user?._id)
@@ -143,11 +148,12 @@ export default function RoomPage() {
       Cookies.remove("roomId");
       navigate("/");
       console.log("Socket disconnected");
+      socket.disconnect();
     } else {
       console.error("❌ Socket is not connected");
     }
   };
-  // TODO MAKE INVITE FRIENDS FUNCTIONALITY
+
   return (
     <div className="room-page">
       <Spin spinning={loading} tip="Loading">
@@ -167,6 +173,20 @@ export default function RoomPage() {
         >
           Відключитися
         </button>
+        {isOwner && (
+          <Link
+            to={`/workoutprogress/${uniqueUIDV4Id}`}
+            state={{ currentWorkout: workouts }}
+          >
+            <Button
+              onClick={() => {
+                socket.emit("redirectAll", { roomId: uniqueUIDV4Id });
+              }}
+            >
+              Почати тренування
+            </Button>
+          </Link>
+        )}
         <List
           className="demo-loadmore-list"
           loading={loading}

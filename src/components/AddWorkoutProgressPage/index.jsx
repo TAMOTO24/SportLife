@@ -1,133 +1,133 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Progress, Divider, Button, Statistic } from "antd";
-import { useLocation } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
+import axios from "axios";
 import "./style.css";
 import Loading from "../addLoadingElement/index";
-
-// ! EXAMPLE VARIABLE
-const workouts = [
-  {
-    id: 1,
-    name: "Barbell Squats",
-    muscleGroups: {
-      quadriceps: 60,
-      glutes: 25,
-      hamstrings: 15,
-    },
-    description:
-      "A fundamental strength exercise for building leg power and mass.",
-    technique: [
-      "Stand upright with your feet shoulder-width apart.",
-      "Place the barbell on your traps and hold it securely.",
-      "Lower yourself by bending your knees until your thighs are parallel to the floor.",
-      "Push back up to the starting position.",
-    ],
-    tips: [
-      "Keep your back straight and avoid rounding your spine.",
-      "Make sure your knees do not go past your toes.",
-    ],
-    sets: 4,
-    reps: 8,
-    restTime: "90 seconds",
-    equipment: ["Barbell", "Squat Rack"],
-  },
-  {
-    id: 2,
-    name: "Leg Press",
-    muscleGroups: {
-      quadriceps: 50,
-      glutes: 30,
-      hamstrings: 20,
-    },
-    description: "An excellent exercise to target the quadriceps and glutes.",
-    technique: [
-      "Sit in the leg press machine and place your feet on the platform.",
-      "Slowly lower the platform by bending your knees to a 90-degree angle.",
-      "Push the platform back up without locking your knees.",
-    ],
-    tips: [
-      "Keep your lower back pressed against the seat.",
-      "Control the movement and avoid sudden jerks.",
-    ],
-    sets: 4,
-    reps: 12,
-    restTime: "60 seconds",
-    equipment: ["Leg Press Machine"],
-  },
-  {
-    id: 3,
-    name: "Romanian Deadlifts",
-    muscleGroups: {
-      hamstrings: 60,
-      glutes: 30,
-      lowerBack: 10,
-    },
-    description: "A great exercise for developing the hamstrings and glutes.",
-    technique: [
-      "Hold dumbbells, stand upright with a slight bend in your knees.",
-      "Lower the dumbbells by hinging at your hips, keeping your back straight.",
-      "Return to the starting position by squeezing your glutes.",
-    ],
-    tips: [
-      "Do not round your back, keep it neutral.",
-      "Move smoothly without sudden jerks.",
-    ],
-    sets: 3,
-    reps: 10,
-    restTime: "60 seconds",
-    equipment: ["Dumbbells"],
-  },
-  {
-    id: 4,
-    name: "Leg Extensions",
-    muscleGroups: {
-      quadriceps: 90,
-      hamstrings: 10,
-    },
-    description: "An isolation exercise to focus on the quadriceps.",
-    technique: [
-      "Sit in the leg extension machine and place your feet under the padded bar.",
-      "Extend your legs fully, contracting your quadriceps.",
-      "Slowly return to the starting position.",
-    ],
-    tips: [
-      "Avoid using too much weight—focus on proper form.",
-      "Keep your back firmly against the seat.",
-    ],
-    sets: 3,
-    reps: 15,
-    restTime: "45 seconds",
-    equipment: ["Leg Extension Machine"],
-  },
-];
+import { formatTime, socket, timeString } from "../../function";
 
 const WorkoutProgressPage = () => {
-  const [time, setTime] = useState(0);
+  // const [time, setTime] = useState(0);
+
+  const [uniqueUIDV4Id] = useState(useParams().roomId);
+  const [data, setData] = useState({});
   const [loading, setIsLoading] = useState(false);
-  const [workoutStatuses, setWorkoutStatuses] = useState(
-    workouts.map((_, index) => (index === 0 ? "WorkingOn" : "Waiting"))
-  );
+  const [exercises, setExercises] = useState([]);
+  const [workoutStatuses, setWorkoutStatuses] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const location = useLocation();
   const { currentWorkout } = location.state || {};
+  const [user, setUser] = useState(undefined);
+  const ownerRef = useRef(null);
+  const [owner, setOwner] = useState(null);
 
   useEffect(() => {
-    if(!loading){
-      const interval = setInterval(() => {
-      setTime((prev) => prev + 1);
-    }, 1000);
-  
-    return () => clearInterval(interval);
-    }
-  }, [loading]);
+    setIsLoading(true);
+    axios
+      .get("/currentuserdata")
+      .then((response) => {
+        setUser(response.data.user);
+      })
+      .catch((error) => console.error("Auth error", error))
+      .finally(() => {
+        setIsLoading(false);
+      });
+  }, []);
+
   useEffect(() => {
-    if(currentIndex >= workouts.length){
+    if (!currentWorkout) return;
+    setIsLoading(true);
+    axios
+      .get(`/exercises/${currentWorkout?.exercises_id}`)
+      .then((response) => {
+        setExercises(response.data.exercises);
+        setWorkoutStatuses(
+          response.data.exercises.map((_, index) =>
+            index === 0 ? "WorkingOn" : "Waiting"
+          )
+        );
+        console.log("in it");
+      })
+      .catch((error) => console.error(error))
+      .finally(() => {
+        setIsLoading(false);
+      });
+  }, [currentWorkout]);
+
+  // useEffect(() => {
+  //   if (!loading) {
+  //     const interval = setInterval(() => {
+  //       setTime((prev) => prev + 1);
+  //     }, 1000);
+
+  //     return () => clearInterval(interval);
+  //   }
+  // }, [loading]);
+
+  useEffect(() => {
+    if (currentIndex >= exercises.length) {
       // TODO handle workout finisher, maybe create new page with info about passed workout
     }
   }, [currentIndex]);
 
-  const handleNextExercise = (index) => {
-    if (index >= workouts.length) {
+  useEffect(() => {
+    if (!user) return;
+    
+    socket.emit("getRoomOwner", { roomId: uniqueUIDV4Id });
+
+    socket.on("connect",() => {
+      console.log("✅ Connecteditch to socket.io server:", socket.id);
+      console.log("daaa ti vizval ego");
+      socket.emit("joinRoom", { roomId: uniqueUIDV4Id, userId: user._id });
+      
+    });
+    // ! ERROR When user update page, clients stop reciving data
+    socket.on("receiveData", (data) => {
+      console.log("didn't in")
+      if (!ownerRef.current) {
+        setExercises(data.exercises);
+        setWorkoutStatuses(data.status);
+      }
+    });
+
+    socket.on("roomOwner", (ownerId) => {
+      const isOwner = ownerId.toString() === user._id;
+      ownerRef.current = isOwner;
+      setOwner(isOwner);
+    });
+
+    if (!socket.connected) socket.connect();
+
+    return () => {
+      socket.off("connect");
+      socket.off("receiveData");
+      socket.off("roomOwner");
+      socket.disconnect();
+    };
+  }, [user]);
+
+  useEffect(() => {
+    if (!socket.connected) return;
+
+    if (
+      user &&
+      ownerRef.current &&
+      exercises.length &&
+      workoutStatuses.length
+    ) {
+      socket.emit("updateData", {
+        roomId: uniqueUIDV4Id,
+        userId: user._id,
+        data: exercises,
+        startTime: Date.now(),
+        finalTimeResult: "",
+        status: workoutStatuses,
+      });
+    }
+  }, [user, exercises, workoutStatuses, owner ]);
+
+  const handleNextExercise = (index) => { // ! Make this function work properly
+    if (index >= exercises.length) {
       return;
     }
     setCurrentIndex(index);
@@ -137,27 +137,40 @@ const WorkoutProgressPage = () => {
       )
     );
   };
-  const formatTime = (seconds) => {
-    const hours = Math.floor(seconds / 3600);
-    const minutes = Math.floor((seconds % 3600) / 60);
-    const sec = seconds % 60;
+  // ! This function is important too
+  // const disconnectSocket = () => {
+  //   if (socket.connected) {
+  //     socket.emit("updateData", {
+  //       roomId: uniqueUIDV4Id,
+  //       userId: user._id,
+  //       data: exercises,
+  //       startTime: data?.startTime,
+  //       finalTimeResult: formatTime(Date.now() - data?.startTime),
+  //     });
+  //   } else {
+  //     console.error("❌ Socket is not connected");
+  //   }
+  // };
 
-    return `${hours}:${minutes < 10 ? "0" : ""}${minutes}:${sec < 10 ? "0" : ""}${sec}`;
-  };
 
-  if (loading) {
-    return <Loading />;
-  }
-
-  return (
+  console.log(exercises);
+  console.log(workoutStatuses);
+  console.log(loading);
+  return !exercises ||
+    exercises.length === 0 ||
+    !workoutStatuses ||
+    workoutStatuses.length === 0 ||
+    loading ? (
+    <Loading />
+  ) : (
     <div className="progress-page">
       <div className="progress-nav-block">
         <div className="progressBlock">
-          <img src="./img-pack/logo/logo_black2.png" alt="logo" />
+          <img src="/img-pack/logo/logo_black2.png" alt="logo" />
           <h1>{currentWorkout?.title}</h1>
           <Progress
             steps={10}
-            percent={(currentIndex / workouts.length) * 100}
+            percent={(currentIndex / exercises.length) * 100}
             size={90}
           />
         </div>
@@ -165,15 +178,15 @@ const WorkoutProgressPage = () => {
       </div>
 
       <div className="progress-workout-block">
-        {workouts.map((item) => (
+        {exercises.map((item) => (
           <div
-            key={item.id}
+            key={item?.index}
             className={`progress-workout-item ${
-              workoutStatuses[item?.id - 1] !== "WorkingOn" ? "bloked" : ""
+              workoutStatuses[item?.index] !== "WorkingOn" ? "bloked" : ""
             }`}
           >
             <img
-              src="./img-pack/trainers/full-shot-woman-with-laptop.jpg"
+              src="/img-pack/trainers/full-shot-woman-with-laptop.jpg"
               alt="trainingImg"
             />
             <div className="item-content">
@@ -259,17 +272,17 @@ const WorkoutProgressPage = () => {
 
               <Divider style={{ background: "#ddd" }} />
 
-              <h4 style={{ color: "#222" }}>Equipment</h4>
+              {/* <h4 style={{ color: "#222" }}>Equipment</h4>
               <ul style={{ color: "#555" }}>
                 {item.equipment.map((tip, index) => (
                   <li key={index}>{tip}</li>
                 ))}
-              </ul>
-              <Divider style={{ background: "#ddd" }} />
+              </ul> */}
+              {/* <Divider style={{ background: "#ddd" }} /> */}
               <div className="progress-block">
                 <Button
                   size="large"
-                  onClick={() => handleNextExercise(item.id)}
+                  onClick={() => handleNextExercise(item.index)}
                 >
                   Next exercise
                 </Button>
@@ -302,11 +315,17 @@ const WorkoutProgressPage = () => {
           alignItems: "center",
           padding: "10px",
           borderTop: "1px solid #ddd",
-          justifyContent: "space-evenly"
+          justifyContent: "space-evenly",
         }}
       >
-        <Statistic value={formatTime(time)} />
-        <div>Sets: {currentIndex} / {workouts.length}</div>
+        {/* <Statistic value={formatTime(time)} /> */}
+        <div>
+          Start time:
+          {timeString(data?.startTime)}
+        </div>
+        <div>
+          Sets: {currentIndex} / {exercises.length}
+        </div>
         <div>© 2025 Sportlife. All rights reserved.</div>
       </footer>
     </div>
