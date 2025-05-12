@@ -16,7 +16,8 @@ const WorkoutProgressPage = () => {
   const [workoutStatuses, setWorkoutStatuses] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const location = useLocation();
-  const { currentWorkout } = location.state || {};
+  // const { currentWorkout } = location.state || {};
+  const [currentWorkout, setCurrentWorkout] = useState(location.state?.currentWorkout || {})
   const [user, setUser] = useState(undefined);
   const ownerRef = useRef(null);
   const [owner, setOwner] = useState(null);
@@ -35,7 +36,7 @@ const WorkoutProgressPage = () => {
   }, []);
 
   useEffect(() => {
-    if (!currentWorkout) return;
+    if (!currentWorkout && ownerRef.current === false) return;
     setIsLoading(true);
     axios
       .get(`/exercises/${currentWorkout?.exercises_id}`)
@@ -46,13 +47,12 @@ const WorkoutProgressPage = () => {
             index === 0 ? "WorkingOn" : "Waiting"
           )
         );
-        console.log("in it");
       })
       .catch((error) => console.error(error))
       .finally(() => {
         setIsLoading(false);
       });
-  }, [currentWorkout]);
+  }, []);
 
   // useEffect(() => {
   //   if (!loading) {
@@ -72,21 +72,20 @@ const WorkoutProgressPage = () => {
 
   useEffect(() => {
     if (!user) return;
-    
+
     socket.emit("getRoomOwner", { roomId: uniqueUIDV4Id });
 
-    socket.on("connect",() => {
-      console.log("✅ Connecteditch to socket.io server:", socket.id);
-      console.log("daaa ti vizval ego");
+    socket.on("connect", () => {
+      console.log("✅ Connected to socket.io server:", socket.id);
       socket.emit("joinRoom", { roomId: uniqueUIDV4Id, userId: user._id });
-      
     });
-    // ! ERROR When user update page, clients stop reciving data
+
     socket.on("receiveData", (data) => {
-      console.log("didn't in")
       if (!ownerRef.current) {
+        setData(data);
         setExercises(data.exercises);
         setWorkoutStatuses(data.status);
+        setCurrentWorkout(data.currentWorkout);
       }
     });
 
@@ -119,21 +118,24 @@ const WorkoutProgressPage = () => {
         roomId: uniqueUIDV4Id,
         userId: user._id,
         data: exercises,
+        currentWorkout: currentWorkout,
         startTime: Date.now(),
         finalTimeResult: "",
         status: workoutStatuses,
       });
     }
-  }, [user, exercises, workoutStatuses, owner ]);
+  }, [user, exercises, workoutStatuses, owner]);
 
-  const handleNextExercise = (index) => { // ! Make this function work properly
+  const handleNextExercise = (index) => {
+    console.log(index);
     if (index >= exercises.length) {
       return;
     }
-    setCurrentIndex(index);
+    setCurrentIndex(currentIndex + 1);
+
     setWorkoutStatuses((prevStatuses) =>
       prevStatuses.map((status, i) =>
-        i === index - 1 ? "Finished" : i === index ? "WorkingOn" : status
+        i === index ? "Finished" : i === index + 1 ? "WorkingOn" : status
       )
     );
   };
@@ -152,10 +154,6 @@ const WorkoutProgressPage = () => {
   //   }
   // };
 
-
-  console.log(exercises);
-  console.log(workoutStatuses);
-  console.log(loading);
   return !exercises ||
     exercises.length === 0 ||
     !workoutStatuses ||
@@ -280,24 +278,29 @@ const WorkoutProgressPage = () => {
               </ul> */}
               {/* <Divider style={{ background: "#ddd" }} /> */}
               <div className="progress-block">
-                <Button
-                  size="large"
-                  onClick={() => handleNextExercise(item.index)}
-                >
-                  Next exercise
-                </Button>
-                {workoutStatuses[item.id - 1] === "Waiting" && (
+                {owner && (
+                  <Button
+                    size="large"
+                    onClick={() => handleNextExercise(item.index)}
+                    disabled={
+                      workoutStatuses[item.index] !== "WorkingOn" ? true : false
+                    }
+                  >
+                    Next exercise
+                  </Button>
+                )}
+                {workoutStatuses[item.index] && (
                   <img
-                    src="./img-pack/icons/clock.png"
+                    src={`/img-pack/icons/${
+                      {
+                        Waiting: "clock.png",
+                        Finished: "success.png",
+                        WorkingOn: "process.png",
+                      }[workoutStatuses[item.index]]
+                    }`}
                     id="icon"
-                    alt="in progress"
+                    alt="status"
                   />
-                )}
-                {workoutStatuses[item.id - 1] === "Finished" && (
-                  <img src="./img-pack/icons/success.png" id="icon" alt="" />
-                )}
-                {workoutStatuses[item.id - 1] === "WorkingOn" && (
-                  <img src="./img-pack/icons/process.png" id="icon" alt="" />
                 )}
               </div>
             </div>

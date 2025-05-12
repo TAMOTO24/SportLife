@@ -84,19 +84,14 @@ export function Notification(
   });
 }
 
-export const formatTime = (time) => {
-  // const hours = Math.floor(seconds / 3600);
-  // const minutes = Math.floor((seconds % 3600) / 60);
-  // const sec = seconds % 60;
-  const date = new Date(time);
-  const hours = date.getUTCHours(); 
-  const minutes = date.getUTCMinutes();
-  const seconds = date.getUTCSeconds();
-
-  // return `${hours}:${minutes < 10 ? "0" : ""}${minutes}:${
-  //   sec < 10 ? "0" : ""
-  // }${sec}`;
-  return { hours, minutes, seconds };
+export const formatTime = (seconds) => {
+  const hours = Math.floor(seconds / 3600);
+  const minutes = Math.floor((seconds % 3600) / 60);
+  const sec = seconds % 60;
+  
+  return `${hours}:${minutes < 10 ? "0" : ""}${minutes}:${
+    sec < 10 ? "0" : ""
+  }${sec}`;
 };
 
 export const timeString = (time) => {

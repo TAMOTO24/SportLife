@@ -12,7 +12,6 @@
   /* transform: scale(0.8); */
   width: 400px;
   height: 95%;
-  margin-right: 10%;
 }
 body {
   background: #f2f2f2;
@@ -58,6 +57,14 @@ body {
   gap: 30px;
   padding-right: 2%;
 }
+h1 {
+  font-size: clamp(1.5rem, 5vw, 3rem);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin: 0 !important;
+  font-family: 'Anton', sans-serif !important;
+}
 .progress-workout-item img {
   width: 100%;
   max-width: 30vw;
@@ -71,14 +78,15 @@ body {
   font-weight: bold;
 }
 .progress-workout-block {
-  padding-top: 10px;
+  padding-bottom: 50px;
+
 }
 
 .progress-workout-item {
   margin-top: 50px;
 }
 .item-content {
-  padding-block: 2%;
+  padding-block: 1%;
   width: 100%;
 }
 .progress-workout-item #icon{

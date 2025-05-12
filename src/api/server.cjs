@@ -68,6 +68,7 @@ io.on("connection", (socket) => {
       }
       io.emit("chatHistory", existingRoom.users);
       io.emit("roomOwner", existingRoom.owner);
+      socket.emit("receiveData", existingRoom.data);
     }
   });
 
@@ -85,7 +86,6 @@ io.on("connection", (socket) => {
       existingRoom.data = data;
       await existingRoom.save();
     }
-    console.log("Отримано оновлення:", data);
     io.to(roomId).emit("receiveUpdate", data);
   });
 
@@ -95,6 +95,7 @@ io.on("connection", (socket) => {
       roomId,
       userId,
       data,
+      currentWorkout,
       startTime = null,
       finalTimeResult = null,
       status,
@@ -103,7 +104,6 @@ io.on("connection", (socket) => {
 
       if (!existingRoom || !data) return;
 
-      console.log("data:", userId, data);
       if (!existingRoom.owner.toString() === userId) {
         return;
       }
@@ -112,6 +112,7 @@ io.on("connection", (socket) => {
       existingRoom.data["startTime"] = startTime;
       existingRoom.data["finalTimeResult"] = finalTimeResult;
       existingRoom.data["status"] = status;
+      existingRoom.data["currentWorkout"] = currentWorkout;
       existingRoom.markModified("data");
       await existingRoom.save();
 
@@ -127,8 +128,6 @@ io.on("connection", (socket) => {
     const existingRoom = await Room.findOne({ roomId });
 
     if (!existingRoom) return;
-
-    console.log(existingRoom.owner, userId);
 
     if (existingRoom.owner.toString() === userId) {
       await Room.deleteOne({ roomId });
@@ -275,6 +274,10 @@ app.put("/api/like", async (req, res) => {
 
 app.get("/exercises/:id", async (req, res) => {
   const { id } = req.params;
+
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res.status(400).json({ message: "Invalid ID format" });
+  }
 
   const exercises = await Exercises.findById(id);
 
