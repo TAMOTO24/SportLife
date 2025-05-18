@@ -39,7 +39,7 @@ export function deleteNotification(notificationId) {
 }
 
 export function setInvitedRoomId(roomId) {
-  Cookies.set("roomId", roomId, { expires: 0.25 });
+  Cookies.set("roomId", roomId, { expires: 0.10 });
   socket.disconnect(); //Disconnect from previous room
   window.location.href = `/workoutroom/${roomId}`;
 }

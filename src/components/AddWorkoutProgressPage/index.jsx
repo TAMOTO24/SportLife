@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Progress, Divider, Button, Statistic } from "antd";
-import { useLocation, useParams } from "react-router-dom";
+import { Progress, Divider, Button, message } from "antd";
+import { useLocation, useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import "./style.css";
 import Loading from "../addLoadingElement/index";
+import Cookies from 'js-cookie'
 import { formatTime, socket, timeString } from "../../function";
 
 const WorkoutProgressPage = () => {
@@ -16,6 +17,7 @@ const WorkoutProgressPage = () => {
   const [workoutStatuses, setWorkoutStatuses] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const location = useLocation();
+  const navigate = useNavigate();
   // const { currentWorkout } = location.state || {};
   const [currentWorkout, setCurrentWorkout] = useState(location.state?.currentWorkout || {})
   const [user, setUser] = useState(undefined);
@@ -95,6 +97,12 @@ const WorkoutProgressPage = () => {
       setOwner(isOwner);
     });
 
+    socket.on("roomClosed", () => {
+      message.error("Кімнату закрито — творець вийшов");
+      Cookies.remove('roomId');
+      navigate("/", { replace: true });
+    });
+
     if (!socket.connected) socket.connect();
 
     return () => {
@@ -140,19 +148,38 @@ const WorkoutProgressPage = () => {
     );
   };
   // ! This function is important too
-  // const disconnectSocket = () => {
-  //   if (socket.connected) {
-  //     socket.emit("updateData", {
-  //       roomId: uniqueUIDV4Id,
-  //       userId: user._id,
-  //       data: exercises,
-  //       startTime: data?.startTime,
-  //       finalTimeResult: formatTime(Date.now() - data?.startTime),
-  //     });
-  //   } else {
-  //     console.error("❌ Socket is not connected");
-  //   }
-  // };
+  const endTraining = () => {
+    if (socket.connected) {
+      socket.emit("updateData", {
+        roomId: uniqueUIDV4Id,
+        userId: user._id,
+        data: exercises,
+        startTime: data?.startTime,
+        finalTimeResult: formatTime(Date.now() - data?.startTime),
+      });
+      socket.emit("disconnectData", {
+        roomId: uniqueUIDV4Id,
+        userId: user._id,
+      });
+      Cookies.remove("roomId");
+      const resultData = {
+        startTime: data?.startTime,
+        trainingTime: formatTime(Date.now() - data?.startTime),
+        data: exercises,
+        userId: user._id,
+        roomId: uniqueUIDV4Id, 
+        exerciseCount: exercises.length,
+        workout: currentWorkout
+      }
+      navigate(ownerRef.current ? `/workout/${uniqueUIDV4Id}/result` : "/", { replace: true, state: {result : resultData}});
+      console.log("Socket disconnected");
+      socket.disconnect();
+    } else {
+      console.error("❌ Socket is not connected");
+    }
+  };
+
+  console.log(workoutStatuses, ((workoutStatuses.lastIndexOf('Finished') + 1) / exercises.length) * 100);
 
   return !exercises ||
     exercises.length === 0 ||
@@ -166,10 +193,16 @@ const WorkoutProgressPage = () => {
         <div className="progressBlock">
           <img src="/img-pack/logo/logo_black2.png" alt="logo" />
           <h1>{currentWorkout?.title}</h1>
+          {/* <Progress
+            percentPosition={{ align: 'start', type: 'outer' }}
+            percent={((workoutStatuses.lastIndexOf('Finished') + 1) / exercises.length) * 100}
+            size={100}
+          /> */}
           <Progress
-            steps={10}
-            percent={(currentIndex / exercises.length) * 100}
-            size={90}
+            percent={((workoutStatuses.lastIndexOf('Finished') + 1) / exercises.length) * 100}
+            percentPosition={{ align: 'end', type: 'inner' }}
+            size={[300, 20]}
+            strokeColor="#001342"
           />
         </div>
         <hr />
@@ -179,9 +212,8 @@ const WorkoutProgressPage = () => {
         {exercises.map((item) => (
           <div
             key={item?.index}
-            className={`progress-workout-item ${
-              workoutStatuses[item?.index] !== "WorkingOn" ? "bloked" : ""
-            }`}
+            className={`progress-workout-item ${workoutStatuses[item?.index] !== "WorkingOn" ? "bloked" : ""
+              }`}
           >
             <img
               src="/img-pack/trainers/full-shot-woman-with-laptop.jpg"
@@ -291,13 +323,12 @@ const WorkoutProgressPage = () => {
                 )}
                 {workoutStatuses[item.index] && (
                   <img
-                    src={`/img-pack/icons/${
-                      {
-                        Waiting: "clock.png",
-                        Finished: "success.png",
-                        WorkingOn: "process.png",
-                      }[workoutStatuses[item.index]]
-                    }`}
+                    src={`/img-pack/icons/${{
+                      Waiting: "clock.png",
+                      Finished: "success.png",
+                      WorkingOn: "process.png",
+                    }[workoutStatuses[item.index]]
+                      }`}
                     id="icon"
                     alt="status"
                   />
@@ -306,6 +337,12 @@ const WorkoutProgressPage = () => {
             </div>
           </div>
         ))}
+        <Button
+          onClick={endTraining}
+          disabled={!
+            workoutStatuses.every(status => status === "Finished")}>
+          End training
+        </Button>
       </div>
       <footer
         style={{

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, Navigate } from "react-router-dom";
 import { socket } from "../../function.js";
 import axios from "axios";
 import { Avatar, List, message, Dropdown, Button, Spin } from "antd";
@@ -72,7 +72,8 @@ export default function RoomPage() {
 
     socket.on("roomClosed", () => {
       message.error("Кімнату закрито — творець вийшов");
-      navigate("/");
+      Cookies.remove('roomId');
+      navigate("/", { replace: true });
     });
 
     socket.on("chatHistory", (user) => {
@@ -89,7 +90,7 @@ export default function RoomPage() {
 
     socket.on("redirect", () => {
       console.log("Redirect");
-      if(!isOwner) navigate(`/workoutprogress/${uniqueUIDV4Id}`);
+      if(!isOwner) navigate(`/workoutprogress/${uniqueUIDV4Id}`, { replace: true });
     });
 
     return () => {
@@ -146,7 +147,7 @@ export default function RoomPage() {
         userId: user._id,
       });
       Cookies.remove("roomId");
-      navigate("/");
+      navigate("/", { replace: true });
       console.log("Socket disconnected");
       socket.disconnect();
     } else {
@@ -168,7 +169,8 @@ export default function RoomPage() {
         <button
           onClick={() => {
             disconnectSocket();
-            navigate("/");
+            navigate("/", { replace: true });
+            //  <Navigate to={"/"} replace/>
           }}
         >
           Відключитися

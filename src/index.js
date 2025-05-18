@@ -17,6 +17,7 @@ import TrainersPage from "./components/addTrainersPage";
 import InfoTrainerPage from "./components/addInfoTrainerPage";
 import CommentsPage from "./components/addPostCommentsPage";
 import RoomPage from "./components/addWorkoutRoomPage";
+import WorkoutResult from "./components/addFinalWorkoutResultPage"
 
 function App() {
   return (
@@ -39,6 +40,7 @@ function App() {
             <Route path="/account" element={<AccountPage />} />
             <Route path="/createpostpage" element={<CreatePostPage />} />
             <Route path="/workoutroom/:roomId" element={<RoomPage />} />
+            <Route path="/workoutroom/:roomId/result" element={<WorkoutResult/>} />
           </Route>
         </Routes>
         <Footer />

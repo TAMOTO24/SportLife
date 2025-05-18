@@ -3,7 +3,7 @@ import "./style.css";
 import { Link, useLocation } from "react-router-dom";
 import Auth from "../propsAuthModal";
 import NotificationElement from "../addNotificationElement";
-// import axios from "axios";
+import Cookies from 'js-cookie'
 
 import { useState } from "react";
 function Header() {
@@ -53,7 +53,7 @@ function Header() {
                 location.pathname !== "/account" && <Auth />}
             </li>
             <li>
-              <NotificationElement />
+              {Cookies.get('token') && <NotificationElement />}
             </li>
           </ul>
         </nav>
