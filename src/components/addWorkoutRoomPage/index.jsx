@@ -57,6 +57,8 @@ export default function RoomPage() {
 
     if (!socket.connected) {
       socket.connect();
+    }else{
+      socket.emit("getAllRoomUsers", {roomId: uniqueUIDV4Id});
     }
 
     socket.on("connect", async () => {

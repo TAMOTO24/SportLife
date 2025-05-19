@@ -72,6 +72,15 @@ io.on("connection", (socket) => {
     }
   });
 
+  socket.on("getAllRoomUsers", async ({ roomId }) => {
+    const existingRoom = await Room.findOne({ roomId });
+
+    if (!existingRoom) return;
+
+    io.emit("chatHistory", existingRoom.users);
+    io.emit("roomOwner", existingRoom.owner);
+  });
+
   socket.on("getRoomOwner", async ({ roomId }) => {
     const existingRoom = await Room.findOne({ roomId });
 
@@ -550,6 +559,10 @@ app.put("/notification/:userId", async (req, res) => {
   const { notificationId } = req.body;
 
   try {
+    if (!notificationId) {
+      return res.status(204).json({ message: "No Id as query" });
+    }
+
     const notification = await Notification.findOne({
       $or: [{ access: "all" }, { access: userId }],
       _id: notificationId,

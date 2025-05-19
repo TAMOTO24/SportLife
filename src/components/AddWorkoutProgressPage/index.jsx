@@ -83,8 +83,8 @@ const WorkoutProgressPage = () => {
     });
 
     socket.on("receiveData", (data) => {
+      setData(data);
       if (!ownerRef.current) {
-        setData(data);
         setExercises(data.exercises);
         setWorkoutStatuses(data.status);
         setCurrentWorkout(data.currentWorkout);
@@ -135,7 +135,6 @@ const WorkoutProgressPage = () => {
   }, [user, exercises, workoutStatuses, owner]);
 
   const handleNextExercise = (index) => {
-    console.log(index);
     if (index >= exercises.length) {
       return;
     }
@@ -164,14 +163,14 @@ const WorkoutProgressPage = () => {
       Cookies.remove("roomId");
       const resultData = {
         startTime: data?.startTime,
-        trainingTime: formatTime(Date.now() - data?.startTime),
+        trainingTime: Date.now() - data?.startTime,
         data: exercises,
         userId: user._id,
         roomId: uniqueUIDV4Id, 
         exerciseCount: exercises.length,
         workout: currentWorkout
       }
-      navigate(ownerRef.current ? `/workout/${uniqueUIDV4Id}/result` : "/", { replace: true, state: {result : resultData}});
+      navigate(ownerRef.current ? `/workoutroom/${uniqueUIDV4Id}/result` : "/", { replace: true, state: {result : resultData}});
       console.log("Socket disconnected");
       socket.disconnect();
     } else {
@@ -179,7 +178,7 @@ const WorkoutProgressPage = () => {
     }
   };
 
-  console.log(workoutStatuses, ((workoutStatuses.lastIndexOf('Finished') + 1) / exercises.length) * 100);
+  // console.log(workoutStatuses, ((workoutStatuses.lastIndexOf('Finished') + 1) / exercises.length) * 100);
 
   return !exercises ||
     exercises.length === 0 ||
