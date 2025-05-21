@@ -1,4 +1,3 @@
-const { notification } = require('antd');
 const mongoose = require('mongoose');
 
 const userSchema = new mongoose.Schema({
@@ -18,10 +17,7 @@ const userSchema = new mongoose.Schema({
   profile_picture: String,
   role: String,
   profileDescription: String,
-  // notifications: {
-  //   type: Array,
-  //   default: [],
-  // }
+  statistic: Array,
 });
 
 module.exports = mongoose.models.accounts || mongoose.model('accounts', userSchema);

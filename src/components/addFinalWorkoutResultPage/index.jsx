@@ -1,5 +1,6 @@
 import React from "react";
 import { useLocation } from "react-router-dom";
+import { Button } from "antd";
 
 const WorkoutResult = () => {
   const location = useLocation();
@@ -70,6 +71,12 @@ const WorkoutResult = () => {
             <div>Відпочинок: {exercise.restTime} сек</div>
           </div>
         ))}
+      </div>
+      <div>
+        <Button type="primary">Зберегти результат</Button>
+        <Button type="default" style={{ marginLeft: 10 }}>
+          На головну
+        </Button>
       </div>
     </div>
   );

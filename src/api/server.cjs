@@ -158,6 +158,26 @@ io.on("connection", (socket) => {
     // * find and delete user from room if he disconnected
   });
 
+  socket.on("updateUsersStatistic", async ({ userId, data }) => {
+    const user = await User.findById(userId);
+    //FIX THIS SOCKET METHOD, DIDN'T SAVE THE RESULT
+
+    console.log("start");
+
+    if (!userId || !data || !user) {
+      return;
+    }
+    if (!Array.isArray(user.statistic)) {
+      user.statistic = [];
+    }
+
+    console.log("end");
+
+    user.statistic.push(data);
+    console.log("result", user.statistic);
+    user.save();
+  });
+
   socket.on("disconnect", () => {
     // console.log("Клієнт відключився:", socket.id);
   });
@@ -497,6 +517,10 @@ app.delete("/notification/:notificationId", async (req, res) => {
   const { notificationId } = req.params;
 
   try {
+    if (!notificationId) {
+      return res.status(204).json({ message: "No Id as query" });
+    }
+
     const notification = await Notification.findByIdAndDelete(notificationId);
 
     if (!notification) {
@@ -514,6 +538,10 @@ app.get("/notification/:userId", async (req, res) => {
   const { userId } = req.params;
 
   try {
+    if (!userId) {
+      return res.status(204).json({ message: "No Id as query" });
+    }
+
     const notifications = await Notification.findOne({
       $and: [
         { $or: [{ access: "all" }, { access: userId }] },
@@ -539,6 +567,9 @@ app.get("/allnotifications/:userId", async (req, res) => {
   const { userId } = req.params;
 
   try {
+    if (!userId) {
+      return res.status(204).json({ message: "No Id as query" });
+    }
     const notifications = await Notification.find({
       $or: [{ access: "all" }, { access: userId }],
     }).sort({ date: -1 });
