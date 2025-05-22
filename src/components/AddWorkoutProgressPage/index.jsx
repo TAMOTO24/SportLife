@@ -42,7 +42,7 @@ const WorkoutProgressPage = () => {
   }, []);
 
   useEffect(() => {
-    if (!currentWorkout && ownerRef.current === false) return;
+    if (!currentWorkout || ownerRef.current === false) return;
     setIsLoading(true);
     axios
       .get(`/exercises/${currentWorkout?.exercises_id}`)
@@ -72,6 +72,7 @@ const WorkoutProgressPage = () => {
 
     socket.on("receiveData", (data) => {
       setData(data);
+      // ! ERROR If owner reload page all data resets to default
       if (!ownerRef.current) {
         setExercises(data.exercises);
         setWorkoutStatuses(data.status);

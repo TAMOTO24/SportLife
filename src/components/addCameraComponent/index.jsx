@@ -8,20 +8,24 @@ const PeerCamera = ({ roomId, isHost }) => {
   const [peer, setPeer] = useState(null);
   const peersRef = useRef({});
 
-  useEffect(() => {
-    // ! Important: Ensure that the PeerJS server is running on the specified host and port
-    // ! Error: if owner of the room reloads the page, the viewer will not be able to see the stream
+  const createNewPeer = () => { // create a new peer instance
     const newPeer = new Peer(undefined, {
       host: "localhost",
       port: 9000,
       path: "/peerjs",
     });
 
-    setPeer(newPeer);
-
     newPeer.on("open", (id) => {
-      socket.emit("join-stream", { roomId, userId: id });
+      socket.emit("join-stream", { roomId, userId: id, isHost });
     });
+
+    return newPeer;
+  };
+
+  useEffect(() => { // create first new peer
+    const newPeer = createNewPeer();
+
+    setPeer(newPeer);
 
     return () => {
       newPeer.destroy();
@@ -33,7 +37,7 @@ const PeerCamera = ({ roomId, isHost }) => {
 
     if (isHost) {
       navigator.mediaDevices
-        .getUserMedia({ video: true, audio: true })
+        .getUserMedia({ video: true, audio: false })
         .then((mediaStream) => {
           console.log("🎥 Stream obtained by host:", mediaStream);
           if (localVideoRef.current) {
@@ -46,6 +50,7 @@ const PeerCamera = ({ roomId, isHost }) => {
             const call = peer.call(userId, mediaStream);
             peersRef.current[userId] = call;
           });
+          socket.emit("host-available", peer.id);
         });
     } else {
       peer.on("call", (call) => {
@@ -53,20 +58,34 @@ const PeerCamera = ({ roomId, isHost }) => {
         call.answer();
         call.on("stream", (remoteStream) => {
           if (localVideoRef.current) {
-            console.log("📺 Stream set to viewer video element");
             localVideoRef.current.srcObject = remoteStream;
-            console.log("📺 Remote stream received:", remoteStream);
             localVideoRef.current.onloadedmetadata = () => {
               localVideoRef.current
                 .play()
-                .catch((err) =>
-                  console.error(
-                    "🔴 Error playing video after metadata loaded:",
-                    err
-                  )
-                );
+                .catch((err) => console.error("🔴 Error playing video:", err));
             };
           }
+        });
+      });
+      socket.on("host-available", (hostPeerId) => {
+        const newPeer = createNewPeer();
+        setPeer(newPeer);
+
+        newPeer.on("open", () => {
+          const call = newPeer.call(hostPeerId, null);
+          if (!call) {
+            console.error("❌ Call not established", call, hostPeerId);
+            return;
+          }
+
+          call.on("stream", (remoteStream) => {
+            if (localVideoRef.current) {
+              localVideoRef.current.srcObject = remoteStream;
+              localVideoRef.current.onloadedmetadata = () => {
+                localVideoRef.current.play().catch(console.error);
+              };
+            }
+          });
         });
       });
     }
@@ -77,7 +96,11 @@ const PeerCamera = ({ roomId, isHost }) => {
         delete peersRef.current[userId];
       }
     });
-  }, [peer, isHost]);
+    return () => {
+      socket.off("user-connected");
+      socket.off("host-available");
+    };
+  }, [peer, socket, isHost]);
 
   return (
     <div>

@@ -51,13 +51,24 @@ PeerServer({
 });
 
 io.on("connection", (socket) => {
+  
+  let currentHostId = null;
+
   socket.on("join-stream", ({ roomId, userId }) => {
-    socket.join(roomId);
     socket.to(roomId).emit("user-connected", userId);
 
     socket.on("disconnect", () => {
       socket.to(roomId).emit("user-disconnected", userId);
     });
+  });
+  socket.on("request-host", () => {
+    if (currentHostId) {
+      socket.emit("host-available", currentHostId);
+    }
+  });
+  socket.on("host-available", (hostPeerId) => {
+    currentHostId = hostPeerId;
+    socket.broadcast.emit("host-available", hostPeerId);
   });
   socket.on("joinRoom", async ({ roomId, userId, peerId }) => {
     socket.join(roomId);
