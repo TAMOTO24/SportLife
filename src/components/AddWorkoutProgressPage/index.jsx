@@ -6,6 +6,7 @@ import "./style.css";
 import Loading from "../addLoadingElement/index";
 import Cookies from "js-cookie";
 import { formatTime, socket, peer, timeString } from "../../function";
+import PeerCamera from "../addCameraComponent/index";
 
 const WorkoutProgressPage = () => {
   // const [time, setTime] = useState(0);
@@ -25,6 +26,7 @@ const WorkoutProgressPage = () => {
   const [user, setUser] = useState(undefined);
   const ownerRef = useRef(null);
   const [owner, setOwner] = useState(null);
+
 
   useEffect(() => {
     setIsLoading(true);
@@ -181,10 +183,12 @@ const WorkoutProgressPage = () => {
     exercises.length === 0 ||
     !workoutStatuses ||
     workoutStatuses.length === 0 ||
-    loading ? (
+    loading ||
+    ownerRef.current == null ? (
     <Loading />
   ) : (
     <div className="progress-page">
+      <PeerCamera user={user} isHost={ownerRef.current} roomId={uniqueUIDV4Id} />
       <div className="progress-nav-block">
         <div className="progressBlock">
           <img src="/img-pack/logo/logo_black2.png" alt="logo" />

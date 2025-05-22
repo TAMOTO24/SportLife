@@ -39,7 +39,7 @@ export function deleteNotification(notificationId) {
 }
 
 export function setInvitedRoomId(roomId) {
-  Cookies.set("roomId", roomId, { expires: 0.10 });
+  Cookies.set("roomId", roomId, { expires: 0.1 });
   socket.disconnect(); //Disconnect from previous room
   window.location.href = `/workoutroom/${roomId}`;
 }
@@ -88,7 +88,7 @@ export const formatTime = (seconds) => {
   const hours = Math.floor(seconds / 3600);
   const minutes = Math.floor((seconds % 3600) / 60);
   const sec = seconds % 60;
-  
+
   return `${hours}:${minutes < 10 ? "0" : ""}${minutes}:${
     sec < 10 ? "0" : ""
   }${sec}`;
@@ -96,9 +96,9 @@ export const formatTime = (seconds) => {
 
 export const timeString = (time) => {
   const date = new Date(time);
-  const hours = date.getHours().toString().padStart(2, '0');
-  const minutes = date.getMinutes().toString().padStart(2, '0');
-  const seconds = date.getSeconds().toString().padStart(2, '0');
+  const hours = date.getHours().toString().padStart(2, "0");
+  const minutes = date.getMinutes().toString().padStart(2, "0");
+  const seconds = date.getSeconds().toString().padStart(2, "0");
 
   return `${hours}:${minutes}:${seconds}`;
 };

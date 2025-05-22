@@ -16,7 +16,7 @@ const Trainers = require("../models/trainers");
 const Room = require("../models/room");
 const Exercises = require("../models/exercises");
 const Notification = require("../models/notifications");
-// const Item = require("../models/items");
+const { PeerServer } = require("peer");
 
 dotenv.config();
 const app = express();
@@ -40,12 +40,26 @@ const io = new Server(server, {
     methods: ["GET", "POST"],
   },
 });
-// const roomMessages = {};
+
+PeerServer({
+  port: 9000,
+  path: "/peerjs",
+  corsOptions: {
+    origin: "*",
+    methods: ["GET", "POST"],
+  },
+});
 
 io.on("connection", (socket) => {
-  // console.log("Клієнт підключився по SocketID:", socket.id);
+  socket.on("join-stream", ({ roomId, userId }) => {
+    socket.join(roomId);
+    socket.to(roomId).emit("user-connected", userId);
 
-  socket.on("joinRoom", async ({ roomId, userId }) => {
+    socket.on("disconnect", () => {
+      socket.to(roomId).emit("user-disconnected", userId);
+    });
+  });
+  socket.on("joinRoom", async ({ roomId, userId, peerId }) => {
     socket.join(roomId);
     const existingRoom = await Room.findOne({ roomId });
 
