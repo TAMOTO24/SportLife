@@ -2,13 +2,15 @@
 import { useEffect, useRef, useState } from "react";
 import Peer from "peerjs";
 import { socket } from "../../function";
+import Draggable from "react-draggable";
 
 const PeerCamera = ({ roomId, isHost }) => {
   const localVideoRef = useRef(null);
   const [peer, setPeer] = useState(null);
   const peersRef = useRef({});
 
-  const createNewPeer = () => { // create a new peer instance
+  const createNewPeer = () => {
+    // create a new peer instance
     const newPeer = new Peer(undefined, {
       host: "localhost",
       port: 9000,
@@ -22,7 +24,8 @@ const PeerCamera = ({ roomId, isHost }) => {
     return newPeer;
   };
 
-  useEffect(() => { // create first new peer
+  useEffect(() => {
+    // create first new peer
     const newPeer = createNewPeer();
 
     setPeer(newPeer);
@@ -103,14 +106,35 @@ const PeerCamera = ({ roomId, isHost }) => {
   }, [peer, socket, isHost]);
 
   return (
-    <div>
-      <video
-        ref={localVideoRef}
-        autoPlay
-        playsInline
-        muted
-        style={{ width: "50%" }}
-      />
+    <div
+      style={{
+        position: "fixed",
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        zIndex: 1000,
+        pointerEvents: "none",
+      }}
+    >
+      <Draggable bounds="parent">
+        <video
+          ref={localVideoRef}
+          autoPlay
+          playsInline
+          muted
+          defaultValue={{ x: 10, y: 10 }}
+          style={{
+            position: "absolute",
+            top: 10,
+            left: 10,
+            height: "25vh",
+            borderRadius: "20px",
+            cursor: "grab",
+            pointerEvents: "auto",
+          }}
+        />
+      </Draggable>
     </div>
   );
 };

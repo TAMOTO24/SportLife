@@ -27,9 +27,9 @@ const WorkoutProgressPage = () => {
   const ownerRef = useRef(null);
   const [owner, setOwner] = useState(null);
 
-
   useEffect(() => {
     setIsLoading(true);
+    console.log("🚀 ~ file: index.jsx:10 ~ WorkoutProgressPage ~ uniqueUIDV4Id:", uniqueUIDV4Id);
     axios
       .get("/currentuserdata")
       .then((response) => {
@@ -43,6 +43,7 @@ const WorkoutProgressPage = () => {
 
   useEffect(() => {
     if (!currentWorkout || ownerRef.current === false) return;
+    console.log("🚀 ~ file: index.jsx:10 ~ WorkoutStatuses ~ uniqueUIDV4Id:", uniqueUIDV4Id);
     setIsLoading(true);
     axios
       .get(`/exercises/${currentWorkout?.exercises_id}`)
@@ -101,7 +102,6 @@ const WorkoutProgressPage = () => {
       socket.disconnect();
     };
   }, [user, navigate, uniqueUIDV4Id]);
-
 
   useEffect(() => {
     if (!socket.connected) return;
@@ -189,7 +189,11 @@ const WorkoutProgressPage = () => {
     <Loading />
   ) : (
     <div className="progress-page">
-      <PeerCamera user={user} isHost={ownerRef.current} roomId={uniqueUIDV4Id} />
+      <PeerCamera
+        user={user}
+        isHost={ownerRef.current}
+        roomId={uniqueUIDV4Id}
+      />
       <div className="progress-nav-block">
         <div className="progressBlock">
           <img src="/img-pack/logo/logo_black2.png" alt="logo" />
@@ -344,12 +348,14 @@ const WorkoutProgressPage = () => {
             </div>
           </div>
         ))}
-        <Button
-          onClick={endTraining}
-          disabled={!workoutStatuses.every((status) => status === "Finished")}
-        >
-          End training
-        </Button>
+        {owner && (
+          <Button
+            onClick={endTraining}
+            disabled={!workoutStatuses.every((status) => status === "Finished")}
+            >
+              End training
+            </Button>
+        )}
       </div>
       <footer
         style={{
@@ -374,6 +380,14 @@ const WorkoutProgressPage = () => {
           Sets: {currentIndex} / {exercises.length}
         </div>
         <div>© 2025 Sportlife. All rights reserved.</div>
+        <div>
+          Live right now!
+          <img
+            src="/img-pack/icons/Red_circle.gif"
+            alt=""
+            style={{ width: "30px", height: "30px" }}
+          />
+        </div>
       </footer>
     </div>
   );
