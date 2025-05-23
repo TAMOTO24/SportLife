@@ -10,7 +10,6 @@ import PeerCamera from "../addCameraComponent/index";
 
 const WorkoutProgressPage = () => {
   // const [time, setTime] = useState(0);
-
   const [uniqueUIDV4Id] = useState(useParams().roomId);
   const [data, setData] = useState({});
   const [loading, setIsLoading] = useState(false);
@@ -19,6 +18,7 @@ const WorkoutProgressPage = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const location = useLocation();
   const navigate = useNavigate();
+  const [startTime, setStartTime] = useState(Date.now());
   // const { currentWorkout } = location.state || {};
   const [currentWorkout, setCurrentWorkout] = useState(
     location.state?.currentWorkout || {}
@@ -28,8 +28,25 @@ const WorkoutProgressPage = () => {
   const [owner, setOwner] = useState(null);
 
   useEffect(() => {
+    if (ownerRef.current) {
+      axios
+        .get(`/room/${uniqueUIDV4Id}`)
+        .then((response) => {
+          const roomData = response.data;
+          setExercises(roomData.data.exercises);
+          setWorkoutStatuses(roomData.data.status);
+          setCurrentWorkout(roomData.data.currentWorkout);
+          setData(roomData.data);
+          setStartTime(roomData.data.startTime);
+          console.log("Room data loaded:", roomData);
+          setCurrentIndex(roomData.status.lastIndexOf("WorkingOn"));
+        })
+        .catch((error) => console.error("Error loading room data", error));
+    }
+  }, [owner, uniqueUIDV4Id]);
+
+  useEffect(() => {
     setIsLoading(true);
-    console.log("🚀 ~ file: index.jsx:10 ~ WorkoutProgressPage ~ uniqueUIDV4Id:", uniqueUIDV4Id);
     axios
       .get("/currentuserdata")
       .then((response) => {
@@ -42,8 +59,8 @@ const WorkoutProgressPage = () => {
   }, []);
 
   useEffect(() => {
-    if (!currentWorkout || ownerRef.current === false) return;
-    console.log("🚀 ~ file: index.jsx:10 ~ WorkoutStatuses ~ uniqueUIDV4Id:", uniqueUIDV4Id);
+    if (!currentWorkout || ownerRef.current === false || workoutStatuses)
+      return;
     setIsLoading(true);
     axios
       .get(`/exercises/${currentWorkout?.exercises_id}`)
@@ -73,7 +90,6 @@ const WorkoutProgressPage = () => {
 
     socket.on("receiveData", (data) => {
       setData(data);
-      // ! ERROR If owner reload page all data resets to default
       if (!ownerRef.current) {
         setExercises(data.exercises);
         setWorkoutStatuses(data.status);
@@ -117,7 +133,7 @@ const WorkoutProgressPage = () => {
         userId: user._id,
         data: exercises,
         currentWorkout: currentWorkout,
-        startTime: Date.now(),
+        startTime: startTime,
         finalTimeResult: "",
         status: workoutStatuses,
       });
@@ -352,9 +368,9 @@ const WorkoutProgressPage = () => {
           <Button
             onClick={endTraining}
             disabled={!workoutStatuses.every((status) => status === "Finished")}
-            >
-              End training
-            </Button>
+          >
+            End training
+          </Button>
         )}
       </div>
       <footer
