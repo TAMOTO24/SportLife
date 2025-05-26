@@ -27,21 +27,27 @@ const WorkoutProgressPage = () => {
   const ownerRef = useRef(null);
   const [owner, setOwner] = useState(null);
 
+  const fillAllData = async () => {
+    setIsLoading(true);
+    try {
+      const response = await axios.get(`/room/${uniqueUIDV4Id}`);
+      const roomData = response.data;
+
+      setExercises(roomData.data.exercises);
+      setWorkoutStatuses(roomData.data.status);
+      setCurrentWorkout(roomData.data.currentWorkout);
+      setData(roomData.data);
+      setStartTime(roomData.data.startTime);
+    } catch (error) {
+      console.error("Error loading room data", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   useEffect(() => {
     if (ownerRef.current) {
-      axios
-        .get(`/room/${uniqueUIDV4Id}`)
-        .then((response) => {
-          const roomData = response.data;
-          setExercises(roomData.data.exercises);
-          setWorkoutStatuses(roomData.data.status);
-          setCurrentWorkout(roomData.data.currentWorkout);
-          setData(roomData.data);
-          setStartTime(roomData.data.startTime);
-          console.log("Room data loaded:", roomData);
-          setCurrentIndex(roomData.status.lastIndexOf("WorkingOn"));
-        })
-        .catch((error) => console.error("Error loading room data", error));
+      fillAllData();
     }
   }, [owner, uniqueUIDV4Id]);
 
@@ -59,8 +65,8 @@ const WorkoutProgressPage = () => {
   }, []);
 
   useEffect(() => {
-    if (!currentWorkout || ownerRef.current === false || workoutStatuses)
-      return;
+    // ! if workoutStatuses may be an undefined there will be an error
+    if (!currentWorkout || ownerRef.current === false || workoutStatuses.length > 0) return;
     setIsLoading(true);
     axios
       .get(`/exercises/${currentWorkout?.exercises_id}`)
@@ -76,7 +82,7 @@ const WorkoutProgressPage = () => {
       .finally(() => {
         setIsLoading(false);
       });
-  }, [currentWorkout]);
+  }, [currentWorkout, user]);
 
   useEffect(() => {
     if (!user) return;
@@ -125,8 +131,10 @@ const WorkoutProgressPage = () => {
     if (
       user &&
       ownerRef.current &&
-      exercises.length &&
-      workoutStatuses.length
+      Array.isArray(exercises) &&
+      exercises.length > 0 &&
+      Array.isArray(workoutStatuses) &&
+      workoutStatuses.length > 0
     ) {
       socket.emit("updateData", {
         roomId: uniqueUIDV4Id,
@@ -195,6 +203,15 @@ const WorkoutProgressPage = () => {
       console.error("❌ Socket is not connected");
     }
   };
+
+  // if (error) {
+  //   return (
+  //     <div>
+  //       <h1>Помилка завантаження даних</h1>
+  //       <p>Спробуйте перезавантажити сторінку.</p>
+  //     </div>
+  //   );
+  // }
 
   return !exercises ||
     exercises.length === 0 ||

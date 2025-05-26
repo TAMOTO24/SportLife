@@ -66,7 +66,7 @@ const NotificationElement = () => {
       });
       console.log("Notification:", data._id);
       Notification(data.message, data.title, data.type, data._id, data.url);
-    }, 10000);
+    }, 5000);
 
     return () => clearInterval(interval);
   }, [user]);
@@ -104,8 +104,7 @@ const NotificationElement = () => {
         width={640}
         bodyStyle={{ padding: 0, backgroundColor: "rgb(24, 26, 29)" }}
       >
-        {notifications.map((notification) => {
-          return (
+        {notifications.map((notification) => (
             <div key={notification._id} className="notification-item">
               <Avatar
                 size={60}
@@ -140,8 +139,7 @@ const NotificationElement = () => {
                 </Space>
               )}
             </div>
-          );
-        })}
+          ))}
       </Drawer>
     </>
   );

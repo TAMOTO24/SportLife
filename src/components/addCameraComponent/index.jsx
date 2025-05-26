@@ -6,6 +6,7 @@ import Draggable from "react-draggable";
 
 const PeerCamera = ({ roomId, isHost }) => {
   const localVideoRef = useRef(null);
+  const mediaStreamRef = useRef(null);
   const [peer, setPeer] = useState(null);
   const peersRef = useRef({});
 
@@ -42,7 +43,8 @@ const PeerCamera = ({ roomId, isHost }) => {
       navigator.mediaDevices
         .getUserMedia({ video: true, audio: false })
         .then((mediaStream) => {
-          console.log("🎥 Stream obtained by host:", mediaStream);
+          mediaStreamRef.current = mediaStream;
+
           if (localVideoRef.current) {
             console.log("🎬 Stream set to host video element");
             localVideoRef.current.srcObject = mediaStream;
@@ -74,6 +76,10 @@ const PeerCamera = ({ roomId, isHost }) => {
         const newPeer = createNewPeer();
         setPeer(newPeer);
 
+        mediaStreamRef.current.getTracks().forEach((track) => {
+          track.stop();
+        });
+
         newPeer.on("open", () => {
           const call = newPeer.call(hostPeerId, null);
           if (!call) {
@@ -92,16 +98,20 @@ const PeerCamera = ({ roomId, isHost }) => {
         });
       });
     }
-
-    socket.on("user-disconnected", (userId) => {
-      if (peersRef.current[userId]) {
-        peersRef.current[userId].close();
-        delete peersRef.current[userId];
-      }
-    });
     return () => {
       socket.off("user-connected");
       socket.off("host-available");
+      
+      if (peer) {
+        peer.destroy();
+        console.log("👋 Peer connection closed", peer);
+      }
+
+      if (mediaStreamRef.current) {
+        mediaStreamRef.current.getTracks().forEach((track) => {
+          track.stop();
+        });
+      }
     };
   }, [peer, socket, isHost]);
 

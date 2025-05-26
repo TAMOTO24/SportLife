@@ -51,7 +51,6 @@ PeerServer({
 });
 
 io.on("connection", (socket) => {
-  
   let currentHostId = null;
 
   socket.on("join-stream", ({ roomId, userId }) => {
@@ -87,10 +86,14 @@ io.on("connection", (socket) => {
       io.emit("chatHistory", newRoom.users);
       io.emit("roomOwner", newRoom.owner);
     } else {
-      if (!existingRoom.users.includes(userId)) {
-        existingRoom.users.push(userId);
-        await existingRoom.save();
-      }
+      const userExists = existingRoom.users.includes(userId);
+      if (userExists){// check if user already exists u can't add empty user or smth that don't exist
+        if (!existingRoom.users.includes(userId)) {
+          existingRoom.users.push(userId);
+          await existingRoom.save();
+        }
+      } else return;
+        
       io.emit("chatHistory", existingRoom.users);
       io.emit("roomOwner", existingRoom.owner);
       socket.emit("receiveData", existingRoom.data);
@@ -255,13 +258,15 @@ app.get("/room/:id", async (req, res) => {
   try {
     const room = await Room.findOne({ roomId: id });
     if (!room) {
-      return res.status(400).json({ message: "There are no room with such id!" });
+      return res
+        .status(400)
+        .json({ message: "There are no room with such id!" });
     }
     res.json(room);
   } catch (error) {
     res.status(500).send(`Server error ${error}`);
   }
-})
+});
 app.get("/userbyid/:id", async (req, res) => {
   const { id } = req.params;
 

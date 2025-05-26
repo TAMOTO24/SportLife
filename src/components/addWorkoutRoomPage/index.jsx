@@ -134,7 +134,7 @@ export default function RoomPage() {
 
   const sendRequest = (id) => {
     createNotification(
-      "Запрошення на приєднання до кімнати",
+      "Запрошення",
       "Запрошення на приєднання до кімнати",
       "info",
       id,
