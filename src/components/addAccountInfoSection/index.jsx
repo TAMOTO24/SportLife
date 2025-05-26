@@ -198,7 +198,7 @@ const AccountInfoSection = () => {
                   <Button type="primary" htmlType="submit">
                     Save Changes
                   </Button>
-                  <Button htmlType="button">Cancel</Button>
+                  {/* <Button htmlType="button">Cancel</Button> */}
                 </Space>
               </Col>
               <Col>

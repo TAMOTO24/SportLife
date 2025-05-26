@@ -17,6 +17,7 @@ const AccountPage = () => {
     const fetchUserData = async () => {
       try {
         const response = await axios.get("/currentuserdata");
+        console.log("User data:", response.data.user);
         setUser(response.data.user);
       } catch (error) {
         message.error("Error retrieving user data");
@@ -46,17 +47,17 @@ const AccountPage = () => {
           />
         </a>
         {[
-          { img: "./img-pack/icons/profile-user.png", label: "Account info" },
+          { img: "/img-pack/icons/profile-user.png", label: "Account info" },
           {
-            img: "./img-pack/icons/dumbbell.png",
+            img: "/img-pack/icons/dumbbell.png",
             label: "Current workout plan",
           },
           {
-            img: "./img-pack/icons/statistical.png",
+            img: "/img-pack/icons/statistical.png",
             label: "Workout statistic",
           },
-          { img: "./img-pack/icons/gym-station.png", label: "Current Trainer" },
-          { img: "./img-pack/icons/fitness.png", label: "Favorite workouts" },
+          { img: "/img-pack/icons/gym-station.png", label: "Current Trainer" },
+          { img: "/img-pack/icons/fitness.png", label: "Favorite workouts" },
         ].map((item, index) => (
           <a
             key={index}
@@ -82,7 +83,7 @@ const AccountPage = () => {
           id="Workout statistic"
           className={selected === "Workout statistic" ? "" : "hidePage"}
         >
-          <WorkoutStatisticSection />
+          <WorkoutStatisticSection user={user}/>
         </div>
       </div>
     </div>
