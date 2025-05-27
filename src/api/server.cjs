@@ -7,6 +7,9 @@ const jwt = require("jsonwebtoken");
 const cookieParser = require("cookie-parser");
 // const multer = require("multer");
 const cors = require("cors");
+const nodemailer = require("nodemailer");
+const { PeerServer } = require("peer");
+const request = require("request");
 
 // const Email = require("../models/email");
 const User = require("../models/user");
@@ -16,7 +19,6 @@ const Trainers = require("../models/trainers");
 const Room = require("../models/room");
 const Exercises = require("../models/exercises");
 const Notification = require("../models/notifications");
-const { PeerServer } = require("peer");
 
 dotenv.config();
 const app = express();
@@ -87,13 +89,14 @@ io.on("connection", (socket) => {
       io.emit("roomOwner", newRoom.owner);
     } else {
       const userExists = existingRoom.users.includes(userId);
-      if (userExists){// check if user already exists u can't add empty user or smth that don't exist
+      if (userExists) {
+        // check if user already exists u can't add empty user or smth that don't exist
         if (!existingRoom.users.includes(userId)) {
           existingRoom.users.push(userId);
           await existingRoom.save();
         }
       } else return;
-        
+
       io.emit("chatHistory", existingRoom.users);
       io.emit("roomOwner", existingRoom.owner);
       socket.emit("receiveData", existingRoom.data);
@@ -606,6 +609,76 @@ app.get("/notification/:userId", async (req, res) => {
   } catch (error) {
     console.error("Error fetching notifications:", error);
     res.status(500).json({ message: "Internal server error" });
+  }
+});
+
+app.post("/sendemail", async (req, res) => {
+  const { id, email, subject, text, data } = req.body;
+
+  if (!email || !subject || !text) {
+    return res.status(400).json({ message: "All fields are required" });
+  }
+
+  try {
+    let transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: "sportlife.corporate.mail@gmail.com",
+        pass: "fund yebs qing bmqy",
+      },
+    });
+
+    let link = `http://localhost:5000/confirm-email`;
+
+    const htmlContent = `
+      <div style="font-family: Arial, sans-serif; padding: 20px;">
+        <h2>Підтвердження на тему ${data.topic}!</h2>
+        <p>Щоб підтвердити свою електронну пошту, натисніть на кнопку нижче:</p>
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+        <a href="${link}" 
+          style="display:inline-block; padding: 10px 20px; background-color: #28a745; color: white; 
+                  text-decoration: none; border-radius: 5px; font-weight: bold;">
+          Подтвердить по документам роль тренера
+        </a>
+
+        <a href="${link}" 
+          style="display:inline-block; padding: 10px 20px; background-color:rgb(167, 40, 40); color: white; 
+                  text-decoration: none; border-radius: 5px; font-weight: bold;">
+          Відхилити запит на тренера
+        </a>
+        </div>
+        <p>Якщо ви не запитували підтвердження, будь ласка, проігноруйте це повідомлення.</p>
+      </div>
+    `;
+
+    await transporter.sendMail({
+      from: `"SPORTLIFe" <your_email@gmail.com>`,
+      to: "sportlife.corporate.mail@gmail.com",
+      subject: `${subject}`,
+      text: `${text}`,
+      html: htmlContent,
+      replyTo: email,
+    });
+
+    const findRequest = await Request.findOne({ userId: id });
+    if (!findRequest) {
+      const user = await User.findById(id);
+      const newRequest = new Request({
+        email: email,
+        userId: user._id,
+        requestReason: "trainer",
+        status: "pending",
+      });
+
+      user.trainerRequestId = newRequest._id; // Save request id to user
+      await user.save(); // Save user with updated request id
+      await newRequest.save();
+    }
+
+    res.json({ success: true, message: "Email sent successfully" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: "Error sending mail" });
   }
 });
 

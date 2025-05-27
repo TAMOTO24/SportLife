@@ -47,17 +47,17 @@ const AccountPage = () => {
           />
         </a>
         {[
-          { img: "/img-pack/icons/profile-user.png", label: "Account info" },
+          { img: "/img-pack/icons/profile-user.png", label: "Інформація аккаунту" },
           {
             img: "/img-pack/icons/dumbbell.png",
-            label: "Current workout plan",
+            label: "Поточний план тренувань",
           },
           {
             img: "/img-pack/icons/statistical.png",
-            label: "Workout statistic",
+            label: "Статистика тренувань",
           },
-          { img: "/img-pack/icons/gym-station.png", label: "Current Trainer" },
-          { img: "/img-pack/icons/fitness.png", label: "Favorite workouts" },
+          { img: "/img-pack/icons/gym-station.png", label: "Конфігурація ролі" },
+          { img: "/img-pack/icons/fitness.png", label: "Улюблені тренування" },
         ].map((item, index) => (
           <a
             key={index}
@@ -74,14 +74,14 @@ const AccountPage = () => {
       <div id="pages">
         {/* <h1>{selected}</h1> */}
         <div
-          id="Account info"
-          className={selected === "Account info" ? "" : "hidePage"}
+          id="Інформація аккаунту"
+          className={selected === "Інформація аккаунту" ? "" : "hidePage"}
         >
           <AccountInfoSection />
         </div>
         <div
-          id="Workout statistic"
-          className={selected === "Workout statistic" ? "" : "hidePage"}
+          id="Статистика тренувань"
+          className={selected === "Статистика тренувань" ? "" : "hidePage"}
         >
           <WorkoutStatisticSection user={user}/>
         </div>

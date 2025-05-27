@@ -12,7 +12,6 @@ const WorkoutStatisticSection = ({ user }) => (
       width: "100%",
     }}
   >
-    <Typography.Title level={1}>Тренувальна статистика</Typography.Title>
     <div
       style={{
         display: "flex",

@@ -18,6 +18,7 @@ const userSchema = new mongoose.Schema({
   role: String,
   profileDescription: String,
   statistic: Array,
+  trainerRequestId: String,
 });
 
 module.exports = mongoose.models.accounts || mongoose.model('accounts', userSchema);
