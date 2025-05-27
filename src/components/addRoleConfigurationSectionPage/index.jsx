@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "./style.css";
 import {
-  UploadOutlined,
   InboxOutlined,
   LoadingOutlined,
 } from "@ant-design/icons";
@@ -83,12 +82,21 @@ const RoleConfigurationSection = ({ user }) => {
             initialValues={{ email: user.email }}
             onFinish={onFinish}
           >
+            <p className="roleConfigurationSectionText">
+              Запишіть нам причину чому ви хочете стати тренером у нашій
+              компанії
+            </p>
             <Form.Item name="note" label="Note" rules={[{ required: true }]}>
               <TextArea rows={4} />
             </Form.Item>
+            <p className="roleConfigurationSectionText">
+              Виберіть роль, яку ви хочете отримати. Якщо ви хочете стати
+              тренером, виберіть "Тренер". Якщо ви хочете стати адміністратором,
+              виберіть "Адміністратор".
+            </p>
             <Form.Item
               name="reason"
-              label="Gender"
+              label="Request Reason"
               rules={[{ required: true }]}
             >
               <Select placeholder="Select a option and change input text above">
@@ -99,14 +107,16 @@ const RoleConfigurationSection = ({ user }) => {
             <Form.Item
               name="email"
               label="Email"
-              disable
               rules={[{ required: true }]}
             >
-              <Input />
+              <Input disabled={true} />
             </Form.Item>
 
             <Form.Item name="upload" valuePropName="fileList"></Form.Item>
-
+            <p className="roleConfigurationSectionText">
+              Будь ласка, надішліть нам своє резюме або інші документи, які
+              підтверджують вашу кваліфікацію. Ви можете завантажити їх тут.
+            </p>
             <Form.Item label="Dragger">
               <Form.Item
                 name="dragger"
@@ -174,7 +184,8 @@ const RoleConfigurationSection = ({ user }) => {
               <div>
                 <h1>Request #{user.trainerRequestId}</h1>
                 <h3>
-                  <b>Status: </b>{requests?.status || "Pending"}
+                  <b>Status: </b>
+                  {requests?.status || "Pending"}
                 </h3>
               </div>
             )}

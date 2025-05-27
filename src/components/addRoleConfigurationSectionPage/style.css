@@ -11,3 +11,6 @@
     font-size: 20px;
     margin-bottom: 8px;
 }
+.roleConfigurationSectionText {
+    font-size: clamp(0.5rem, 2vw, 1.3rem);
+}

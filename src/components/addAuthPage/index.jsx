@@ -32,11 +32,20 @@ const AuthPage = () => {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [authType, setAuthType] = useState("signin");
+
+  const phonePrefixes = Array.from({ length: 999 }, (_, i) => { //phone prefixes all
+    const value = i + 1;
+    return (
+      <Option key={value} value={value}>
+        +{value}
+      </Option>
+    );
+  });
+
   const prefixSelector = (
     <Form.Item name="prefix" noStyle>
       <Select style={{ width: 70 }}>
-        <Option value="86">+86</Option>
-        <Option value="87">+87</Option>
+        {phonePrefixes}
       </Select>
     </Form.Item>
   );
@@ -72,7 +81,7 @@ const AuthPage = () => {
           values.prefix + values.phone,
           "path",
           values.gender,
-          values.role,
+          "user",
           navigate,
           message
         );
@@ -98,9 +107,8 @@ const AuthPage = () => {
             style={{ width: "600px" }}
           >
             {/* Email field */}
-            {authType == "signup" && (
+            {authType === "signup" && (
               <>
-                {" "}
                 <Form.Item
                   label="Nickname"
                   name="username"
@@ -170,7 +178,7 @@ const AuthPage = () => {
                 placeholder="Password"
               />
             </Form.Item>
-            {authType == "signup" && (
+            {authType === "signup" && (
               <>
                 <Form.Item
                   label="Confirm Password"
@@ -241,18 +249,6 @@ const AuthPage = () => {
                     <Option value="male">male</Option>
                     <Option value="female">female</Option>
                     <Option value="other">other</Option>
-                  </Select>
-                </Form.Item>
-
-                <Form.Item
-                  name="role"
-                  label="Gym role"
-                  rules={[{ required: true }]}
-                >
-                  <Select placeholder="Select you'r gym role" allowClear>
-                    <Option value="trainer">trainer</Option>
-                    <Option value="visiter">visiter</Option>
-                    <Option value="online-visiter">online visiter</Option>
                   </Select>
                 </Form.Item>
 

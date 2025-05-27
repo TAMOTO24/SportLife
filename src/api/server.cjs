@@ -36,6 +36,13 @@ app.use(
     immutable: true,
   })
 );
+const transporter = nodemailer.createTransport({
+  service: "gmail",
+  auth: {
+    user: "sportlife.corporate.mail@gmail.com",
+    pass: "fund yebs qing bmqy",
+  },
+});
 const http = require("http");
 const server = http.createServer(app);
 
@@ -589,12 +596,66 @@ app.get("/request/:id", async (req, res) => {
   try {
     const { id } = req.params;
     const request = await Request.findById(id);
+    if (!id) {
+      return res.status(400).json({ message: "No ID provided" });
+    }
     if (!request) {
       return res.status(204).json({ message: "No request found" });
     }
     res.status(200).json(request);
   } catch (error) {
     console.error("Error fetching request:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+app.get("/rejectchangerequest/:id", async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    if (!id) {
+      return res.status(204).json({ message: "No Id as query" });
+    }
+
+    const request = await Request.findOne({ userId: id });
+    if (!request) {
+      return res.status(204).json({ message: "Request not found" });
+    }
+    request.status = "rejected";
+    await request.save();
+
+    res.send("Роль відхилена!");
+  } catch (error) {
+    console.error("Error rejecting change request:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
+app.get("/acceptchangerequest/:id", async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    if (!id) {
+      return res.status(204).json({ message: "No Id as query" });
+    }
+
+    const request = await Request.findOne({ userId: id });
+    if (!request) {
+      return res.status(204).json({ message: "Request not found" });
+    }
+    request.status = "accepted";
+    await request.save();
+
+    const user = await User.findById(request.userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    user.role = "trainer"; // Update user role to trainer
+    user.trainerRequestId = null; // Clear trainer request ID
+    await user.save();
+
+    res.send("Роль успішно підтверджена!");
+  } catch (error) {
+    console.error("Error accepting change request:", error);
     res.status(500).json({ message: "Internal server error" });
   }
 });
@@ -616,28 +677,23 @@ app.post("/sendemail", upload.array("files"), async (req, res) => {
     }));
 
     console.log("Attachments:", attachments);
-    let transporter = nodemailer.createTransport({
-      service: "gmail",
-      auth: {
-        user: "sportlife.corporate.mail@gmail.com",
-        pass: "fund yebs qing bmqy",
-      },
-    });
+    const baseUrl = process.env.BASE_SERVER_URL || "http://localhost:5000";
+    const linkAccept = `${baseUrl}/acceptchangerequest/${id}`;
+    const linkReject = `${baseUrl}/rejectchangerequest/${id}`;
 
-    let link = `http://localhost:5000/confirm-email`;
-
+    // ! TODO make prettier mail page
     const htmlContent = `
       <div style="font-family: Arial, sans-serif; padding: 20px;">
-        <h2>Підтвердження на тему ${subject}!</h2>
         <p>Щоб підтвердити свою електронну пошту, натисніть на кнопку нижче:</p>
-        <div style="display: flex; flex-direction: column; gap: 10px;">
-        <a href="${link}" 
+        <div style="display: flex; gap: 10px;">
+
+        <a href="${linkAccept}" 
           style="display:inline-block; padding: 10px 20px; background-color: #28a745; color: white; 
-                  text-decoration: none; border-radius: 5px; font-weight: bold;">
+          text-decoration: none; border-radius: 5px; font-weight: bold;">
           Подтвердить по документам роль тренера
         </a>
 
-        <a href="${link}" 
+        <a href="${linkReject}" 
           style="display:inline-block; padding: 10px 20px; background-color:rgb(167, 40, 40); color: white; 
                   text-decoration: none; border-radius: 5px; font-weight: bold;">
           Відхилити запит на тренера
@@ -648,10 +704,10 @@ app.post("/sendemail", upload.array("files"), async (req, res) => {
     `;
 
     await transporter.sendMail({
-      from: `"SPORTLIFe" <your_email@gmail.com>`,
+      from: `"SportLife" ${email}`,
       to: "sportlife.corporate.mail@gmail.com",
-      subject: `${subject}`,
-      text: `${note}`,
+      subject: `Підтвердження на тему ${subject}`,
+      text: note,
       html: htmlContent,
       replyTo: email,
       attachments,
