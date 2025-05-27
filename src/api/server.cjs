@@ -5,23 +5,27 @@ const dotenv = require("dotenv");
 const path = require("path");
 const jwt = require("jsonwebtoken");
 const cookieParser = require("cookie-parser");
-// const multer = require("multer");
+const multer = require("multer");
 const cors = require("cors");
 const nodemailer = require("nodemailer");
 const { PeerServer } = require("peer");
-const request = require("request");
 
-// const Email = require("../models/email");
 const User = require("../models/user");
 const Post = require("../models/post");
 const Workouts = require("../models/workouts");
 const Trainers = require("../models/trainers");
 const Room = require("../models/room");
+const Request = require("../models/requests");
 const Exercises = require("../models/exercises");
 const Notification = require("../models/notifications");
 
 dotenv.config();
 const app = express();
+
+const storage = multer.memoryStorage();
+const upload = multer({
+  storage: storage,
+});
 
 app.use(cookieParser());
 app.use(cors());
@@ -218,23 +222,6 @@ server.on("error", (err) => {
   console.error("❗ HTTP server error:", err);
 });
 
-// TODO: Delete all multer functionality.
-// const storage = multer.diskStorage({
-//   destination: (req, file, cb) => {
-//     cb(null, "./public/server-savings/"); //null - if error, "./server-savings/" - where to save files
-//   },
-//   filename: (req, file, cb) => {
-//     cb(null, Date.now() + path.extname(file.originalname)); //null - if error, Date.now() - unique name, path.extname - file extension
-//   },
-// });
-
-// const upload = multer({
-//   storage: storage, //Set current storage rules
-//   limits: {
-//     fileSize: 10 * 1024 * 1024, // Max size 10 MB
-//   },
-// });
-
 mongoose
   .connect(process.env.DB_CONNECTION_STRING, {
     useNewUrlParser: true,
@@ -398,17 +385,6 @@ app.post("/createpagepost", async (req, res) => {
   }
 });
 
-// app.post("/upload", upload.array("image", 2), (req, res) => {
-//   if (!req.files) {
-//     return res.status(400).json({ message: "No files!" });
-//   }
-
-//   const filePaths = Array.isArray(req.files)
-//     ? req.files.map((file) => `./server-savings/${file.filename}`)
-//     : [`./server-savings/${req.files.filename}`];
-//   res.json({ filePaths });
-// });
-
 app.get("/api/getposts", async (req, res) => {
   try {
     const post = await Post.find();
@@ -417,9 +393,6 @@ app.get("/api/getposts", async (req, res) => {
     res.status(500).send("Server error");
   }
 });
-
-// const __dirname = path.resolve();
-// app.use(express.static(path.join(__dirname, "client/build")));
 
 app.post("/newuser", async (req, res) => {
   const {
@@ -612,14 +585,37 @@ app.get("/notification/:userId", async (req, res) => {
   }
 });
 
-app.post("/sendemail", async (req, res) => {
-  const { id, email, subject, text, data } = req.body;
+app.get("/request/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const request = await Request.findById(id);
+    if (!request) {
+      return res.status(204).json({ message: "No request found" });
+    }
+    res.status(200).json(request);
+  } catch (error) {
+    console.error("Error fetching request:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
 
-  if (!email || !subject || !text) {
+app.post("/sendemail", upload.array("files"), async (req, res) => {
+  const { id, email, subject, note } = req.body;
+  const files = req.files;
+
+  if (!email || !subject || !note || !id || !files || files.length === 0) {
+    console.log(id, email, subject, note, files);
     return res.status(400).json({ message: "All fields are required" });
   }
 
   try {
+    const attachments = files.map((file, index) => ({
+      filename: file.originalname || `file-${index}`,
+      content: file.buffer,
+      contentType: file.mimetype,
+    }));
+
+    console.log("Attachments:", attachments);
     let transporter = nodemailer.createTransport({
       service: "gmail",
       auth: {
@@ -632,7 +628,7 @@ app.post("/sendemail", async (req, res) => {
 
     const htmlContent = `
       <div style="font-family: Arial, sans-serif; padding: 20px;">
-        <h2>Підтвердження на тему ${data.topic}!</h2>
+        <h2>Підтвердження на тему ${subject}!</h2>
         <p>Щоб підтвердити свою електронну пошту, натисніть на кнопку нижче:</p>
         <div style="display: flex; flex-direction: column; gap: 10px;">
         <a href="${link}" 
@@ -655,9 +651,10 @@ app.post("/sendemail", async (req, res) => {
       from: `"SPORTLIFe" <your_email@gmail.com>`,
       to: "sportlife.corporate.mail@gmail.com",
       subject: `${subject}`,
-      text: `${text}`,
+      text: `${note}`,
       html: htmlContent,
       replyTo: email,
+      attachments,
     });
 
     const findRequest = await Request.findOne({ userId: id });

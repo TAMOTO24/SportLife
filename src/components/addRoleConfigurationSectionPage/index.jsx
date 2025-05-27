@@ -1,22 +1,78 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import "./style.css";
-import { UploadOutlined, InboxOutlined } from "@ant-design/icons";
-import { Form, Input, Select, Card, Upload, Button, Space, Tag } from "antd";
+import {
+  UploadOutlined,
+  InboxOutlined,
+  LoadingOutlined,
+} from "@ant-design/icons";
+import {
+  Form,
+  Input,
+  Select,
+  Card,
+  Upload,
+  Button,
+  Space,
+  Tag,
+  Spin,
+} from "antd";
 import Axios from "axios";
 
 const { Option } = Select;
 const { TextArea } = Input;
 
 const RoleConfigurationSection = ({ user }) => {
+  const [form] = Form.useForm();
+  const [requests, setRequests] = useState([]);
+  const [loading, setLoading] = useState(true);
+
   const normFile = (e) => {
-    console.log("Upload event:", e);
     if (Array.isArray(e)) {
       return e;
     }
-    console.log("FileList:", e?.fileList);
     return e?.fileList;
   };
-  
+
+  useEffect(() => {
+    const fetchRequests = async () => {
+      setLoading(true);
+      try {
+        const response = await Axios.get(`/request/${user?.trainerRequestId}`);
+        setRequests(response.data);
+      } catch (error) {
+        console.error("Error fetching requests:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchRequests();
+  }, []);
+
+  const onFinish = async (values) => {
+    const formData = new FormData();
+    formData.append("id", user._id);
+    formData.append("email", user.email);
+    formData.append("subject", values.reason);
+    formData.append("note", values.note);
+
+    values.dragger.forEach((fileWrapper) => {
+      formData.append("files", fileWrapper.originFileObj);
+    });
+
+    try {
+      const response = await Axios.post("/sendemail", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      console.log("Request submitted:", response.data);
+      form.resetFields();
+      setRequests(response.data);
+    } catch (error) {
+      console.error("Error submitting request:", error);
+    }
+  };
+
   return (
     <div className="roleConfigurationSection">
       <div className="roleConfigurationBlock">
@@ -25,6 +81,7 @@ const RoleConfigurationSection = ({ user }) => {
             layout="vertical"
             className="roleConfigurationForm"
             initialValues={{ email: user.email }}
+            onFinish={onFinish}
           >
             <Form.Item name="note" label="Note" rules={[{ required: true }]}>
               <TextArea rows={4} />
@@ -57,7 +114,7 @@ const RoleConfigurationSection = ({ user }) => {
                 getValueFromEvent={normFile}
                 noStyle
               >
-                <Upload.Dragger name="files" action="/upload.do">
+                <Upload.Dragger name="files">
                   <p className="ant-upload-drag-icon">
                     <InboxOutlined />
                   </p>
@@ -81,41 +138,49 @@ const RoleConfigurationSection = ({ user }) => {
           </Form>
         </Card>
       </div>
-
-      <div className="roleConfigurationBlock">
-        <Card>
-          <h1>
-            <b>Current Role:</b>{" "}
-            <Tag color="blue" style={{ fontSize: "20px" }}>
-              {user.role}
-            </Tag>
-          </h1>
-          <p>
-            If you want to change your role, please fill out the form on the
-            left and submit your request.
-          </p>
-          <p>
-            Your current role is <b className="roleText">{user.role}</b>. If you
-            need to change it, please contact support.
-          </p>
-          <h3>
-            <b>Available Roles:</b>
-          </h3>
-          <ul>
-            <li>
-              <Tag color="green">Trainer</Tag>
-            </li>
-            <li>
-              <Tag color="orange">Admin</Tag>
-            </li>
-          </ul>
-          {user?.trainerRequestId && (
-            <div>
-              <h2>Current Status</h2>
-            </div>
-          )}
-        </Card>
-      </div>
+      <Spin
+        indicator={<LoadingOutlined spin />}
+        spinning={loading}
+        size="small"
+      >
+        <div className="roleConfigurationBlock">
+          <Card>
+            <h1>
+              <b>Current Role:</b>{" "}
+              <Tag color="blue" style={{ fontSize: "20px" }}>
+                {user.role}
+              </Tag>
+            </h1>
+            <p>
+              If you want to change your role, please fill out the form on the
+              left and submit your request.
+            </p>
+            <p>
+              Your current role is <b className="roleText">{user.role}</b>. If
+              you need to change it, please contact support.
+            </p>
+            <h3>
+              <b>Available Roles:</b>
+            </h3>
+            <ul>
+              <li>
+                <Tag color="green">Trainer</Tag>
+              </li>
+              <li>
+                <Tag color="orange">Admin</Tag>
+              </li>
+            </ul>
+            {user?.trainerRequestId && (
+              <div>
+                <h1>Request #{user.trainerRequestId}</h1>
+                <h3>
+                  <b>Status: </b>{requests?.status || "Pending"}
+                </h3>
+              </div>
+            )}
+          </Card>
+        </div>
+      </Spin>
     </div>
   );
 };
