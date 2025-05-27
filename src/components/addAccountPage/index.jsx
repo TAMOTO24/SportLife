@@ -5,11 +5,12 @@ import axios from "axios";
 import Loading from "../addLoadingElement";
 import AccountInfoSection from "../addAccountInfoSection";
 import WorkoutStatisticSection from "../addWorkoutStatisticSection";
+import RoleConfigurationSection from "../addRoleConfigurationSectionPage";
 
 const AccountPage = () => {
   const [form] = Form.useForm();
   const [active, setActive] = useState(false);
-  const [selected, setSelected] = useState("Account info");
+  const [selected, setSelected] = useState("Інформація аккаунту");
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState(undefined);
 
@@ -43,11 +44,15 @@ const AccountPage = () => {
                 : "./img-pack/icons/menu.png"
             }
             id="menu"
-            img loading="lazy"
+            img
+            loading="lazy"
           />
         </a>
         {[
-          { img: "/img-pack/icons/profile-user.png", label: "Інформація аккаунту" },
+          {
+            img: "/img-pack/icons/profile-user.png",
+            label: "Інформація аккаунту",
+          },
           {
             img: "/img-pack/icons/dumbbell.png",
             label: "Поточний план тренувань",
@@ -56,7 +61,10 @@ const AccountPage = () => {
             img: "/img-pack/icons/statistical.png",
             label: "Статистика тренувань",
           },
-          { img: "/img-pack/icons/gym-station.png", label: "Конфігурація ролі" },
+          {
+            img: "/img-pack/icons/gym-station.png",
+            label: "Конфігурація ролі",
+          },
           { img: "/img-pack/icons/fitness.png", label: "Улюблені тренування" },
         ].map((item, index) => (
           <a
@@ -83,7 +91,13 @@ const AccountPage = () => {
           id="Статистика тренувань"
           className={selected === "Статистика тренувань" ? "" : "hidePage"}
         >
-          <WorkoutStatisticSection user={user}/>
+          <WorkoutStatisticSection user={user} />
+        </div>
+        <div
+          id="Конфігурація ролі"
+          className={selected === "Конфігурація ролі" ? "" : "hidePage"}
+        >
+          <RoleConfigurationSection user={user} />
         </div>
       </div>
     </div>
