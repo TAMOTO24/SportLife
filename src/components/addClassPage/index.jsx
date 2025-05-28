@@ -1,6 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
-import { Card, Typography, Row, Col, Image, Button, Space } from "antd";
+import {
+  Card,
+  Typography,
+  Row,
+  Col,
+  Image,
+  Button,
+  Space,
+  message,
+} from "antd";
 import { Link } from "react-router-dom";
 import "./style.css";
 import { PieChart, Pie } from "recharts";
@@ -11,7 +20,7 @@ const { Title, Paragraph } = Typography;
 
 const ClassPage = () => {
   const location = useLocation();
-  const [ RoomId ] = useState(Cookies.get("roomId"));
+  const [RoomId] = useState(Cookies.get("roomId"));
   const { workout } = location.state || {};
   const [uniqueUIDV4Id, setUniqueUIDV4Id] = useState(uuidv4());
 
@@ -135,12 +144,11 @@ const ClassPage = () => {
           </div>
 
           <Space>
-            <Button type="primary" style={{ backgroundColor: "#f56a00" }}>
-              Book Now
-            </Button>
             <Button type="primary">
-              {/*MAKE CONTINUE PREVIOUS ROOM AND CREATE NEW ROOM FUNCTIONALITY*/}
-              <Link to={`/workoutroom/${uniqueUIDV4Id}`} state={{ workouts: workout }}>
+              <Link
+                to={`/workoutroom/${uniqueUIDV4Id}`}
+                state={{ workouts: workout }}
+              >
                 {RoomId ? "Join created room" : "Create new room"}
               </Link>
             </Button>

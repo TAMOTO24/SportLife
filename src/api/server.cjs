@@ -660,6 +660,88 @@ app.get("/acceptchangerequest/:id", async (req, res) => {
   }
 });
 
+app.get("/allbookmarks/:userId", async (req, res) => {
+  const userId = req.params;
+
+  try {
+    const user = await User.findById(userId);
+
+    if (!user || !Array.isArray(user.bookmarks)) {
+      return res.status(404).json({ message: "User or bookmarks not found" });
+    }
+
+    const bookmarkIds = user.bookmarks.map(
+      (id) => new mongoose.Types.ObjectId(id)
+    );
+
+    const posts = await Post.find({ _id: { $in: bookmarkIds } });
+    const workouts = await Workouts.find({ _id: { $in: bookmarkIds } });
+
+    const postBookmarks = posts.map((post) => ({
+      ...post.toObject(),
+      type: "post",
+    }));
+
+    const workoutBookmarks = workouts.map((workout) => ({
+      ...workout.toObject(),
+      type: "workout",
+    }));
+
+    const allBookmarks = [...postBookmarks, ...workoutBookmarks];
+
+    res.json({ success: true, bookmarks: allBookmarks });
+  } catch (err) {
+    console.error(err);
+    res
+      .status(500)
+      .json({ success: false, message: "Error retriving bookmarks" });
+  }
+});
+
+app.put("/bookmark/:userId", async (req, res) => {
+  const { userId } = req.params;
+  const { bookmarkId } = req.body;
+
+  if (!bookmarkId) {
+    return res.status(400).json({ message: "BookMarkId is requiered!" });
+  }
+
+  try {
+    const user = await User.findById(userId);
+
+    if (!user) {
+      console.log("not found");
+      return res.status(400).json({ message: "User not found" });
+    }
+
+    if (!Array.isArray(user.bookmarks)) {
+      user.bookmarks = [];
+    }
+
+    if (user.bookmarks.includes(bookmarkId)) {
+      console.log("delete BOOKMARK", user.bookmarks.includes(bookmarkId));
+      const index = user?.bookmarks?.indexOf(bookmarkId);
+
+      if (index > -1) {
+        user.bookmarks.splice(index, 1);
+      }
+    } else {
+      console.log("ADD BOOKMARK");
+      user?.bookmarks.push(bookmarkId);
+    }
+
+    await user.save();
+
+    res.json({
+      success: true,
+      mark_status: user?.bookmarks.includes(bookmarkId),
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: "Error bookmark" });
+  }
+});
+
 app.post("/sendemail", upload.array("files"), async (req, res) => {
   const { id, email, subject, note } = req.body;
   const files = req.files;
