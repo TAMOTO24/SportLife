@@ -710,7 +710,6 @@ app.put("/bookmark/:userId", async (req, res) => {
     const user = await User.findById(userId);
 
     if (!user) {
-      console.log("not found");
       return res.status(400).json({ message: "User not found" });
     }
 
@@ -719,14 +718,12 @@ app.put("/bookmark/:userId", async (req, res) => {
     }
 
     if (user.bookmarks.includes(bookmarkId)) {
-      console.log("delete BOOKMARK", user.bookmarks.includes(bookmarkId));
       const index = user?.bookmarks?.indexOf(bookmarkId);
 
       if (index > -1) {
         user.bookmarks.splice(index, 1);
       }
     } else {
-      console.log("ADD BOOKMARK");
       user?.bookmarks.push(bookmarkId);
     }
 

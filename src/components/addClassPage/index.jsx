@@ -15,6 +15,7 @@ import "./style.css";
 import { PieChart, Pie } from "recharts";
 import { v4 as uuidv4 } from "uuid";
 import Cookies from "js-cookie";
+import BookMark from "../addBookMarkElement/index"
 
 const { Title, Paragraph } = Typography;
 
@@ -144,6 +145,7 @@ const ClassPage = () => {
           </div>
 
           <Space>
+            <BookMark element={workout} />
             <Button type="primary">
               <Link
                 to={`/workoutroom/${uniqueUIDV4Id}`}
