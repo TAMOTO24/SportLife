@@ -595,10 +595,14 @@ app.get("/notification/:userId", async (req, res) => {
 app.get("/request/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    const request = await Request.findById(id);
+
     if (!id) {
       return res.status(400).json({ message: "No ID provided" });
     }
+    console.log(id);
+
+    const request = await Request.findById(id);
+
     if (!request) {
       return res.status(204).json({ message: "No request found" });
     }
@@ -661,7 +665,11 @@ app.get("/acceptchangerequest/:id", async (req, res) => {
 });
 
 app.get("/allbookmarks/:userId", async (req, res) => {
-  const userId = req.params;
+  const { userId } = req.params;
+
+  if (!userId) {
+    return res.status(404).json({ message: "Id is important" });
+  }
 
   try {
     const user = await User.findById(userId);
@@ -674,6 +682,7 @@ app.get("/allbookmarks/:userId", async (req, res) => {
       (id) => new mongoose.Types.ObjectId(id)
     );
 
+    // ! TODO: Make sure that order is the one specified in bookmarkIds array
     const posts = await Post.find({ _id: { $in: bookmarkIds } });
     const workouts = await Workouts.find({ _id: { $in: bookmarkIds } });
 
@@ -689,7 +698,11 @@ app.get("/allbookmarks/:userId", async (req, res) => {
 
     const allBookmarks = [...postBookmarks, ...workoutBookmarks];
 
-    res.json({ success: true, bookmarks: allBookmarks });
+    const sortedBookmarks = user.bookmarks.map((id) =>
+      allBookmarks.find((item) => item._id.toString() === id.toString())
+    );
+
+    res.json({ success: true, bookmarks: sortedBookmarks });
   } catch (err) {
     console.error(err);
     res

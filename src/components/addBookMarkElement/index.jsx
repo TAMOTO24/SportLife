@@ -2,17 +2,20 @@ import React, { useEffect, useState } from "react";
 import { message } from "antd";
 import axios from "axios";
 
-const BookMark = ( {element} ) => {
+const BookMark = ({ element, theme = true }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(false);
   const [bookMarkStatus, setBookMarkStatus] = useState(null);
+  const nameTheme = theme ? "bookmarkW" : "bookmark";
 
   useEffect(() => {
     const fetchUserData = async () => {
       try {
         const response = await axios.get("/currentuserdata");
         setUser(response.data.user);
-        setBookMarkStatus(response.data.user?.bookmarks?.includes(element?._id))
+        setBookMarkStatus(
+          response.data.user?.bookmarks?.includes(element?._id)
+        );
       } catch (error) {
         message.error("Error retrieving user data");
       }
@@ -43,9 +46,7 @@ const BookMark = ( {element} ) => {
     >
       <img
         src={`/img-pack/icons/${
-          bookMarkStatus
-            ? "bookmarkW_saved.png"
-            : "bookmarkW.png"
+          bookMarkStatus ? nameTheme + "_saved.png" : nameTheme + ".png"
         }`}
         style={{ width: "70px", height: "70px", cursor: "pointer" }}
         onClick={fetchBookmark}

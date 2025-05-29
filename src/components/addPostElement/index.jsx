@@ -4,6 +4,7 @@ import { useNavigate, Link } from "react-router-dom";
 import Cookies from "js-cookie";
 import "./style.css";
 import { Modal, message, Card, Divider } from "antd";
+import BookMark from "../addBookMarkElement/index"
 
 const PostElement = ({ item, hoverable,  theme }) => { // THEME - false ? black/red theme : white/black theme 
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -88,6 +89,7 @@ const PostElement = ({ item, hoverable,  theme }) => { // THEME - false ? black/
       <Card
         hoverable={hoverable}
         className={!theme && "black-theme-block"}
+        style={{maxWidth: "975px"}}
         bordered={theme}
         onClick={() => {
           if (hoverable) {
@@ -149,7 +151,7 @@ const PostElement = ({ item, hoverable,  theme }) => { // THEME - false ? black/
                 <img src="/img-pack/icons/share.png"  className={!theme ? "black-theme" : ""} loading="lazy" alt="" />
               </a>
               <a className="postSave">
-                <img src="/img-pack/icons/favorite.png"  className={!theme ? "black-theme" : ""} loading="lazy" alt="" />
+                <BookMark element={item} theme={false}/>
               </a>
             </div>
           </div>

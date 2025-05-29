@@ -33,6 +33,8 @@ const RoleConfigurationSection = ({ user }) => {
   };
 
   useEffect(() => {
+    if (!user || !user.trainerRequestId) return;
+
     const fetchRequests = async () => {
       setLoading(true);
       try {

@@ -6,6 +6,7 @@ import Loading from "../addLoadingElement";
 import AccountInfoSection from "../addAccountInfoSection";
 import WorkoutStatisticSection from "../addWorkoutStatisticSection";
 import RoleConfigurationSection from "../addRoleConfigurationSectionPage";
+import BookmarkList from "../addBookMarkSection";
 
 const AccountPage = () => {
   const [form] = Form.useForm();
@@ -13,6 +14,7 @@ const AccountPage = () => {
   const [selected, setSelected] = useState("Інформація аккаунту");
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState(undefined);
+  const [bookmarks, setBookMarks] = useState([]);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -28,6 +30,25 @@ const AccountPage = () => {
     };
     fetchUserData();
   }, []);
+
+  useEffect(() => {
+    if (!user) return;
+
+    console.log("IN");
+
+    const fetchBookMarks = async () => {
+      try {
+        const response = await axios.get(`/allbookmarks/${user?._id}`);
+        console.log("awdawdawdaw", response.data.bookmarks);
+        setBookMarks(response.data.bookmarks);
+      } catch (error) {
+        message.error("Error recieving bookmarks");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchBookMarks();
+  }, [selected]);
 
   if (loading) {
     return <Loading />;
@@ -53,10 +74,10 @@ const AccountPage = () => {
             img: "/img-pack/icons/profile-user.png",
             label: "Інформація аккаунту",
           },
-          {
-            img: "/img-pack/icons/dumbbell.png",
-            label: "Поточний план тренувань",
-          },
+          // {
+          //   img: "/img-pack/icons/dumbbell.png",
+          //   label: "Мої збереження",
+          // },
           {
             img: "/img-pack/icons/statistical.png",
             label: "Статистика тренувань",
@@ -65,7 +86,7 @@ const AccountPage = () => {
             img: "/img-pack/icons/gym-station.png",
             label: "Конфігурація ролі",
           },
-          { img: "/img-pack/icons/fitness.png", label: "Улюблені тренування" },
+          { img: "/img-pack/icons/fitness.png", label: "Мої збереження" },
         ].map((item, index) => (
           <a
             key={index}
@@ -98,6 +119,12 @@ const AccountPage = () => {
           className={selected === "Конфігурація ролі" ? "" : "hidePage"}
         >
           <RoleConfigurationSection user={user} />
+        </div>
+        <div
+          id="Мої збереження"
+          className={selected === "Мої збереження" ? "" : "hidePage"}
+        >
+          <BookmarkList bookmarks={bookmarks}/>
         </div>
       </div>
     </div>
