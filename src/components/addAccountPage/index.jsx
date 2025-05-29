@@ -74,10 +74,10 @@ const AccountPage = () => {
             img: "/img-pack/icons/profile-user.png",
             label: "Інформація аккаунту",
           },
-          // {
-          //   img: "/img-pack/icons/dumbbell.png",
-          //   label: "Мої збереження",
-          // },
+          {
+            img: "/img-pack/icons/dumbbell.png",
+            label: "Особистий тренер",
+          },
           {
             img: "/img-pack/icons/statistical.png",
             label: "Статистика тренувань",

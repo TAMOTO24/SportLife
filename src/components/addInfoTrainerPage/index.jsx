@@ -33,7 +33,7 @@ const InfoTrainersPage = () => {
             <strong>Info:</strong> {trainer_info.info}
           </Paragraph>
           <Paragraph>
-            <strong>User ID:</strong> {trainer_info.user_id}
+            <strong>User ID:</strong> {trainer_info.userId}
           </Paragraph>
           <Paragraph>
             <strong>Trainer ID:</strong> {trainer_info._id}
@@ -59,7 +59,7 @@ const InfoTrainersPage = () => {
                 <strong>Info:</strong> {trainer_info.info}
               </Paragraph>
               <Paragraph>
-                <strong>User ID:</strong> {trainer_info.user_id}
+                <strong>User ID:</strong> {trainer_info.userId}
               </Paragraph>
               <Paragraph>
                 <strong>Trainer ID:</strong> {trainer_info._id}
