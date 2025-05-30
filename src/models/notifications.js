@@ -2,10 +2,10 @@ const { message } = require("antd");
 const mongoose = require("mongoose");
 
 const notificationSchema = new mongoose.Schema({
-  userId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "accounts",
-  },
+  // userId: {
+  //   type: mongoose.Schema.Types.ObjectId,
+  //   ref: "accounts",
+  // },
   title: {
     type: String,
   },
@@ -30,6 +30,7 @@ const notificationSchema = new mongoose.Schema({
     default: "info",
   },
   action: String,
+  fromWho: String
 });
 
 const notification =

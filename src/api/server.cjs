@@ -530,6 +530,7 @@ app.post("/notification", async (req, res) => {
     message,
     url,
     type,
+    fromWho: userId,
     readStatus: [],
     action
   });

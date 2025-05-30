@@ -46,12 +46,10 @@ const PeerCamera = ({ roomId, isHost }) => {
           mediaStreamRef.current = mediaStream;
 
           if (localVideoRef.current) {
-            console.log("🎬 Stream set to host video element");
             localVideoRef.current.srcObject = mediaStream;
           }
 
           socket.on("user-connected", (userId) => {
-            console.log("📡 New viewer connected:", userId);
             const call = peer.call(userId, mediaStream);
             peersRef.current[userId] = call;
           });
@@ -59,7 +57,6 @@ const PeerCamera = ({ roomId, isHost }) => {
         });
     } else {
       peer.on("call", (call) => {
-        console.log("📞 Incoming call from host");
         call.answer();
         call.on("stream", (remoteStream) => {
           if (localVideoRef.current) {
@@ -76,16 +73,14 @@ const PeerCamera = ({ roomId, isHost }) => {
         const newPeer = createNewPeer();
         setPeer(newPeer);
 
-        mediaStreamRef.current.getTracks().forEach((track) => {
-          track.stop();
-        });
-
+        if (mediaStreamRef.current) {
+          mediaStreamRef.current.getTracks().forEach((track) => {
+            track.stop();
+          });
+        }
         newPeer.on("open", () => {
           const call = newPeer.call(hostPeerId, null);
-          if (!call) {
-            console.error("❌ Call not established", call, hostPeerId);
-            return;
-          }
+          if (!call) return;
 
           call.on("stream", (remoteStream) => {
             if (localVideoRef.current) {
@@ -101,7 +96,7 @@ const PeerCamera = ({ roomId, isHost }) => {
     return () => {
       socket.off("user-connected");
       socket.off("host-available");
-      
+
       if (peer) {
         peer.destroy();
         console.log("👋 Peer connection closed", peer);
@@ -109,6 +104,7 @@ const PeerCamera = ({ roomId, isHost }) => {
 
       if (mediaStreamRef.current) {
         mediaStreamRef.current.getTracks().forEach((track) => {
+          // ! ERROR This code should stop tracking video for all users especially for host, it doesn't solve the problem
           track.stop();
         });
       }

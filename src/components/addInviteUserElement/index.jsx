@@ -2,7 +2,13 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Avatar, Dropdown, Spin, Button } from "antd";
 
-const InviteUser = ({ userId, message, sendFunction }) => {
+const InviteUser = ({
+  userId,
+  message,
+  sendFunction = "",
+  onSelectUser,
+  onlyTrainer = false,
+}) => {
   const [allUsers, setAllusers] = useState([]);
   const [loading, setLoading] = useState(false);
 
@@ -33,7 +39,10 @@ const InviteUser = ({ userId, message, sendFunction }) => {
             gap: "8px",
             width: "100%",
           }}
-          onClick={() => sendFunction(i?._id)}
+          onClick={() => {
+            onSelectUser(i?._id);
+            if (sendFunction) sendFunction(i?._id);
+          }}
         >
           <Avatar
             size={60}

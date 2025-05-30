@@ -48,7 +48,7 @@ const BookMark = ({ element, theme = true }) => {
         src={`/img-pack/icons/${
           bookMarkStatus ? nameTheme + "_saved.png" : nameTheme + ".png"
         }`}
-        style={{ width: "70px", height: "70px", cursor: "pointer" }}
+        style={{ width: "40px", height: "40px", cursor: "pointer" }}
         onClick={fetchBookmark}
       />
     </button>

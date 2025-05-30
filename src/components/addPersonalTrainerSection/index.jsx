@@ -1,7 +1,8 @@
 import { useState } from "react";
-import { Drawer, Button, Result, Typography, Form, Input } from "antd";
+import { Drawer, Button, Result, Typography, Form, Input, message } from "antd";
 import { CloseCircleOutlined } from "@ant-design/icons";
 import { createNotification } from "../../function";
+import InviteUser from "../addInviteUserElement";
 import "./style.css";
 
 const { Paragraph, Text } = Typography;
@@ -13,6 +14,7 @@ const PersonalTrainer = ({ user }) => {
 
   const showDrawer = () => setOpen(true);
   const onClose = () => setOpen(false);
+  const [chosenUser, setChosenUser] = useState(undefined);
 
   const handleSubmit = (values) => {
     console.log("Відправлено:", values.note);
@@ -21,9 +23,11 @@ const PersonalTrainer = ({ user }) => {
       values.note,
       "Прохання на тему персонального тренера.",
       "info",
-      user?._id,
-      
-    )
+      chosenUser,
+      "",
+      "personalTrainerRequest"
+    );
+    message.success("Запрошення надіслано!");
     onClose();
   };
 
@@ -82,6 +86,16 @@ const PersonalTrainer = ({ user }) => {
             <TextArea
               rows={4}
               placeholder="Наприклад: хочу змінити програму тренувань..."
+            />
+          </Form.Item>
+          <Form.Item>
+            <InviteUser
+              userId={user?._id}
+              message={"Запросити"}
+              onSelectUser={(id) => {
+                console.log("Вибраний юзер:", id);
+                setChosenUser(id);
+              }}
             />
           </Form.Item>
 

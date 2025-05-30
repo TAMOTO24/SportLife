@@ -13,6 +13,7 @@ const NotificationElement = () => {
   const [user, setUser] = useState(undefined);
   const [loading, setLoading] = useState(true);
   const [notifications, setNotifications] = useState([]);
+  // const [sender, setSender] = useState(undefined);
 
   useEffect(() => {
     // Get current user data
@@ -65,7 +66,14 @@ const NotificationElement = () => {
         notificationId: data._id,
       });
       console.log("Notification:", data._id);
-      Notification(data.message, data.title, data.type, data._id, data.url, data?.action);
+      Notification(
+        data.message,
+        data.title,
+        data.type,
+        data._id,
+        data.url,
+        data?.action
+      );
     }, 5000);
 
     return () => clearInterval(interval);
@@ -105,19 +113,30 @@ const NotificationElement = () => {
         bodyStyle={{ padding: 0, backgroundColor: "rgb(24, 26, 29)" }}
       >
         {notifications.map((notification) => (
-            <div key={notification._id} className="notification-item">
-              <Avatar
-                size={60}
-                src={notification.avatar || "/img-pack/icons/user.png"}
-              />
-              <div className="notification-content">
-                <div className="notification-header">
-                  <h1>{notification.title}</h1>
-                  <div>{notification.date}</div>
-                </div>
-                <p>{notification.message}</p>
+          <div key={notification._id} className="notification-item">
+            <Avatar
+              size={60}
+              src={notification.avatar || "/img-pack/icons/user.png"}
+            />
+            <div className="notification-content">
+              <div className="notification-header">
+                <h2>{notification.title}</h2>
+                <div>{notification.date}</div>
               </div>
-              {notification.url && notification?.action == "roomRequest" && (
+              {/* <div>
+                {notification?.fromWho && (
+                  <>
+                    <Avatar
+                      size={60}
+                      src={sender.profile_picture || "/img-pack/icons/user.png"}
+                    />
+                    <p>{sender.username}</p>
+                  </>
+                )}
+              </div> */}
+
+              <p>{notification.message}</p>
+              {notification?.action && (
                 <Space>
                   <Button
                     type="link"
@@ -130,7 +149,13 @@ const NotificationElement = () => {
                     type="primary"
                     size="small"
                     onClick={() => {
-                      setInvitedRoomId(notification?.url);
+                      if (notification?.action === "roomRequest")
+                        setInvitedRoomId(notification?.roomId);
+                      else if (
+                        notification?.action === "personalTrainerRequest"
+                      )
+                        console.log("Accepted request");
+
                       deleteNotification(notification?._id);
                     }}
                   >
@@ -139,7 +164,8 @@ const NotificationElement = () => {
                 </Space>
               )}
             </div>
-          ))}
+          </div>
+        ))}
       </Drawer>
     </>
   );

@@ -47,44 +47,9 @@ export function deleteNotification(notificationId) {
     });
 }
 
-// export function personalTrainerRequest(
-//   trainerId,
-//   userId,
-//   data,
-//   notificationId = ""
-// ) {
-//   const key = `open${Date.now()}`;
+export function acceptPTRequest(userId, trainerId){
 
-//   const body = (
-//     <Space>
-//       <Button
-//         type="link"
-//         size="small"
-//         onClick={() => deleteNotification(notificationId)}
-//       >
-//         Відхилити
-//       </Button>
-//       <Button
-//         type="primary"
-//         size="small"
-//         // onClick={() => {
-//         //   setInvitedRoomId(roomId);
-//         //   deleteNotification(notificationId);
-//         // }}
-//       >
-//         Прийняти
-//       </Button>
-//     </Space>
-//   );
-
-//   notification({
-//     message: "Прохання на тему персонального тренера.",
-//     description: data.message,
-//     key,
-//     duration: 7,
-//     btn: body,
-//   });
-// }
+}
 
 export function setInvitedRoomId(roomId) {
   Cookies.set("roomId", roomId, { expires: 0.1 });
@@ -115,11 +80,10 @@ export function Notification(
         type="primary"
         size="small"
         onClick={() => {
-          if (action === "roomRequest") {
+          if (action === "roomRequest") 
             setInvitedRoomId(roomId);
-          } else if (action === "personalTrainerRequest"){
-
-          }
+          else if (action === "personalTrainerRequest")
+            console.log("Accepted request");
           deleteNotification(notificationId);
         }}
       >
