@@ -4,6 +4,7 @@ import {
   Notification,
   deleteNotification,
   setInvitedRoomId,
+  acceptPTRequest
 } from "../../function";
 import axios from "axios";
 import "./style.css";
@@ -149,12 +150,11 @@ const NotificationElement = () => {
                     type="primary"
                     size="small"
                     onClick={() => {
+                      console.log(notification?.fromWho, notification?.access);
                       if (notification?.action === "roomRequest")
                         setInvitedRoomId(notification?.roomId);
-                      else if (
-                        notification?.action === "personalTrainerRequest"
-                      )
-                        console.log("Accepted request");
+                      else if (notification?.action === "personalTrainerRequest")
+                        acceptPTRequest(notification?.fromWho, notification?.access);
 
                       deleteNotification(notification?._id);
                     }}

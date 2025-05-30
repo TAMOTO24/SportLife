@@ -100,9 +100,9 @@ io.on("connection", (socket) => {
       io.emit("roomOwner", newRoom.owner);
     } else {
       if (!existingRoom.users.includes(userId)) {
-          existingRoom.users.push(userId);
-          await existingRoom.save();
-        }
+        existingRoom.users.push(userId);
+        await existingRoom.save();
+      }
       console.log("enter and give chatHistory");
 
       io.emit("chatHistory", existingRoom.users);
@@ -261,6 +261,34 @@ app.get("/room/:id", async (req, res) => {
     res.status(500).send(`Server error ${error}`);
   }
 });
+
+app.put("/usersetpersonaltrainer", async (req, res) => {
+  const { userId, trainerId } = req.body;
+
+  if (!userId) {
+    return res.status(400).json({ message: "UserId is requiared!" });
+  }
+  if (!userId) {
+    return res.status(400).json({ message: "TrainerId is requiared!" });
+  }
+
+  try {
+    const user = await User.findById(userId);
+
+    if (!user.personalTrainerId) {
+      user.personalTrainerId = trainerId;
+      await user.save();
+    } else {
+      return res
+        .status(400)
+        .json({ message: "You already have an personal trainer!" });
+    }
+    res.json({message: "Trainer changes is equipped!"});
+  } catch (err) {
+    res.status(500).send(`Server error ${err}`);
+  }
+});
+
 app.get("/userbyid/:id", async (req, res) => {
   const { id } = req.params;
 
@@ -521,7 +549,7 @@ app.get("/currentuserdata", async (req, res) => {
 });
 
 app.post("/notification", async (req, res) => {
-  const { access, title, message, userId, url, type, action } = req.body;
+  const { access, title, message, userId, url, type, action, fromWho } = req.body;
 
   const newNotification = new Notification({
     access: access === "all" ? "all" : userId,
@@ -530,9 +558,9 @@ app.post("/notification", async (req, res) => {
     message,
     url,
     type,
-    fromWho: userId,
+    fromWho,
     readStatus: [],
-    action
+    action,
   });
   await newNotification.save();
 

@@ -14,10 +14,12 @@ export function createNotification(
   title,
   type = "info",
   userId,
+  fromWho = "",
   url = "",
   action = "",
   access = ""
 ) {
+  // ! Need testing for errors
   axios
     .post("/notification", {
       message,
@@ -27,6 +29,7 @@ export function createNotification(
       url,
       access,
       action,
+      fromWho
     })
     .then((response) => {
       console.log("Notification sent:", response.data);
@@ -47,8 +50,15 @@ export function deleteNotification(notificationId) {
     });
 }
 
-export function acceptPTRequest(userId, trainerId){
-
+export function acceptPTRequest(userId, trainerId) {
+  axios
+    .put(`/usersetpersonaltrainer`, {userId, trainerId})
+    .then((response) => {
+      console.log( response.data );
+    })
+    .catch((error) => {
+      console.error("Error updating personal trainer:", error);
+    });
 }
 
 export function setInvitedRoomId(roomId) {
@@ -80,8 +90,7 @@ export function Notification(
         type="primary"
         size="small"
         onClick={() => {
-          if (action === "roomRequest") 
-            setInvitedRoomId(roomId);
+          if (action === "roomRequest") setInvitedRoomId(roomId);
           else if (action === "personalTrainerRequest")
             console.log("Accepted request");
           deleteNotification(notificationId);

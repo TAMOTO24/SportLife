@@ -24,6 +24,7 @@ const PersonalTrainer = ({ user }) => {
       "Прохання на тему персонального тренера.",
       "info",
       chosenUser,
+      user?._id,
       "",
       "personalTrainerRequest"
     );
