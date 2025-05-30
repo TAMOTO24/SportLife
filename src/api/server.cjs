@@ -99,14 +99,11 @@ io.on("connection", (socket) => {
       io.emit("chatHistory", newRoom.users);
       io.emit("roomOwner", newRoom.owner);
     } else {
-      const userExists = existingRoom.users.includes(userId);
-      if (userExists) {
-        // check if user already exists u can't add empty user or smth that don't exist
-        if (!existingRoom.users.includes(userId)) {
+      if (!existingRoom.users.includes(userId)) {
           existingRoom.users.push(userId);
           await existingRoom.save();
         }
-      } else return;
+      console.log("enter and give chatHistory");
 
       io.emit("chatHistory", existingRoom.users);
       io.emit("roomOwner", existingRoom.owner);

@@ -65,7 +65,7 @@ const NotificationElement = () => {
         notificationId: data._id,
       });
       console.log("Notification:", data._id);
-      Notification(data.message, data.title, data.type, data._id, data.url);
+      Notification(data.message, data.title, data.type, data._id, data.url, data?.action);
     }, 5000);
 
     return () => clearInterval(interval);

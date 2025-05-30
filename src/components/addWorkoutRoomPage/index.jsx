@@ -1,19 +1,19 @@
 import React, { useEffect, useState } from "react";
-import { useParams, Navigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { socket } from "../../function.js";
 import axios from "axios";
-import { Avatar, List, message, Dropdown, Button, Spin } from "antd";
+import { List, message, Button, Spin } from "antd";
 import { useNavigate, useLocation, Link } from "react-router-dom";
 // import { v4 as uuidv4 } from "uuid";
 import { createNotification } from "../../function.js";
 import Cookies from "js-cookie";
+import InviteUser from "../addInviteUserElement/index.jsx";
 import "./style.css";
 
 export default function RoomPage() {
   const location = useLocation();
   const [uniqueUIDV4Id] = useState(useParams().roomId);
   const [user, setUser] = useState(undefined);
-  const [allUsers, setAllusers] = useState([]);
   const [loading, setLoading] = useState(true);
 
   const navigate = useNavigate();
@@ -21,23 +21,8 @@ export default function RoomPage() {
   const { workouts } = location.state || {};
 
   const [users, setUsers] = useState([]);
-  const [data, setData] = useState({});
+  // const [data, setData] = useState({});
   const [isOwner, setOwner] = useState(false);
-
-  useEffect(() => {
-    setLoading(true);
-    const fetchData = async () => {
-      try {
-        const response = await axios.get("/allusers");
-        setAllusers(response.data);
-      } catch (error) {
-        console.error("Error in useEffect:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchData();
-  }, []);
 
   useEffect(() => {
     setLoading(true);
@@ -57,8 +42,8 @@ export default function RoomPage() {
 
     if (!socket.connected) {
       socket.connect();
-    }else{
-      socket.emit("getAllRoomUsers", {roomId: uniqueUIDV4Id});
+    } else {
+      socket.emit("getAllRoomUsers", { roomId: uniqueUIDV4Id });
     }
 
     socket.on("connect", async () => {
@@ -74,25 +59,27 @@ export default function RoomPage() {
 
     socket.on("roomClosed", () => {
       message.error("Кімнату закрито — творець вийшов");
-      Cookies.remove('roomId');
+      Cookies.remove("roomId");
       navigate("/", { replace: true });
     });
 
     socket.on("chatHistory", (user) => {
       setUsers(user);
+      console.log("user connected");
     });
 
     socket.on("roomOwner", (ownerId) => {
       setOwner(ownerId === user._id);
     });
 
-    socket.on("receiveUpdate", (data) => {
-      setData(data);
-    });
+    // socket.on("receiveUpdate", (data) => {
+    //   setData(data);
+    // });
 
     socket.on("redirect", () => {
       console.log("Redirect");
-      if(!isOwner) navigate(`/workoutprogress/${uniqueUIDV4Id}`, { replace: true });
+      if (!isOwner)
+        navigate(`/workoutprogress/${uniqueUIDV4Id}`, { replace: true });
     });
 
     return () => {
@@ -103,34 +90,6 @@ export default function RoomPage() {
       socket.off("receiveUpdate");
     };
   }, [user, uniqueUIDV4Id, navigate]);
-
-  const items = allUsers
-    .filter((i) => i?._id !== user?._id)
-    .map((i) => ({
-      key: i?._id,
-      label: (
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "8px",
-            width: "100%",
-          }}
-          onClick={() => sendRequest(i?._id)}
-        >
-          <Avatar
-            size={60}
-            src={i?.profile_picture || "/img-pack/icons/user-blacktheme.png"}
-          />
-          <div>
-            <strong>
-              {i?.name} {i?.last_name || ""}
-            </strong>
-            <div style={{ fontSize: "12px", color: "#888" }}>{i?.role}</div>
-          </div>
-        </div>
-      ),
-    }));
 
   const sendRequest = (id) => {
     createNotification(
@@ -163,11 +122,16 @@ export default function RoomPage() {
       <Spin spinning={loading} tip="Loading">
         <h2>Створення кімнати</h2>
         {isOwner && (
-          <Dropdown menu={{ items }}>
-            <Button onClick={(e) => e.preventDefault()}>
-              Надіслати запрошення
-            </Button>
-          </Dropdown>
+          <InviteUser
+            userId={user?._id}
+            message={"Надіслати запрошення"}
+            sendFunction={sendRequest}
+          />
+          // <Dropdown menu={{ items }}>
+          //   <Button onClick={(e) => e.preventDefault()}>
+          //
+          //   </Button>
+          // </Dropdown>
         )}
         <button
           onClick={() => {

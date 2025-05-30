@@ -1,9 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "./style.css";
-import {
-  InboxOutlined,
-  LoadingOutlined,
-} from "@ant-design/icons";
+import { InboxOutlined, LoadingOutlined } from "@ant-design/icons";
 import {
   Form,
   Input,
@@ -79,6 +76,7 @@ const RoleConfigurationSection = ({ user }) => {
       <div className="roleConfigurationBlock">
         <Card title="Role Configuration" className="roleConfigurationCard">
           <Form
+            form={form}
             layout="vertical"
             className="roleConfigurationForm"
             initialValues={{ email: user.email }}
@@ -106,11 +104,7 @@ const RoleConfigurationSection = ({ user }) => {
                 <Option value="admin">request Admin role</Option>
               </Select>
             </Form.Item>
-            <Form.Item
-              name="email"
-              label="Email"
-              rules={[{ required: true }]}
-            >
+            <Form.Item name="email" label="Email" rules={[{ required: true }]}>
               <Input disabled={true} />
             </Form.Item>
 

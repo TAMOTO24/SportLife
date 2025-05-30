@@ -1,15 +1,31 @@
 import { useState } from "react";
-import { Drawer, Button, Result, Typography } from "antd";
+import { Drawer, Button, Result, Typography, Form, Input } from "antd";
 import { CloseCircleOutlined } from "@ant-design/icons";
+import { createNotification } from "../../function";
 import "./style.css";
 
 const { Paragraph, Text } = Typography;
+const { TextArea } = Input;
 
 const PersonalTrainer = ({ user }) => {
+  const [form] = Form.useForm();
   const [open, setOpen] = useState(false);
 
   const showDrawer = () => setOpen(true);
   const onClose = () => setOpen(false);
+
+  const handleSubmit = (values) => {
+    console.log("Відправлено:", values.note);
+    form.resetFields();
+    createNotification(
+      values.note,
+      "Прохання на тему персонального тренера.",
+      "info",
+      user?._id,
+      
+    )
+    onClose();
+  };
 
   return (
     <>
@@ -52,8 +68,29 @@ const PersonalTrainer = ({ user }) => {
       </h2>
       {!user?.personalTrainerId && <></>}
       <Drawer onClose={onClose} closable={false} open={open}>
-        <h2>Ваш персональний тренер</h2>
-        <p>Інформація про тренування, цілі, прогрес і т.д.</p>
+        <h2 style={{ marginBottom: 8 }}>Ваш персональний тренер</h2>
+        <p style={{ color: "#888", marginBottom: 24 }}>
+          Інформація про тренування, цілі, прогрес і т.д.
+        </p>
+
+        <Form layout="vertical" form={form} onFinish={handleSubmit}>
+          <Form.Item
+            label="Записка"
+            name="note"
+            rules={[{ required: true, message: "Будь ласка, введіть записку" }]}
+          >
+            <TextArea
+              rows={4}
+              placeholder="Наприклад: хочу змінити програму тренувань..."
+            />
+          </Form.Item>
+
+          <Form.Item>
+            <Button type="primary" htmlType="submit" block>
+              Відправити
+            </Button>
+          </Form.Item>
+        </Form>
       </Drawer>
     </>
   );
