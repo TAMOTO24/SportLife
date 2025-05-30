@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from "react";
 import "./style.css";
-import { Form, message } from "antd";
+import { Form, message, Spin } from "antd";
 import axios from "axios";
 import Loading from "../addLoadingElement";
 import AccountInfoSection from "../addAccountInfoSection";
 import WorkoutStatisticSection from "../addWorkoutStatisticSection";
 import RoleConfigurationSection from "../addRoleConfigurationSectionPage";
 import BookmarkList from "../addBookMarkSection";
+import PersonalTrainer from "../addPersonalTrainerSection";
 
 const AccountPage = () => {
   const [form] = Form.useForm();
@@ -87,18 +88,24 @@ const AccountPage = () => {
             label: "Конфігурація ролі",
           },
           { img: "/img-pack/icons/fitness.png", label: "Мої збереження" },
-        ].map((item, index) => (
-          <a
-            key={index}
-            className={`elementBlock ${
-              selected === item.label ? "selected" : ""
-            }`}
-            onClick={() => setSelected(item.label)}
-          >
-            <img loading="lazy" src={item.img} alt={item.label} />
-            <div className={active ? "activeButton" : ""}>{item.label}</div>
-          </a>
-        ))}
+        ].map((item, index) => {
+          // ! Change it to user?.role === "trainer" later
+          if (item.label === "Особистий тренер" && !user?.role === "trainer")
+            return null;
+
+          return (
+            <a
+              key={index}
+              className={`elementBlock ${
+                selected === item.label ? "selected" : ""
+              }`}
+              onClick={() => setSelected(item.label)}
+            >
+              <img loading="lazy" src={item.img} alt={item.label} />
+              <div className={active ? "activeButton" : ""}>{item.label}</div>
+            </a>
+          );
+        })}
       </div>
       <div id="pages">
         {/* <h1>{selected}</h1> */}
@@ -108,6 +115,13 @@ const AccountPage = () => {
         >
           <AccountInfoSection />
         </div>
+        <div
+          id="Особистий тренер"
+          className={selected === "Особистий тренер" ? "" : "hidePage"}
+        >
+          <PersonalTrainer user={user} />
+        </div>
+
         <div
           id="Статистика тренувань"
           className={selected === "Статистика тренувань" ? "" : "hidePage"}
@@ -124,7 +138,9 @@ const AccountPage = () => {
           id="Мої збереження"
           className={selected === "Мої збереження" ? "" : "hidePage"}
         >
-          <BookmarkList bookmarks={bookmarks}/>
+          <Spin spinning={loading}>
+            <BookmarkList bookmarks={bookmarks} />
+          </Spin>
         </div>
       </div>
     </div>

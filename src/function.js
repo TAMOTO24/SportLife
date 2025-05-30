@@ -14,11 +14,12 @@ export function createNotification(
   title,
   type = "info",
   userId,
-  url = "",
+  url = "",  
+  action = "",
   access = ""
 ) {
   axios
-    .post("/notification", { message, title, type, userId, url, access })
+    .post("/notification", { message, title, type, userId, url, access, action })
     .then((response) => {
       console.log("Notification sent:", response.data);
     })

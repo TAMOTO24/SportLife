@@ -524,7 +524,7 @@ app.get("/currentuserdata", async (req, res) => {
 });
 
 app.post("/notification", async (req, res) => {
-  const { access, title, message, userId, url, type } = req.body;
+  const { access, title, message, userId, url, type, action } = req.body;
 
   const newNotification = new Notification({
     access: access === "all" ? "all" : userId,
@@ -534,6 +534,7 @@ app.post("/notification", async (req, res) => {
     url,
     type,
     readStatus: [],
+    action
   });
   await newNotification.save();
 

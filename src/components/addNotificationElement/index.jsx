@@ -117,7 +117,7 @@ const NotificationElement = () => {
                 </div>
                 <p>{notification.message}</p>
               </div>
-              {notification.url && (
+              {notification.url && notification?.action == "roomRequest" && (
                 <Space>
                   <Button
                     type="link"

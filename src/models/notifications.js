@@ -28,7 +28,8 @@ const notificationSchema = new mongoose.Schema({
     type: String,
     enum: ["info", "success", "error"],
     default: "info",
-  }
+  },
+  action: String,
 });
 
 const notification =

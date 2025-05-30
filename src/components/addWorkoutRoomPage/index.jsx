@@ -138,7 +138,8 @@ export default function RoomPage() {
       "Запрошення на приєднання до кімнати",
       "info",
       id,
-      uniqueUIDV4Id
+      uniqueUIDV4Id,
+      "roomRequest"
     );
     message.success("Запрошення надіслано!");
   };
