@@ -4,7 +4,7 @@ import {
   Notification,
   deleteNotification,
   setInvitedRoomId,
-  acceptPTRequest
+  trainerRequest,
 } from "../../function";
 import axios from "axios";
 import "./style.css";
@@ -142,7 +142,13 @@ const NotificationElement = () => {
                   <Button
                     type="link"
                     size="small"
-                    onClick={() => deleteNotification(notification?._id)}
+                    onClick={() => {
+                      if (notification?.action === "personalTrainerRequest")
+                        trainerRequest(notification?.fromWho, notification?.access, "reject");
+                      setOpen(false);
+                      setLoading(true);
+                      deleteNotification(notification?._id);
+                    }}
                   >
                     Destroy All
                   </Button>
@@ -154,7 +160,7 @@ const NotificationElement = () => {
                       if (notification?.action === "roomRequest")
                         setInvitedRoomId(notification?.roomId);
                       else if (notification?.action === "personalTrainerRequest")
-                        acceptPTRequest(notification?.fromWho, notification?.access);
+                        trainerRequest(notification?.fromWho, notification?.access, "accept");
 
                       deleteNotification(notification?._id);
                     }}

@@ -37,11 +37,15 @@ const PersonalTrainer = ({ user }) => {
       <h1>
         <b>Персональний тренер</b>
       </h1>
-      {!user?.personalTrainerId && (
+      {user?.personalTrainerId && (
         <Result
           status="404"
           title="У вас ще немає персонального тренеру"
-          subTitle="Для запису на персонального тренеру заповніть форму де треба обрати самого тренера та заповнити дані, після цього почекати поки тренер приймє запит!"
+          subTitle="
+          Для запису на персонального тренеру 
+          заповніть форму де треба обрати самого тренера та заповнити дані, 
+          після цього почекати поки тренер приймє запит!
+          "
           extra={
             <Button type="primary" key="console" onClick={showDrawer}>
               Надіслати запрошення
@@ -71,6 +75,12 @@ const PersonalTrainer = ({ user }) => {
       <h2>
         <b>Запит на персонального тренера</b>
       </h2>
+      <div>
+        Статус запиту{" "}
+        {user?.personalTrainerId === "rejected" || !user?.personalTrainerId
+          ? "ВІДХИЛЕНО"
+          : "Підтверджено"}
+      </div>
       {!user?.personalTrainerId && <></>}
       <Drawer onClose={onClose} closable={false} open={open}>
         <h2 style={{ marginBottom: 8 }}>Ваш персональний тренер</h2>

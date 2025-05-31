@@ -50,9 +50,9 @@ export function deleteNotification(notificationId) {
     });
 }
 
-export function acceptPTRequest(userId, trainerId) {
+export function trainerRequest(userId, trainerId, action) {
   axios
-    .put(`/usersetpersonaltrainer`, {userId, trainerId})
+    .put(`/usersetpersonaltrainer`, {userId, trainerId, action})
     .then((response) => {
       console.log( response.data );
     })
@@ -77,36 +77,36 @@ export function Notification(
 ) {
   const key = `open${Date.now()}`;
 
-  const body = (
-    <Space>
-      <Button
-        type="link"
-        size="small"
-        onClick={() => deleteNotification(notificationId)}
-      >
-        Destroy All
-      </Button>
-      <Button
-        type="primary"
-        size="small"
-        onClick={() => {
-          if (action === "roomRequest") setInvitedRoomId(roomId);
-          else if (action === "personalTrainerRequest")
-            console.log("Accepted request");
-          deleteNotification(notificationId);
-        }}
-      >
-        Confirm
-      </Button>
-    </Space>
-  );
+  // const body = (
+  //   <Space>
+  //     <Button
+  //       type="link"
+  //       size="small"
+  //       onClick={() => deleteNotification(notificationId)}
+  //     >
+  //       Destroy All
+  //     </Button>
+  //     <Button
+  //       type="primary"
+  //       size="small"
+  //       onClick={() => {
+  //         if (action === "roomRequest") setInvitedRoomId(roomId);
+  //         else if (action === "personalTrainerRequest")
+  //           personalTrainerRequest
+  //         deleteNotification(notificationId);
+  //       }}
+  //     >
+  //       Confirm
+  //     </Button>
+  //   </Space>
+  // );
 
   notification[type]({
     message: title,
     description: message,
     key,
     duration: 7,
-    ...(roomId ? {} : { btn: body }),
+    // ...(roomId ? {} : { btn: body }),
   });
 }
 

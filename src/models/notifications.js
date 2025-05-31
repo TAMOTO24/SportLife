@@ -1,4 +1,3 @@
-const { message } = require("antd");
 const mongoose = require("mongoose");
 
 const notificationSchema = new mongoose.Schema({

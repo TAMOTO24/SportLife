@@ -263,7 +263,7 @@ app.get("/room/:id", async (req, res) => {
 });
 
 app.put("/usersetpersonaltrainer", async (req, res) => {
-  const { userId, trainerId } = req.body;
+  const { userId, trainerId, action } = req.body;
 
   if (!userId) {
     return res.status(400).json({ message: "UserId is requiared!" });
@@ -275,15 +275,19 @@ app.put("/usersetpersonaltrainer", async (req, res) => {
   try {
     const user = await User.findById(userId);
 
-    if (!user.personalTrainerId) {
-      user.personalTrainerId = trainerId;
-      await user.save();
-    } else {
-      return res
-        .status(400)
-        .json({ message: "You already have an personal trainer!" });
-    }
-    res.json({message: "Trainer changes is equipped!"});
+    if (action == "accept") {
+      if (!user.personalTrainerId) user.personalTrainerId = trainerId;
+       else {
+        return res
+          .status(400)
+          .json({ message: "You already have an personal trainer!" });
+      }
+    } else user.personalTrainerId = "rejected";
+
+    console.log(action);
+    await user.save();
+
+    res.json({ message: "Trainer changes is equipped!" });
   } catch (err) {
     res.status(500).send(`Server error ${err}`);
   }
@@ -549,7 +553,8 @@ app.get("/currentuserdata", async (req, res) => {
 });
 
 app.post("/notification", async (req, res) => {
-  const { access, title, message, userId, url, type, action, fromWho } = req.body;
+  const { access, title, message, userId, url, type, action, fromWho } =
+    req.body;
 
   const newNotification = new Notification({
     access: access === "all" ? "all" : userId,
