@@ -22,7 +22,7 @@ const WorkoutPage = () => {
   };
 
   const navigateToWorkoutPage = (item) => {
-    navigate("/classpage", { state: { workout: item } });
+    navigate(`/classpage/${item?._id}`, { state: { workout: item } });
   };
 
   const fetchWorkouts = useCallback(async (index) => {

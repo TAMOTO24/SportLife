@@ -20,7 +20,8 @@ const userSchema = new mongoose.Schema({
   statistic: Array,
   trainerRequestId: String,
   bookmarks: Array,
-  personalTrainerId: String 
+  personalTrainerId: String,
+  clientId: String
 });
 
 module.exports = mongoose.models.accounts || mongoose.model('accounts', userSchema);

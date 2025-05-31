@@ -31,7 +31,7 @@ function App() {
           <Route path="/authpage" element={<AuthPage />} />
           <Route path="/newsandinf" element={<NewsInfoPage />} />
           <Route path="/workoutpage" element={<WorkoutPage />} />
-          <Route path="/classpage" element={<ClassPage />} />
+          <Route path="/classpage/:workoutId" element={<ClassPage />} />
           <Route path="/trainerspage" element={<TrainersPage />} />
           <Route path="/trainerspage/info" element={<InfoTrainerPage />} />
           <Route path="/newsandinf/comments" element={<CommentsPage />} />

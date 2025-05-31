@@ -268,24 +268,27 @@ app.put("/usersetpersonaltrainer", async (req, res) => {
   if (!userId) {
     return res.status(400).json({ message: "UserId is requiared!" });
   }
-  if (!userId) {
+  if (!trainerId) {
     return res.status(400).json({ message: "TrainerId is requiared!" });
   }
 
   try {
     const user = await User.findById(userId);
+    const trainer = await User.findById(trainerId);
 
     if (action == "accept") {
-      if (!user.personalTrainerId) user.personalTrainerId = trainerId;
-       else {
-        return res
-          .status(400)
-          .json({ message: "You already have an personal trainer!" });
-      }
+        user.personalTrainerId = trainerId;
+
+        trainer.clientId = userId;
+      // } else {
+      //   return res
+      //     .status(400)
+      //     .json({ message: "You already have an personal trainer!" });
+      // }
     } else user.personalTrainerId = "rejected";
 
-    console.log(action);
     await user.save();
+    await trainer.save();
 
     res.json({ message: "Trainer changes is equipped!" });
   } catch (err) {
