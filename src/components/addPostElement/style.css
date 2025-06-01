@@ -1,6 +1,7 @@
 .post {
   display: flex;
   /* border-top: 1px solid gray; */
+  align-items: flex-start;
   padding: 10px;
   width: 100%;
 
@@ -8,6 +9,7 @@
   /* max-height: 900px; */
 }
 .postPhoto img {
+  flex-shrink: 0;
   width: 60px;
   height: 60px;
   border-radius: 50%;
@@ -27,16 +29,19 @@
   z-index: 100;
   gap: 10px;
 }
-.disable-block{
+.disable-block {
   display: none;
   pointer-events: none;
 }
 .postPanel {
   justify-content: space-between;
   align-items: center;
+  flex-wrap: wrap;
+  margin-top: 10px;
 }
 .postContent {
   position: block;
+  min-width: 0;
   width: 100%;
 }
 .postGallery {
@@ -52,12 +57,12 @@
   max-height: 600px;
   flex-direction: column;
 }
-.postText{
+.postText {
   font-size: 20px;
   margin: 10px;
   color: black;
 }
-.postUser{
+.postUser {
   font-size: 15px;
   font-weight: bolder;
   color: black;
@@ -93,14 +98,14 @@
 .postComment div {
   font-size: 20px;
 }
-.black-theme{
+.black-theme {
   filter: brightness(0) invert(1);
 }
-.black-theme-title{
+.black-theme-title {
   /* color: #e35454; */
   color: whitesmoke;
 }
-.black-theme-block{
+.black-theme-block {
   border: 3px solid #e35454;
   background: #181a1f;
 }
@@ -117,7 +122,8 @@
   text-decoration: none;
   border: 1px solid rgb(163, 163, 255);
   background: black;
-  transition: width 0.4s ease-in-out, padding 0.4s ease-in-out, border-radius 0.4s ease-in-out;
+  transition: width 0.4s ease-in-out, padding 0.4s ease-in-out,
+    border-radius 0.4s ease-in-out;
   width: 50px;
   display: flex;
   justify-content: center;
@@ -140,12 +146,12 @@
   border-radius: 25px;
   background: rgb(100, 100, 255);
 }
-.addPostButton:active{
-    width: 50px;
-    background: gray;
+.addPostButton:active {
+  width: 50px;
+  background: gray;
 }
-.addPostButton:active::before{
-    color: black;
+.addPostButton:active::before {
+  color: black;
 }
 
 .addPostButton:hover::before {
@@ -168,5 +174,3 @@
     transform: translateX(0);
   }
 }
-
-  

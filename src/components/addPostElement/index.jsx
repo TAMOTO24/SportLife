@@ -4,20 +4,37 @@ import { useNavigate, Link } from "react-router-dom";
 import Cookies from "js-cookie";
 import "./style.css";
 import { Modal, message, Card, Divider } from "antd";
-import BookMark from "../addBookMarkElement/index"
+import BookMark from "../addBookMarkElement/index";
 
-const PostElement = ({ item, hoverable,  theme }) => { // THEME - false ? black/red theme : white/black theme 
+const PostElement = ({ item, hoverable, theme }) => {
+  // THEME - false ? black/red theme : white/black theme
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [currentImage, setCurrentImage] = useState("");
   const [loading, setLoading] = useState(true);
   const [likes, setLikes] = useState(item.like.length);
   const [user, setUser] = useState(undefined);
+  const [creator, setCreator] = useState({});
   const navigate = useNavigate();
 
   useEffect(() => {
+    const fetchUseIdData = async () => {
+      setLoading(true);
+      try {
+        const response = await axios.get(`/userbyid/${item?.created_by}`);
+        setCreator(response.data);
+      } catch (error) {
+        message.error(error.response.data.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchUseIdData();
+  }, []);
+
+  useEffect(() => {
     const token = Cookies.get("token");
-    if (!token){
-      return
+    if (!token) {
+      return;
     }
     const fetchUserData = async () => {
       try {
@@ -32,7 +49,7 @@ const PostElement = ({ item, hoverable,  theme }) => { // THEME - false ? black/
     fetchUserData();
   }, []);
 
-  const postLike = (userid, id) => { // ! BAG: in comment page likes after reload didn't change
+  const postLike = (userid, id) => {
     const token = Cookies.get("token");
     setLoading(true);
     if (!token) {
@@ -83,13 +100,13 @@ const PostElement = ({ item, hoverable,  theme }) => { // THEME - false ? black/
   const handleCancel = () => {
     setIsModalVisible(false);
   };
+
   return (
     <>
-     {/* {hoverable && ( <Divider style={{ background: "#ddd" }} />)} */}
       <Card
         hoverable={hoverable}
         className={!theme && "black-theme-block"}
-        style={{maxWidth: "975px"}}
+        style={{ maxWidth: "975px" }}
         bordered={theme}
         onClick={() => {
           if (hoverable) {
@@ -106,7 +123,7 @@ const PostElement = ({ item, hoverable,  theme }) => { // THEME - false ? black/
           <div className="postPhoto">
             <img
               loading="lazy"
-              src={item.userIcon || "/img-pack/icons/user-blacktheme.png"}
+              src={creator?.profile_picture || "/img-pack/icons/user-blacktheme.png"}
               alt="UserIcon"
               className={!theme ? "black-theme" : ""}
             />
@@ -115,11 +132,15 @@ const PostElement = ({ item, hoverable,  theme }) => { // THEME - false ? black/
           <div className="postContent">
             <div>
               <div className="postUserContent">
-                <div className={`postUser ${!theme && "black-theme-title"}`}>{item.user || "unknown user"}</div>
-                <div className="postUsername">@{item.username}</div>
+                <div className={`postUser ${!theme && "black-theme-title"}`}>
+                  {creator?.name || "Uknown"}
+                </div>
+                <div className="postUsername">@{creator?.username}</div>
                 <div className="postDate">{calculateTimeAgo(item.date)}</div>
               </div>
-              <div className={`postText ${!theme && "black-theme-title"}`}>{item.text}</div>
+              <div className={`postText ${!theme && "black-theme-title"}`}>
+                {item.text}
+              </div>
             </div>
             <div className="postGallery">
               {item.gallery.map((image, index) => (
@@ -140,18 +161,33 @@ const PostElement = ({ item, hoverable,  theme }) => { // THEME - false ? black/
                   postLike(user?._id, item._id);
                 }}
               >
-                <img src="/img-pack/icons/like.png" className={!theme && "black-theme"} loading="lazy" alt="" />
+                <img
+                  src="/img-pack/icons/like.png"
+                  className={!theme && "black-theme"}
+                  loading="lazy"
+                  alt=""
+                />
                 <div>{likes}</div>
               </a>
               <Link to="" className="postComment">
-                <img src="/img-pack/icons/chat.png"  className={!theme ? "black-theme" : ""} loading="lazy" alt="" />
+                <img
+                  src="/img-pack/icons/chat.png"
+                  className={!theme ? "black-theme" : ""}
+                  loading="lazy"
+                  alt=""
+                />
                 <div>{item.comment.length}</div>
               </Link>
               <a className="postShare">
-                <img src="/img-pack/icons/share.png"  className={!theme ? "black-theme" : ""} loading="lazy" alt="" />
+                <img
+                  src="/img-pack/icons/share.png"
+                  className={!theme ? "black-theme" : ""}
+                  loading="lazy"
+                  alt=""
+                />
               </a>
               <a className="postSave">
-                <BookMark element={item} theme={false}/>
+                <BookMark element={item} theme={false} />
               </a>
             </div>
           </div>

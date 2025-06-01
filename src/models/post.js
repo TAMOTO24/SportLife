@@ -3,14 +3,12 @@ const mongoose = require("mongoose");
 const postSchema = new mongoose.Schema({
   // _id: ObjectId,
   text: String,
-  user: String,
-  username: String,
+  created_by: String,
   date: {
     type: Date,
     default: Date.now,
   },
   gallery: Array,
-  userIcon: String,
   comment: Array,
   like: Array,
 });

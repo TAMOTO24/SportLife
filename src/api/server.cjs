@@ -446,6 +446,24 @@ app.get("/api/getposts", async (req, res) => {
   }
 });
 
+app.get("/postbyid/:userId", async (req, res) => {
+  const { userId } = req.params;
+
+  if (!userId) {
+    return res.status(400).json({ message: "User Id is required!" });
+  }
+
+  try {
+    const post = await Post.find({ created_by: userId });
+    if (!post) {
+      return res.status(200).json({ message: "There are no posts" });
+    }
+    res.json(post);
+  } catch (err) {
+    res.status(500).send("Server error", err);
+  }
+});
+
 app.post("/newuser", async (req, res) => {
   const {
     username,
