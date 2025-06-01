@@ -6,7 +6,7 @@ import { List, message, Button, Spin } from "antd";
 import { useNavigate, useLocation, Link } from "react-router-dom";
 // import { v4 as uuidv4 } from "uuid";
 import { createNotification } from "../../function.js";
-import Cookies from "js-cookie";
+// import Cookies from "js-cookie";
 import InviteUser from "../addInviteUserElement/index.jsx";
 import "./style.css";
 
@@ -36,7 +36,6 @@ export default function RoomPage() {
         setLoading(false);
       });
   }, []);
-  // TODO Functionality to other sockets look for owner if he out of the room then all out if he out of the workoutpage then all out as usual
   useEffect(() => {
     if (!user) return;
 
@@ -47,8 +46,6 @@ export default function RoomPage() {
     }
 
     socket.on("connect", async () => {
-      console.log("✅ Connected to socket.io server:", socket.id);
-
       socket.emit("joinRoom", { roomId: uniqueUIDV4Id, userId: user._id });
       socket.emit("getRoomOwner", { roomId: uniqueUIDV4Id });
     });
@@ -59,16 +56,16 @@ export default function RoomPage() {
 
     socket.on("roomClosed", () => {
       message.error("Кімнату закрито — творець вийшов");
-      Cookies.remove("roomId");
+      // Cookies.remove("roomId");
       navigate("/", { replace: true });
     });
 
     socket.on("chatHistory", (user) => {
       setUsers(user);
-      console.log("user connected");
     });
 
     socket.on("roomOwner", (ownerId) => {
+      console.log("Room owner changed", ownerId === user._id, ownerId, user._id)
       setOwner(ownerId === user._id);
     });
 
@@ -88,8 +85,14 @@ export default function RoomPage() {
       socket.off("chatHistory");
       socket.off("roomOwner");
       socket.off("receiveUpdate");
+      console.log("U left the room or smth went wrong");
+      // socket.emit("disconnectData", {
+      //   roomId: uniqueUIDV4Id,
+      //   userId: user._id,
+      // });
+      // socket.disconnect();
     };
-  }, [user, uniqueUIDV4Id, navigate]);
+  }, [user, uniqueUIDV4Id, navigate, location]);
 
   const sendRequest = (id) => {
     // ! TEST THIS CODE UP - it can contain an error
@@ -110,7 +113,7 @@ export default function RoomPage() {
         roomId: uniqueUIDV4Id,
         userId: user._id,
       });
-      Cookies.remove("roomId");
+      // Cookies.remove("roomId");
       navigate("/", { replace: true });
       console.log("Socket disconnected");
       socket.disconnect();

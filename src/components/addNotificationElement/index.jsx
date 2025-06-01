@@ -89,7 +89,6 @@ const NotificationElement = () => {
   };
   return (
     <>
-      {/* ADD NOTIFICATION SUPPORT*/}
       <Badge
         dot={true}
         style={{
@@ -124,17 +123,6 @@ const NotificationElement = () => {
                 <h2>{notification.title}</h2>
                 <div>{notification.date}</div>
               </div>
-              {/* <div>
-                {notification?.fromWho && (
-                  <>
-                    <Avatar
-                      size={60}
-                      src={sender.profile_picture || "/img-pack/icons/user.png"}
-                    />
-                    <p>{sender.username}</p>
-                  </>
-                )}
-              </div> */}
 
               <p>{notification.message}</p>
               {notification?.action && (
@@ -150,22 +138,21 @@ const NotificationElement = () => {
                       deleteNotification(notification?._id);
                     }}
                   >
-                    Destroy All
+                    Відхилити
                   </Button>
                   <Button
                     type="primary"
                     size="small"
                     onClick={() => {
-                      console.log(notification?.fromWho, notification?.access);
                       if (notification?.action === "roomRequest")
-                        setInvitedRoomId(notification?.roomId);
+                        setInvitedRoomId(notification?.url);
                       else if (notification?.action === "personalTrainerRequest")
                         trainerRequest(notification?.fromWho, notification?.access, "accept");
 
                       deleteNotification(notification?._id);
                     }}
                   >
-                    Confirm
+                    Підтвердити
                   </Button>
                 </Space>
               )}

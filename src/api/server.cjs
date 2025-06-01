@@ -96,8 +96,11 @@ io.on("connection", (socket) => {
       });
       await newRoom.save();
 
-      io.emit("chatHistory", newRoom.users);
-      io.emit("roomOwner", newRoom.owner);
+      console.log("Create new room with - ", userId, " - owner");
+
+      io.to(newRoom.roomId).emit("chatHistory", newRoom.users);
+      io.to(newRoom.roomId).emit("roomOwner", newRoom.owner);
+      socket.emit("receiveData", newRoom.data);
     } else {
       if (!existingRoom.users.includes(userId)) {
         existingRoom.users.push(userId);
@@ -105,8 +108,8 @@ io.on("connection", (socket) => {
       }
       console.log("enter and give chatHistory");
 
-      io.emit("chatHistory", existingRoom.users);
-      io.emit("roomOwner", existingRoom.owner);
+      io.to(existingRoom.roomId).emit("chatHistory", existingRoom.users);
+      io.to(existingRoom.roomId).emit("roomOwner", existingRoom.owner);
       socket.emit("receiveData", existingRoom.data);
     }
   });
@@ -116,8 +119,8 @@ io.on("connection", (socket) => {
 
     if (!existingRoom) return;
 
-    io.emit("chatHistory", existingRoom.users);
-    io.emit("roomOwner", existingRoom.owner);
+    io.to(roomId).emit("chatHistory", existingRoom.users);
+    io.to(roomId).emit("roomOwner", existingRoom.owner);
   });
 
   socket.on("getRoomOwner", async ({ roomId }) => {
@@ -125,7 +128,7 @@ io.on("connection", (socket) => {
 
     if (!existingRoom) return;
 
-    io.emit("roomOwner", existingRoom.owner);
+    io.to(roomId).emit("roomOwner", existingRoom.owner);
   });
 
   socket.on("sendUpdate", async ({ roomId, data }) => {
@@ -134,7 +137,7 @@ io.on("connection", (socket) => {
       existingRoom.data = data;
       await existingRoom.save();
     }
-    io.to(roomId).emit("receiveUpdate", data);
+    io.to(roomId).to(roomId).emit("receiveUpdate", data);
   });
 
   socket.on(
@@ -182,14 +185,14 @@ io.on("connection", (socket) => {
 
       console.log("owner disconnected, room deleted");
 
-      socket.to(roomId).emit("roomClosed");
+      socket.broadcast.to(roomId).emit("roomClosed");
       return;
     }
 
     existingRoom.users = existingRoom.users.filter((user) => user !== userId);
     await existingRoom.save();
 
-    io.emit("chatHistory", existingRoom.users);
+    io.to(roomId).emit("chatHistory", existingRoom.users);
 
     if (existingRoom.users.length === 0) {
       await Room.deleteOne({ roomId });
@@ -201,8 +204,6 @@ io.on("connection", (socket) => {
     const user = await User.findById(userId);
     //FIX THIS SOCKET METHOD, DIDN'T SAVE THE RESULT
 
-    console.log("start");
-
     if (!userId || !data || !user) {
       return;
     }
@@ -213,12 +214,11 @@ io.on("connection", (socket) => {
     console.log("end");
 
     user.statistic.push(data);
-    console.log("result", user.statistic);
     user.save();
   });
 
   socket.on("disconnect", () => {
-    // console.log("Клієнт відключився:", socket.id);
+    console.log("Клієнт відключився:", socket.id);
   });
 });
 
@@ -277,9 +277,9 @@ app.put("/usersetpersonaltrainer", async (req, res) => {
     const trainer = await User.findById(trainerId);
 
     if (action == "accept") {
-        user.personalTrainerId = trainerId;
+      user.personalTrainerId = trainerId;
 
-        trainer.clientId = userId;
+      trainer.clientId = userId;
       // } else {
       //   return res
       //     .status(400)
@@ -336,6 +336,19 @@ app.get("/api/workouts/:type", async (req, res) => {
   const { type } = req.params;
   try {
     const items = await Workouts.find({ type });
+    res.json(items);
+  } catch (error) {
+    res.status(500).send("Server error");
+  }
+});
+
+app.get("/workoutbyid/:workoutid", async (req, res) => {
+  const { workoutid } = req.params;
+  if (!workoutid) {
+    res.status(400).send("Workout id is required!");
+  }
+  try {
+    const items = await Workouts.findById(workoutid);
     res.json(items);
   } catch (error) {
     res.status(500).send("Server error");

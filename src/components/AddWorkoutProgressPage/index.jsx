@@ -111,7 +111,7 @@ const WorkoutProgressPage = () => {
 
     socket.on("roomClosed", () => {
       message.error("Кімнату закрито — творець вийшов");
-      Cookies.remove("roomId");
+      // Cookies.remove("roomId");
       navigate("/", { replace: true });
     });
 
@@ -191,7 +191,7 @@ const WorkoutProgressPage = () => {
         ownerRef.current ? `/workoutroom/${uniqueUIDV4Id}/result` : "/",
         { replace: true, state: { result: resultData } }
       );
-      Cookies.remove("roomId");
+      // Cookies.remove("roomId");
       socket.emit("disconnectData", {
         roomId: uniqueUIDV4Id,
         userId: user._id,

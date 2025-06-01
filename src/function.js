@@ -62,7 +62,7 @@ export function trainerRequest(userId, trainerId, action) {
 }
 
 export function setInvitedRoomId(roomId) {
-  Cookies.set("roomId", roomId, { expires: 0.1 });
+  // Cookies.set("roomId", roomId, { expires: 0.1 });
   socket.disconnect(); //Disconnect from previous room
   window.location.href = `/workoutroom/${roomId}`;
 }

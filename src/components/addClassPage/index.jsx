@@ -10,42 +10,58 @@ import {
   Space,
   message,
 } from "antd";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import "./style.css";
 import { PieChart, Pie } from "recharts";
 import { v4 as uuidv4 } from "uuid";
+import axios from "axios";
 import Cookies from "js-cookie";
-import BookMark from "../addBookMarkElement/index"
+import BookMark from "../addBookMarkElement/index";
+import Loading from "../addLoadingElement";
 
 const { Title, Paragraph } = Typography;
 
 const ClassPage = () => {
   const location = useLocation();
-  const [RoomId] = useState(Cookies.get("roomId"));
+  const { workoutId } = useParams();
+  // const [RoomId] = useState(Cookies.get("roomId"));
   const { workout } = location.state || {};
+  const [workoutState, setWorkoutState] = useState(workout);
   const [uniqueUIDV4Id, setUniqueUIDV4Id] = useState(uuidv4());
 
   useEffect(() => {
-    const existingRoomId = Cookies.get("roomId");
-    if (!existingRoomId) {
-      Cookies.set("roomId", uniqueUIDV4Id, { expires: 0.25 });
-    } else {
-      setUniqueUIDV4Id(existingRoomId);
-    }
+    axios
+      .get(`/workoutbyid/${workoutId}`)
+      .then((response) => {
+        setWorkoutState(response.data);
+      })
+      .catch((error) => console.error(error));
   }, []);
 
-  return (
+  // useEffect(() => {
+  //   const existingRoomId = Cookies.get("roomId");
+  //   if (!existingRoomId) {
+  //     Cookies.set("roomId", uniqueUIDV4Id, { expires: 0.25 });
+  //   } else {
+  //     setUniqueUIDV4Id(existingRoomId);
+  //   }
+  // }, []);
+
+  return workoutState ? (
     <div
       className="classPage"
       style={{
-        backgroundImage: `url(${workout.img[0]})`,
+        backgroundImage:
+          workoutState.img && workoutState.img.length >= 0
+            ? `url(${workoutState.img[0]})`
+            : "none",
         backgroundSize: "cover",
         backgroundPosition: "center",
       }}
     >
       <div className="classBlock">
         <div className="classUpperPanel">
-          <img src="./img-pack/logo/logo2_white.png" alt="Logo" id="logo" />
+          <img src="/img-pack/logo/logo2_white.png" alt="Logo" id="logo" />
           <div id="login-text">
             Don't have an account? <a href="#">Register</a>!
           </div>
@@ -54,13 +70,13 @@ const ClassPage = () => {
 
         <div className="textSection">
           <Title level={2} style={{ color: "white" }}>
-            {workout.title}
+            {workoutState.title}
           </Title>
           <Paragraph style={{ color: "#a8acb1", fontSize: "18px" }}>
-            <strong>Trainer:</strong> {workout.trainer}
+            <strong>Trainer:</strong> {workoutState.trainer}
           </Paragraph>
           <Paragraph style={{ color: "#a8acb1", fontSize: "18px" }}>
-            <strong>Description:</strong> {workout.description}
+            <strong>Description:</strong> {workoutState.description}
           </Paragraph>
         </div>
 
@@ -69,7 +85,7 @@ const ClassPage = () => {
             Workout Types
           </Title>
           <Row gutter={16}>
-            {workout.type.map((type, index) => (
+            {workoutState.type.map((type, index) => (
               <Col span={8} key={index}>
                 <Card
                   title={
@@ -99,7 +115,7 @@ const ClassPage = () => {
             Image Gallery
           </Title>
           <Row gutter={16}>
-            {workout.img.map((image, index) => (
+            {workoutState.img.map((image, index) => (
               <Col span={8} key={index}>
                 <Image
                   width="100%"
@@ -118,13 +134,13 @@ const ClassPage = () => {
             Additional Details
           </Title>
           <Paragraph style={{ color: "#a8acb1", fontSize: "18px" }}>
-            <strong>Warm up Duration:</strong> {workout.workoutplan["Warm up"]}{" "}
-            min
+            <strong>Warm up Duration:</strong>{" "}
+            {workoutState.workoutplan["Warm up"]} min
           </Paragraph>
           <Paragraph style={{ color: "#a8acb1", fontSize: "18px" }}>
             <strong>Exercise Machines: </strong>
             {""}
-            {workout.exercise_machines.join(", ")}
+            {workoutState.exercise_machines.join(", ")}
           </Paragraph>
           <hr />
           <Paragraph style={{ color: "#a8acb1", fontSize: "30px" }}>
@@ -134,7 +150,7 @@ const ClassPage = () => {
             <PieChart width={800} height={400}>
               <Pie
                 dataKey="A"
-                data={workout.body_activity}
+                data={workoutState.body_activity}
                 cx="50%"
                 cy="50%"
                 outerRadius={80}
@@ -145,19 +161,22 @@ const ClassPage = () => {
           </div>
 
           <Space>
-            <BookMark element={workout} />
+            <BookMark element={workoutState} />
             <Button type="primary">
               <Link
                 to={`/workoutroom/${uniqueUIDV4Id}`}
-                state={{ workouts: workout }}
+                state={{ workouts: workoutState }}
               >
-                {RoomId ? "Join created room" : "Create new room"}
+                {/* {RoomId ? "Join created room" : "Create new room"} */}
+                Create new room
               </Link>
             </Button>
           </Space>
         </div>
       </div>
     </div>
+  ) : (
+    <Loading />
   );
 };
 

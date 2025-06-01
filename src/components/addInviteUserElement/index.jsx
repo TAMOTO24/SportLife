@@ -6,7 +6,7 @@ const InviteUser = ({
   userId,
   message,
   sendFunction = "",
-  onSelectUser,
+  onSelectUser = "",
   onlyTrainer = false,
 }) => {
   const [allUsers, setAllusers] = useState([]);
@@ -28,7 +28,7 @@ const InviteUser = ({
   }, []);
 
   const items = allUsers
-    .filter((i) => i?._id !== userId)
+    .filter((i) => i?._id !== userId && (!onlyTrainer || i?.role === "trainer"))
     .map((i) => ({
       key: i?._id,
       label: (
@@ -40,7 +40,8 @@ const InviteUser = ({
             width: "100%",
           }}
           onClick={() => {
-            onSelectUser(i?._id);
+            if (onSelectUser) onSelectUser(i?._id);
+
             if (sendFunction) sendFunction(i?._id);
           }}
         >
