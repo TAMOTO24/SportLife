@@ -18,6 +18,7 @@ import InfoTrainerPage from "./components/addInfoTrainerPage";
 import CommentsPage from "./components/addPostCommentsPage";
 import RoomPage from "./components/addWorkoutRoomPage";
 import WorkoutResult from "./components/addFinalWorkoutResultPage"
+import UsersPage from "./components/addUsersPage";
 
 function App() {
   return (
@@ -32,6 +33,7 @@ function App() {
           <Route path="/newsandinf" element={<NewsInfoPage />} />
           <Route path="/workoutpage" element={<WorkoutPage />} />
           <Route path="/classpage/:workoutId" element={<ClassPage />} />
+          <Route path="/userspage" element={<UsersPage />} />
           <Route path="/trainerspage" element={<TrainersPage />} />
           <Route path="/trainerspage/info" element={<InfoTrainerPage />} />
           <Route path="/newsandinf/comments" element={<CommentsPage />} />

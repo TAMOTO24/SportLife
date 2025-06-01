@@ -21,11 +21,11 @@ function Header() {
           <ul>
             <img src="/img-pack/logo/logo_white.png" alt="Logo" id="Logo" />
             {[
-              { to: "/", label: "Homepage" },
-              { to: "/trainerspage", label: "Trainers" },
-              { to: "/newsandinf", label: "News & Info" },
-              { to: "", label: "Reviews" },
-              { to: "/workoutpage", label: "Workout" },
+              { to: "/", label: "Головна" },
+              { to: "/trainerspage", label: "Тренери" },
+              { to: "/newsandinf", label: "Новити та інформація" },
+              { to: "/userspage", label: "Користувачі" },
+              { to: "/workoutpage", label: "Плани тренувань" },
             ].map((item) => (
               <Link to={item.to} id="navLink">
                 <li id="navElement" key={item.label}>
@@ -33,7 +33,7 @@ function Header() {
                 </li>
               </Link>
             ))}
-            <li
+            {/* <li
               onClick={() => setIsOpen(!isOpen)}
               className="dropDownButton"
               id="moreBtn"
@@ -46,7 +46,7 @@ function Header() {
                   </Link>
                 </div>
               )}
-            </li>
+            </li> */}
             <li>
               {location.pathname !== "/authpage" &&
                 location.pathname !== "/account" && <Auth />}
