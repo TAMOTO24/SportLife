@@ -123,9 +123,12 @@ const PostElement = ({ item, hoverable, theme }) => {
           <div className="postPhoto">
             <img
               loading="lazy"
-              src={creator?.profile_picture || "/img-pack/icons/user-blacktheme.png"}
+              src={
+                creator?.profile_picture ||
+                "/img-pack/icons/user-blacktheme.png"
+              }
               alt="UserIcon"
-              className={!theme ? "black-theme" : ""}
+              className={!theme && !creator?.profile_picture  ? "black-theme" : ""}
             />
           </div>
 
@@ -186,8 +189,8 @@ const PostElement = ({ item, hoverable, theme }) => {
                   alt=""
                 />
               </a>
-              <a className="postSave">
-                <BookMark element={item} theme={false} />
+              <a className="postSave" onClick={(e) => e.stopPropagation()}>
+                <BookMark element={item} theme={theme} />
               </a>
             </div>
           </div>

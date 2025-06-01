@@ -60,7 +60,7 @@
   justify-content: center;
   flex-direction: column;
   background-color: rgb(24, 26, 29);
-  padding-inline: 500px;
+  padding-inline: 20vw;
 }
 a {
   cursor: pointer;

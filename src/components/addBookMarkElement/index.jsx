@@ -6,7 +6,7 @@ const BookMark = ({ element, theme = true }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(false);
   const [bookMarkStatus, setBookMarkStatus] = useState(null);
-  const nameTheme = theme ? "bookmarkW" : "bookmark";
+  const nameTheme = theme ? "bookmark" : "bookmarkW";
 
   useEffect(() => {
     const fetchUserData = async () => {

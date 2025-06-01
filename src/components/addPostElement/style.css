@@ -46,7 +46,7 @@
 }
 .postGallery {
   display: flex;
-  /* border: 1px solid gray; */
+  justify-content: center;
   border-radius: 10px;
   gap: 2px;
   width: 100%;
@@ -90,13 +90,13 @@
 .postComment img,
 .postShare img,
 .postSave img {
-  width: 20px;
-  height: 20px;
+  width: 2vh;
+  height: 2vh;
   cursor: pointer;
 }
 .postLike div,
 .postComment div {
-  font-size: 20px;
+  font-size: 25px;
 }
 .black-theme {
   filter: brightness(0) invert(1);

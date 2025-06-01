@@ -1,15 +1,12 @@
 // UserProfile.jsx
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import { Card, Avatar, Typography, Divider, Skeleton, Space } from "antd";
 import {
-  Card,
-  Avatar,
-  Typography,
-  Divider,
-  Skeleton,
-  Space,
-} from "antd";
-import { CalendarOutlined, SkinOutlined, BookOutlined } from "@ant-design/icons"
+  CalendarOutlined,
+  SkinOutlined,
+  BookOutlined,
+} from "@ant-design/icons";
 import PostElement from "../addPostElement";
 import axios from "axios";
 
@@ -67,9 +64,7 @@ const UserProfile = () => {
         <Space align="start">
           <Avatar
             size={80}
-            src={
-              user?.profile_picture || "/img-pack/icons/user-blacktheme.png"
-            }
+            src={user?.profile_picture || "/img-pack/icons/user-blacktheme.png"}
           />
           <div style={{ marginLeft: 16 }}>
             <Title level={4} style={{ marginBottom: 0 }}>
@@ -90,7 +85,8 @@ const UserProfile = () => {
                 </strong>
               </Text>
               <Text>
-                <SkinOutlined /> Тренувань: <strong>{user?.statistic?.length || 0}</strong>
+                <SkinOutlined /> Тренувань:{" "}
+                <strong>{user?.statistic?.length || 0}</strong>
               </Text>
               <Text>
                 <BookOutlined /> Постів: <strong>{posts?.length || 0}</strong>
@@ -104,11 +100,25 @@ const UserProfile = () => {
 
       {loadingPosts ? (
         <Skeleton active />
-      ) : (
+      ) : posts.length > 0 ? (
         <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
           {posts.map((post) => (
-            <PostElement key={post._id} item={post} hoverable={true} theme={true} />
+            <PostElement item={post} hoverable={true} theme={true} />
           ))}
+        </div>
+      ) : (
+        <div
+          style={{
+            textAlign: "center",
+            padding: "40px 0",
+            color: "#888",
+            fontSize: "18px",
+            border: "1px dashed #ccc",
+            borderRadius: "12px",
+            background: "#fafafa",
+          }}
+        >
+          Цей користувач ще не створював пости.
         </div>
       )}
     </div>

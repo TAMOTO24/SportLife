@@ -109,7 +109,6 @@ function Home() {
             >
               {posts.slice(0, 3).map((item) => (
                 <PostElement
-                  key={item.id}
                   item={item}
                   hoverable={true}
                   theme={false}
