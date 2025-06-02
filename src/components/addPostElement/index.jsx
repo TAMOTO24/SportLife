@@ -11,7 +11,9 @@ const PostElement = ({ item, hoverable, theme }) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [currentImage, setCurrentImage] = useState("");
   const [loading, setLoading] = useState(true);
-  const [likes, setLikes] = useState(item.like.length);
+  const [likes, setLikes] = useState(() =>
+    Array.isArray(item?.like) ? item.like.length : 0
+  );
   const [user, setUser] = useState(undefined);
   const [creator, setCreator] = useState({});
   const navigate = useNavigate();
@@ -53,11 +55,11 @@ const PostElement = ({ item, hoverable, theme }) => {
     const token = Cookies.get("token");
     setLoading(true);
     if (!token) {
-      message("You need to be logged in to like a post.");
+      message.warning("You need to be logged in to like a post.");
       return;
     }
     if (!user) {
-      message("Something went wrong.");
+      message.error("Something went wrong.");
       return;
     }
 
@@ -112,8 +114,9 @@ const PostElement = ({ item, hoverable, theme }) => {
           if (hoverable) {
             navigate("/newsandinf/comments", {
               state: {
-                post: item,
+                postId: item._id,
                 date: calculateTimeAgo(item.date),
+                user: user,
               },
             });
           }
@@ -128,7 +131,9 @@ const PostElement = ({ item, hoverable, theme }) => {
                 "/img-pack/icons/user-blacktheme.png"
               }
               alt="UserIcon"
-              className={!theme && !creator?.profile_picture  ? "black-theme" : ""}
+              className={
+                !theme && !creator?.profile_picture ? "black-theme" : ""
+              }
             />
           </div>
 

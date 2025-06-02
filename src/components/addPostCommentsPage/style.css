@@ -12,7 +12,7 @@
     flex-direction: column;
     align-items: center;
     margin-top: 20px;
-    min-height: 1400px;
+    /* min-height: 1400px; */
     margin-bottom: 50px;
 }
 .commentBlock{
@@ -24,4 +24,23 @@
     font-size: 20px;
     color: black;
     margin-top: 10px;
+}
+.commentInputContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 20px;
+  width: 90vw;
+  background-color: #fafafa;
+  border: 1px solid #e8e8e8;
+  border-radius: 12px;
+  margin: 20px;
+}
+
+.commentInput {
+  resize: none;
+}
+
+.sendButton {
+  align-self: flex-end;
 }

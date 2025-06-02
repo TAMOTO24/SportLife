@@ -446,6 +446,28 @@ app.get("/api/getposts", async (req, res) => {
   }
 });
 
+app.put("/createcomment/:postId", async (req, res) => {
+  const { postId } = req.params;
+  const { text, userId } = req.body;
+
+  if (!postId || !userId || !text) {
+    return res.status(500).json({ message: "all data is required!" });
+  }
+  try {
+    const post = await Post.findById(postId);
+    let comment = {
+      id: userId,
+      text,
+    };
+
+    post.comment.push(comment);
+    await post.save();
+    res.json({ post, comment });
+  } catch (error) {
+    res.status(500).json({ message: `Server error ${error}` });
+  }
+});
+
 app.get("/postbyid/:userId", async (req, res) => {
   const { userId } = req.params;
 
@@ -461,6 +483,24 @@ app.get("/postbyid/:userId", async (req, res) => {
     res.json(post);
   } catch (err) {
     res.status(500).send("Server error", err);
+  }
+});
+
+app.get("/post/:postId", async (req, res) => {
+  const { postId } = req.params;
+
+  if (!postId) {
+    return res.status(400).json({ message: "User Id is required!" });
+  }
+
+  try {
+    const post = await Post.findById(postId);
+    if (!post) {
+      return res.status(200).json({ message: "There are no posts" });
+    }
+    res.json(post);
+  } catch (err) {
+    res.status(500).send(`Server error: ${err}`);
   }
 });
 
@@ -783,6 +823,9 @@ app.put("/bookmark/:userId", async (req, res) => {
 
   if (!bookmarkId) {
     return res.status(400).json({ message: "BookMarkId is requiered!" });
+  }
+  if (!userId) {
+    return res.status(400).json({ message: "Users id is requiered!" });
   }
 
   try {

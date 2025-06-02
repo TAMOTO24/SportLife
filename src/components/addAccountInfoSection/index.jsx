@@ -39,7 +39,7 @@ const AccountInfoSection = () => {
         const response = await axios.get("/currentuserdata");
         setUser(response.data.user);
       } catch (error) {
-        message.error("Error retrieving user data");
+        console.log("User data recieving error - ", error);
       } finally {
         setLoading(false);
       }
