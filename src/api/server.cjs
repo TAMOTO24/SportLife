@@ -407,7 +407,7 @@ app.get("/exercises/:id", async (req, res) => {
 });
 
 app.post("/createpagepost", async (req, res) => {
-  const { filePaths, description } = req.body; //Take data post img paths and description
+  const { filePaths, description, userId } = req.body; //Take data post img paths and description
 
   const token =
     req.cookies.token || req.header("Authorization")?.replace("Bearer ", ""); //Verify user JWT token
@@ -429,6 +429,7 @@ app.post("/createpagepost", async (req, res) => {
       username: answerUser.username,
       gallery: filePaths,
       userIcon: answerUser.icon || "",
+      created_by: userId
     });
     await newPost.save();
   } catch (error) {

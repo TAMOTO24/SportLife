@@ -1,41 +1,43 @@
 import React, { useState, useEffect } from "react";
-import { Form, Input, Button, Upload, Image, Divider, message } from "antd";
-import { PictureFilled, InboxOutlined } from "@ant-design/icons";
+import { Form, Input, Button, Upload, Divider, message } from "antd";
+import { InboxOutlined } from "@ant-design/icons";
+import { uploadFileToCloudinary } from "../../uploadFile";
 import "./style.css";
 import axios from "axios";
 
 const CreatePostPage = () => {
   const [loading, setLoading] = useState(false);
-  const [images, setImages] = useState([]); //Saves uploaded files to use them in axios upload api
-  const [files, setFile] = useState([]); // Saves url's to files to show them in gallery of chosen files to create post
-  const [postData, setPostData] = useState({
-    filePaths: [],
-    description: "",
-  });
+  const [user, setUser] = useState({});
 
-  useEffect(() => {
-    if (!postData.description) return;
-    if (!postData.filePaths) return;
-    axios
-      .post("/createpagepost", postData)
-      .catch((error) => console.error("Auth error", error));
-  }, [postData]);
-
-  const handleSave = async (file) => {
-    if (!file) return message.error("Please upload an image!");
-    if (images.length >= 2)
-      return message.error("You can upload up to 2 images!");
-
-    setFile((prevImages) => [...prevImages, file]);
-
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      // Fill array of images to show up in gallery
-      const imageUrl = reader.result;
-      setImages((prevImages) => [...prevImages, imageUrl]); // add this URL to array
-    };
-    reader.readAsDataURL(file); // make file readable as a URL
+  const normFile = (e) => {
+    console.log("normFile event:", e);
+    if (Array.isArray(e)) {
+      return e;
+    }
+    return e?.fileList;
   };
+  const handleUploadMultiple = async (file) => {
+    try {
+      const url = await uploadFileToCloudinary(file);
+      return url;
+    } catch (err) {
+      message.error("Помилка при завантаженні деяких файлів");
+      throw err;
+    }
+  };
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const response = await axios.get("/currentuserdata");
+        setUser(response.data.user);
+      } catch (error) {
+        console.log("User data recieving error - ", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchUserData();
+  }, []);
 
   const handleSubmit = async (values) => {
     // main handlesubmit that saves files using api construct and create post in MongoDB
@@ -43,24 +45,22 @@ const CreatePostPage = () => {
     if (!values.description)
       return message.error("Please write some text in description.");
 
-    const formData = new FormData();
-    files.forEach((image, index) => {
-      formData.append(`image`, image);
-    });
-
     try {
-      // api to ave files(images) to special folder
-      setLoading(true);
-      const response = await axios.post("/upload", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
-      // message.success("Images uploaded successfully!");
-      setPostData({
-        filePaths: response.data.filePaths,
+      const urls = await Promise.all(
+        values.upload.map((fileWrapper) =>
+          handleUploadMultiple(fileWrapper.originFileObj)
+        )
+      );
+
+      const postData = {
         description: values.description,
-      });
+        filePaths: urls,
+        userId: user?._id
+      };
+
+      axios
+        .post("/createpagepost", postData)
+        .catch((error) => console.error("Auth error", error));
     } catch (error) {
       message.error("Upload error!");
       console.error(error);
@@ -83,32 +83,15 @@ const CreatePostPage = () => {
               style={{ borderRadius: "8px" }}
             />
           </Form.Item>
-
-          <Form.Item name="galleryPic">
-            <Upload
-              name="file"
-              listType="picture"
-              showUploadList={false}
-              beforeUpload={(file) => {
-                handleSave(file);
-                return false;
-              }}
-            >
-              <Button
-                block
-                icon={<PictureFilled />}
-                style={{ width: "50px", borderRadius: "8px", height: "50px" }}
-              />
-            </Upload>
-          </Form.Item>
+          {/* <Form.Item name="upload" valuePropName="fileList" /> */}
           <Form.Item label="Dragger">
             <Form.Item
-              name="dragger"
+              name="upload"
               valuePropName="fileList"
-              // getValueFromEvent={normFile}
+              getValueFromEvent={normFile}
               noStyle
             >
-              <Upload.Dragger name="files" action="/upload.do">
+              <Upload.Dragger name="files" beforeUpload={() => false} multiple>
                 <p className="ant-upload-drag-icon">
                   <InboxOutlined />
                 </p>
@@ -142,13 +125,6 @@ const CreatePostPage = () => {
             <Divider>Images</Divider>
           </Form.Item>
         </Form>
-
-        <div className="image-preview">
-          {/* Image preview container */}
-          {images.map((src, index) => (
-            <Image key={index} width={200} src={src} />
-          ))}
-        </div>
       </div>
     </div>
   );

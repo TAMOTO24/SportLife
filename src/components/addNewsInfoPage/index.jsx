@@ -17,7 +17,6 @@ function NewsInfoPage() {
       .then((response) => setPosts(response.data))
       .catch((error) => console.error(error))
       .finally(() => setLoading(false));
-
   }, []);
 
 
