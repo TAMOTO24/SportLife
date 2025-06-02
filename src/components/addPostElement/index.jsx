@@ -3,7 +3,8 @@ import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
 import Cookies from "js-cookie";
 import "./style.css";
-import { Modal, message, Card, Divider } from "antd";
+import { Modal, message, Card, Popconfirm, Button } from "antd";
+import { DeleteOutlined } from "@ant-design/icons";
 import BookMark from "../addBookMarkElement/index";
 
 const PostElement = ({ item, hoverable, theme }) => {
@@ -50,6 +51,16 @@ const PostElement = ({ item, hoverable, theme }) => {
     };
     fetchUserData();
   }, []);
+
+  const deletePost = async (postId) => {
+    try {
+      await axios.delete(`/post/${postId}`);
+      message.error("Пост видалений успішно.");
+    } catch (error) {
+      message.error("Не вдалося видалити пост.");
+      console.error(error);
+    }
+  };
 
   const postLike = (userid, id) => {
     const token = Cookies.get("token");
@@ -139,13 +150,38 @@ const PostElement = ({ item, hoverable, theme }) => {
 
           <div className="postContent">
             <div>
-              <div className="postUserContent">
-                <div className={`postUser ${!theme && "black-theme-title"}`}>
-                  {creator?.name || "Uknown"}
+              <div className="postUserAction">
+                <div className="postUserContent">
+                  <div className={`postUser ${!theme && "black-theme-title"}`}>
+                    {creator?.name || "Uknown"}
+                  </div>
+                  <div className="postUsername">@{creator?.username}</div>
+                  <div className="postDate">{calculateTimeAgo(item.date)}</div>
                 </div>
-                <div className="postUsername">@{creator?.username}</div>
-                <div className="postDate">{calculateTimeAgo(item.date)}</div>
+                {user?._id === item?.created_by && (
+                  <Popconfirm
+                    title="Ви впевнені, що хочете видалити пост?"
+                    description="Ця дія необоротна."
+                    onConfirm={(e) => {
+                      e.stopPropagation();
+                      deletePost(item?._id);
+                    }}
+                    okText="Так"
+                    cancelText="Скасувати"
+                    okButtonProps={{ danger: true }}
+                  >
+                    <Button
+                      type="text"
+                      danger
+                      icon={<DeleteOutlined />}
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      Видалити
+                    </Button>
+                  </Popconfirm>
+                )}
               </div>
+
               <div className={`postText ${!theme && "black-theme-title"}`}>
                 {item.text}
               </div>

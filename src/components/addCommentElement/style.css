@@ -1,0 +1,10 @@
+.commentContent {
+  display: flex;
+  flex-direction: column;
+}
+.deleteCommentButton {
+  border: none !important;
+  box-shadow: none;
+  background: transparent;
+  padding: 0;
+}

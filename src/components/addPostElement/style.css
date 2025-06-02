@@ -163,6 +163,10 @@
 .addPostButton::before {
   animation: textDisappear 0.5s ease-in-out forwards;
 }
+.postUserAction{
+  display: flex;
+  justify-content: space-between;
+}
 
 @keyframes textAppear {
   0% {

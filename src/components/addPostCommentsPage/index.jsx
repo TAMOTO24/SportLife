@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Input, Empty, Typography, Button, Avatar, message } from "antd";
 import { useLocation } from "react-router-dom";
 import "./style.css";
@@ -16,8 +16,9 @@ const CommentsPage = () => {
   const [post, setPost] = useState(undefined);
   const [user, setUser] = useState(location.state.user || {});
   const [allUsers, setAllUsers] = useState([]);
-  const [commentText, setCommentText] = useState("");
+  const commentTextRef = useRef("");
   const [comments, setComments] = useState(undefined);
+
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -34,18 +35,31 @@ const CommentsPage = () => {
       .finally(() => setLoading(false));
   }, [postId]);
 
+  const handleDeleteComment = async (comment) => {
+    try {
+      const response = await axios.delete(
+        `/deletecomment/${post._id}/${comment}`
+      );
+      setPost(response.data.updatedPost);
+      setComments(response.data.updatedPost.comment);
+    } catch (error) {
+      message.error("Не вдалося видалити коментар.");
+      console.error(error);
+    }
+  };
+
   const handleSendComment = async () => {
-    if (!commentText.trim()) return;
+    if (!commentTextRef.current.trim()) return;
 
     try {
       setLoading(true);
       const response = await axios.put(`/createcomment/${post._id}`, {
         userId: user._id,
-        text: commentText.trim(),
+        text: commentTextRef.current.trim(),
       });
 
       setComments(response.data.post.comment);
-      setCommentText("");
+      commentTextRef.current = "";
       message.success("Коментар додано!");
     } catch (error) {
       console.error(error);
@@ -91,7 +105,6 @@ const CommentsPage = () => {
   if (!post) {
     return <Loading />;
   }
-  console.log("post is ", post);
 
   return (
     <div className="commentsPage">
@@ -106,9 +119,16 @@ const CommentsPage = () => {
           <TextArea
             rows={3}
             placeholder="Напишіть коментар..."
-            value={commentText}
-            onChange={(e) => setCommentText(e.target.value)}
+            defaultValue=""
+            onChange={(e) => {
+              commentTextRef.current = e.target.value;
+            }}
             className="commentInput"
+            ref={(el) => {
+              if (el && commentTextRef.current === "") {
+                el.resizableTextArea.textArea.value = "";
+              }
+            }}
           />
           <Button
             type="primary"
@@ -144,8 +164,11 @@ const CommentsPage = () => {
               <CommentElement
                 key={item._id}
                 user={commentUser}
-                date={date}
+                commentUserId={item.id}
+                currentUserId={user._id}
                 text={item.text}
+                date={date}
+                onDelete={handleDeleteComment}
               />
             );
           })

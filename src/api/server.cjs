@@ -446,6 +446,40 @@ app.get("/api/getposts", async (req, res) => {
   }
 });
 
+app.delete("/post/:postId", async(req, res) => {
+  const { postId } = req.params;
+
+  if (!postId) {
+    return res.status(400).json({ message: "User Id is required!" });
+  }
+
+  try {
+    const post = await Post.findByIdAndDelete(postId);
+    if (!post) {
+      return res.status(200).json({ message: "There are no posts" });
+    }
+    res.json(post);
+  } catch (err) {
+    res.status(500).send(`Server error: ${err}`);
+  }
+});
+
+app.delete("/deletecomment/:postId/:comment", async (req, res) => {
+  const { postId, comment } = req.params;
+
+  try {
+    const post = await Post.findById(postId);
+    if (!post) return res.status(404).json({ message: "Пост не знайдено" });
+
+    post.comment = post.comment.filter(c => c.text.toString() !== comment);
+    await post.save();
+
+    res.json({ message: "Коментар видалено", updatedPost: post });
+  } catch (error) {
+    res.status(500).json({ message: `Server error: ${error.message}` });
+  }
+});
+
 app.put("/createcomment/:postId", async (req, res) => {
   const { postId } = req.params;
   const { text, userId } = req.body;

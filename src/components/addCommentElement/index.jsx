@@ -1,33 +1,43 @@
-import React, { useEffect, useState } from "react";
-import { Avatar, Empty } from "antd";
-import { UserOutlined } from "@ant-design/icons";
-import Loading from "../addLoadingElement";
+import { Avatar, Button } from "antd";
+import { CloseCircleOutlined } from "@ant-design/icons";
+import "./style.css";
 
-const CommentElement = ({ user, date, text }) => {
+const CommentElement = ({
+  user,
+  date,
+  text,
+  onDelete,
+  currentUserId,
+  commentUserId,
+}) => {
+  const isOwnComment = currentUserId === commentUserId;
+
   return (
-    <>
-      <div className="commentContainer">
-        <Avatar
-          size={84}
-          icon={
-            user?.profile_picture ? (
-              <img src={user?.profile_picture} alt="user" />
-            ) : (
-              <UserOutlined />
-            )
-          }
-        />
-        <div className="commentContent">
-          {/* TODO: make id recognision comment user */}
-          <div className="postUserContent">
-            <div className="postUser">{user?.name || "unknown user"}</div>
-            <div className="postUsername">@{user?.username}</div>
-            {/* <div className="postDate">{date}</div> */}
-          </div>
-          <div className="commentText">{text}</div>
+    <div className="commentContainer">
+      <Avatar
+        size={84}
+        src={user?.profile_picture || "/img-pack/icons/user-blacktheme.png"}
+      />
+      <div className="commentContent">
+        <div className="postUserContent">
+          <div className="postUser">{user?.name || "unknown user"}</div>
+          <div className="postUsername">@{user?.username}</div>
+          {/* <div className="postDate">{date}</div> */}
         </div>
+        <div className="commentText">{text}</div>
       </div>
-    </>
+      {isOwnComment && (
+        <Button
+          type="text"
+          danger
+          size="small"
+          onClick={() => onDelete(text)}
+          className="deleteCommentButton"
+        >
+          <CloseCircleOutlined style={{ fontSize: 30 }}/>
+        </Button>
+      )}
+    </div>
   );
 };
 
