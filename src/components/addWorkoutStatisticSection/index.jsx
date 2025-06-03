@@ -16,6 +16,7 @@ const WorkoutStatisticSection = ({ user }) => (
       style={{
         display: "flex",
         justifyContent: "space-between",
+        flexDirection: "column",
         alignItems: "center",
         gap: 20,
       }}
@@ -23,7 +24,7 @@ const WorkoutStatisticSection = ({ user }) => (
       <div style={{ flex: 1 }}>
         <TrainingCalendar statistics={user.statistic} />
       </div>
-      <div style={{ flex: 1 }}>
+      <div style={{ flex: 1, width: "100%" }}>
         <OverallMuscleStats statistics={user.statistic} />
       </div>
     </div>
@@ -32,7 +33,7 @@ const WorkoutStatisticSection = ({ user }) => (
     <Space
       direction="vertical"
       size="large"
-      style={{ width: "100%", overflow: "auto", maxHeight: "70vh" }}
+      style={{ width: "100%", overflow: "auto", maxHeight: "28vh" }}
     >
       {user?.statistic.map((session, idx) => (
         <Card

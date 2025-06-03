@@ -128,6 +128,9 @@ const WorkoutProgressPage = () => {
   useEffect(() => {
     if (!socket.connected) return;
 
+    console.log("Change it - ", workoutStatuses);
+    console.log(exercises);
+
     if (
       user &&
       ownerRef.current &&
@@ -203,15 +206,6 @@ const WorkoutProgressPage = () => {
       console.error("❌ Socket is not connected");
     }
   };
-
-  // if (error) {
-  //   return (
-  //     <div>
-  //       <h1>Помилка завантаження даних</h1>
-  //       <p>Спробуйте перезавантажити сторінку.</p>
-  //     </div>
-  //   );
-  // }
 
   return !exercises ||
     exercises.length === 0 ||

@@ -1,5 +1,14 @@
 import { useState } from "react";
-import { Drawer, Button, Result, Typography, Input, Form, Tag, message } from "antd";
+import {
+  Drawer,
+  Button,
+  Result,
+  Typography,
+  Input,
+  Form,
+  Tag,
+  message,
+} from "antd";
 import { CloseCircleOutlined } from "@ant-design/icons";
 import { createNotification } from "../../function";
 import InviteUser from "../addInviteUserElement";
@@ -36,7 +45,8 @@ const PersonalTrainer_User = ({ user }) => {
       <h1>
         <b>Персональний тренер</b>
       </h1>
-      {user?.personalTrainerId && (
+      {"// ! If user have personal trainer then output his info show to user his personal trainer!"}
+      {!user?.personalTrainerId && (
         <Result
           status="404"
           title="У вас ще немає персонального тренеру"
@@ -62,12 +72,8 @@ const PersonalTrainer_User = ({ user }) => {
             </Text>
           </Paragraph>
           <Paragraph>
-            <CloseCircleOutlined className="site-result-demo-error-icon" /> Your
-            account has been frozen. <a>Thaw immediately &gt;</a>
-          </Paragraph>
-          <Paragraph>
-            <CloseCircleOutlined className="site-result-demo-error-icon" /> Your
-            account is not yet eligible to apply. <a>Apply Unlock &gt;</a>
+            <CloseCircleOutlined className="site-result-demo-error-icon" />
+            Заявка не подана, подайте будь-ласка заявку
           </Paragraph>
         </Result>
       )}

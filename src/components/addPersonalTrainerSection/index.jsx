@@ -8,13 +8,15 @@ const PersonalTrainer = ({ user }) => {
 
   useEffect(() => {
     axios
-      .get(`/userbyid/${user?.clientId}`)
+      .get(`/userbyid/${user?.clientId || user?.personalTrainerId}`)
       .then((response) => {
         setClient(response.data);
         console.log(response.data.statistic);
       })
       .catch((error) => console.error(error));
   }, []);
+
+  console.log("Client", client, user?.clientId)
 
   return (
     <>

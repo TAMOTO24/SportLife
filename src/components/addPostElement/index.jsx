@@ -193,7 +193,10 @@ const PostElement = ({ item, hoverable, theme }) => {
                   src={image}
                   alt="Gallery"
                   loading="lazy"
-                  onClick={() => showModal(image)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    showModal(image);
+                  }}
                 />
               ))}
             </div>

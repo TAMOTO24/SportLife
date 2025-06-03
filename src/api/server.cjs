@@ -201,17 +201,17 @@ io.on("connection", (socket) => {
   });
 
   socket.on("updateUsersStatistic", async ({ userId, data }) => {
+    if (!userId) return;
     const user = await User.findById(userId);
-    //FIX THIS SOCKET METHOD, DIDN'T SAVE THE RESULT
 
-    if (!userId || !data || !user) {
+    console.log("userId - ", userId, " - data - ",  data, "- user -", user);
+
+    if (!data || !user) {
       return;
     }
     if (!Array.isArray(user.statistic)) {
       user.statistic = [];
     }
-
-    console.log("end");
 
     user.statistic.push(data);
     user.save();

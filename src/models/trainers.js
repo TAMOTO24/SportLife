@@ -4,7 +4,6 @@ const trainersSchema = new mongoose.Schema({
     // user_id: ObjectId,
     info: String,
     training_type: String,
-    profile_img: String,
     title: String,
     name: String,
 });

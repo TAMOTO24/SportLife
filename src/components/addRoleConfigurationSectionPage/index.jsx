@@ -20,7 +20,7 @@ const { TextArea } = Input;
 const RoleConfigurationSection = ({ user }) => {
   const [form] = Form.useForm();
   const [requests, setRequests] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   const normFile = (e) => {
     if (Array.isArray(e)) {
@@ -108,7 +108,7 @@ const RoleConfigurationSection = ({ user }) => {
               <Input disabled={true} />
             </Form.Item>
 
-            <Form.Item name="upload" valuePropName="fileList"></Form.Item>
+            {/* <Form.Item name="upload" valuePropName="fileList"></Form.Item> */}
             <p className="roleConfigurationSectionText">
               Будь ласка, надішліть нам своє резюме або інші документи, які
               підтверджують вашу кваліфікацію. Ви можете завантажити їх тут.

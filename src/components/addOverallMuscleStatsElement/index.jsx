@@ -47,7 +47,7 @@ const OverallMuscleStats = ({ statistics }) => {
       {chartData.length === 0 ? (
         <p>Немає даних для побудови статистики</p>
       ) : (
-        <ResponsiveContainer width="100%" height={300}>
+        <ResponsiveContainer width="100%" height={600}>
           <PieChart>
             <Pie
               data={chartData}
@@ -55,7 +55,7 @@ const OverallMuscleStats = ({ statistics }) => {
               nameKey="name"
               cx="50%"
               cy="50%"
-              outerRadius={100}
+              outerRadius={250}
               label={({ name, value }) => `${name}: ${value}%`}
             >
               {chartData.map((_, i) => (
