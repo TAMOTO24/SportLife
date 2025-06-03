@@ -8,14 +8,12 @@ import {
   Image,
   Button,
   Space,
-  message,
 } from "antd";
 import { Link, useParams } from "react-router-dom";
 import "./style.css";
 import { PieChart, Pie } from "recharts";
 import { v4 as uuidv4 } from "uuid";
 import axios from "axios";
-import Cookies from "js-cookie";
 import BookMark from "../addBookMarkElement/index";
 import Loading from "../addLoadingElement";
 
@@ -27,7 +25,7 @@ const ClassPage = () => {
   // const [RoomId] = useState(Cookies.get("roomId"));
   const { workout } = location.state || {};
   const [workoutState, setWorkoutState] = useState(workout);
-  const [uniqueUIDV4Id, setUniqueUIDV4Id] = useState(uuidv4());
+  const uniqueUIDV4Id = uuidv4();
 
   useEffect(() => {
     axios
@@ -161,7 +159,7 @@ const ClassPage = () => {
           </div>
 
           <Space>
-            <BookMark element={workoutState} />
+            <BookMark element={workoutState} theme={false} />
             <Button type="primary">
               <Link
                 to={`/workoutroom/${uniqueUIDV4Id}`}

@@ -4,9 +4,7 @@ import { socket } from "../../function.js";
 import axios from "axios";
 import { List, message, Button, Spin } from "antd";
 import { useNavigate, useLocation, Link } from "react-router-dom";
-// import { v4 as uuidv4 } from "uuid";
 import { createNotification } from "../../function.js";
-// import Cookies from "js-cookie";
 import InviteUser from "../addInviteUserElement/index.jsx";
 import "./style.css";
 
@@ -21,7 +19,6 @@ export default function RoomPage() {
   const { workouts } = location.state || {};
 
   const [users, setUsers] = useState([]);
-  // const [data, setData] = useState({});
   const [isOwner, setOwner] = useState(false);
 
   useEffect(() => {
@@ -65,7 +62,6 @@ export default function RoomPage() {
     });
 
     socket.on("roomOwner", (ownerId) => {
-      console.log("Room owner changed", ownerId === user._id, ownerId, user._id)
       setOwner(ownerId === user._id);
     });
 
@@ -74,7 +70,6 @@ export default function RoomPage() {
     // });
 
     socket.on("redirect", () => {
-      console.log("Redirect");
       if (!isOwner)
         navigate(`/workoutprogress/${uniqueUIDV4Id}`, { replace: true });
     });
@@ -86,11 +81,6 @@ export default function RoomPage() {
       socket.off("roomOwner");
       socket.off("receiveUpdate");
       console.log("U left the room or smth went wrong");
-      // socket.emit("disconnectData", {
-      //   roomId: uniqueUIDV4Id,
-      //   userId: user._id,
-      // });
-      // socket.disconnect();
     };
   }, [user, uniqueUIDV4Id, navigate, location]);
 
@@ -113,7 +103,6 @@ export default function RoomPage() {
         roomId: uniqueUIDV4Id,
         userId: user._id,
       });
-      // Cookies.remove("roomId");
       navigate("/", { replace: true });
       console.log("Socket disconnected");
       socket.disconnect();
@@ -132,17 +121,11 @@ export default function RoomPage() {
             message={"Надіслати запрошення"}
             sendFunction={sendRequest}
           />
-          // <Dropdown menu={{ items }}>
-          //   <Button onClick={(e) => e.preventDefault()}>
-          //
-          //   </Button>
-          // </Dropdown>
         )}
         <button
           onClick={() => {
             disconnectSocket();
             navigate("/", { replace: true });
-            //  <Navigate to={"/"} replace/>
           }}
         >
           Відключитися
@@ -166,23 +149,6 @@ export default function RoomPage() {
           loading={loading}
           itemLayout="horizontal"
           dataSource={users}
-          // renderItem={(item) => (
-          //   <List.Item
-          //     actions={[
-          //       <a key="list-loadmore-edit">edit</a>,
-          //       <a key="list-loadmore-more">more</a>,
-          //     ]}
-          //   >
-          //     <Skeleton avatar title={false} loading={item.loading} active>
-          //       <List.Item.Meta
-          //         avatar={<Avatar src={item.avatar} />}
-          //         title={<a href="https://ant.design">{item.name}</a>}
-          //         description="Ant Design, a design language for background applications, is refined by Ant UED Team"
-          //       />
-          //       <div>content</div>
-          //     </Skeleton>
-          //   </List.Item>
-          // )}
         />
         <ul>
           Люди в кімнаті:

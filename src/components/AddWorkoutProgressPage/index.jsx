@@ -4,12 +4,10 @@ import { useLocation, useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import "./style.css";
 import Loading from "../addLoadingElement/index";
-import Cookies from "js-cookie";
-import { formatTime, socket, peer, timeString } from "../../function";
+import { formatTime, socket, timeString } from "../../function";
 import PeerCamera from "../addCameraComponent/index";
 
 const WorkoutProgressPage = () => {
-  // const [time, setTime] = useState(0);
   const [uniqueUIDV4Id] = useState(useParams().roomId);
   const [data, setData] = useState({});
   const [loading, setIsLoading] = useState(false);
@@ -19,19 +17,26 @@ const WorkoutProgressPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [startTime, setStartTime] = useState(Date.now());
-  // const { currentWorkout } = location.state || {};
+
   const [currentWorkout, setCurrentWorkout] = useState(
     location.state?.currentWorkout || {}
   );
   const [user, setUser] = useState(undefined);
   const ownerRef = useRef(null);
   const [owner, setOwner] = useState(null);
+  const [serverData, setServerData] = useState(false);
 
   const fillAllData = async () => {
     setIsLoading(true);
     try {
       const response = await axios.get(`/room/${uniqueUIDV4Id}`);
       const roomData = response.data;
+
+      if (
+        !roomData.data.exercises ||
+        !roomData.data.status ||
+        !roomData.data.startTime
+      ) return;
 
       setExercises(roomData.data.exercises);
       setWorkoutStatuses(roomData.data.status);
@@ -44,29 +49,14 @@ const WorkoutProgressPage = () => {
       setIsLoading(false);
     }
   };
-
   useEffect(() => {
-    if (ownerRef.current) {
-      fillAllData();
-    }
-  }, [owner, uniqueUIDV4Id]);
-
-  useEffect(() => {
-    setIsLoading(true);
-    axios
-      .get("/currentuserdata")
-      .then((response) => {
-        setUser(response.data.user);
-      })
-      .catch((error) => console.error("Auth error", error))
-      .finally(() => {
-        setIsLoading(false);
-      });
-  }, []);
-
-  useEffect(() => {
-    // ! if workoutStatuses may be an undefined there will be an error
-    if (!currentWorkout || ownerRef.current === false || workoutStatuses.length > 0) return;
+    if (
+      !currentWorkout ||
+      !ownerRef.current ||
+      workoutStatuses.length > 0 ||
+      !exercises
+    )
+      return;
     setIsLoading(true);
     axios
       .get(`/exercises/${currentWorkout?.exercises_id}`)
@@ -82,7 +72,29 @@ const WorkoutProgressPage = () => {
       .finally(() => {
         setIsLoading(false);
       });
-  }, [currentWorkout, user]);
+  }, [currentWorkout, user, owner]);
+
+  useEffect(() => {
+    const init = async () => {
+      await fillAllData();
+      setServerData(true);
+    };
+
+    if (ownerRef.current) init();
+  }, [owner, uniqueUIDV4Id]);
+
+  useEffect(() => {
+    setIsLoading(true);
+    axios
+      .get("/currentuserdata")
+      .then((response) => {
+        setUser(response.data.user);
+      })
+      .catch((error) => console.error("Auth error", error))
+      .finally(() => {
+        setIsLoading(false);
+      });
+  }, []);
 
   useEffect(() => {
     if (!user) return;
@@ -109,10 +121,18 @@ const WorkoutProgressPage = () => {
       setOwner(isOwner);
     });
 
+    socket.on("backToRoom", () => {
+      if (socket.connected) {
+        message.warning("Перенаправлено в кімнату");
+        navigate(`/workoutroom/${uniqueUIDV4Id}`, { replace: true });
+      }
+    });
+
     socket.on("roomClosed", () => {
-      message.error("Кімнату закрито — творець вийшов");
-      // Cookies.remove("roomId");
-      navigate("/", { replace: true });
+      if (socket.connected) {
+        message.warning("Кімнату закрито — творець вийшов");
+        navigate("/", { replace: true });
+      }
     });
 
     if (!socket.connected) socket.connect();
@@ -121,24 +141,28 @@ const WorkoutProgressPage = () => {
       socket.off("connect");
       socket.off("receiveData");
       socket.off("roomOwner");
+      socket.off("backToRoom");
+      socket.off("roomClosed");
       socket.disconnect();
+      // This code runs when the component is unmounted due to a route change
+      // ! Still this code need to be tested, if error will appear this would be critical
+      if (ownerRef.current) {
+        socket.emit("hostChangedPage", { roomId: uniqueUIDV4Id });
+      }
     };
   }, [user, navigate, uniqueUIDV4Id]);
 
   useEffect(() => {
     if (!socket.connected) return;
 
-    console.log("Change it - ", workoutStatuses);
-    console.log(exercises);
-
     if (
       user &&
       ownerRef.current &&
       Array.isArray(exercises) &&
-      exercises.length > 0 &&
       Array.isArray(workoutStatuses) &&
-      workoutStatuses.length > 0
+      serverData
     ) {
+      console.log("setNewDAta");
       socket.emit("updateData", {
         roomId: uniqueUIDV4Id,
         userId: user._id,
@@ -149,7 +173,7 @@ const WorkoutProgressPage = () => {
         status: workoutStatuses,
       });
     }
-  }, [user, exercises, workoutStatuses, owner, currentWorkout, uniqueUIDV4Id]);
+  }, [user, exercises, workoutStatuses, owner, currentWorkout, serverData]);
 
   const handleNextExercise = (index) => {
     if (index >= exercises.length) {
@@ -182,9 +206,7 @@ const WorkoutProgressPage = () => {
         exerciseCount: exercises.length,
         workout: currentWorkout,
       };
-      console.log(ownerRef.current, user._id);
       if (ownerRef.current) {
-        console.log("send update statistic");
         socket.emit("updateUsersStatistic", {
           userId: user?._id,
           data: resultData,
@@ -194,13 +216,11 @@ const WorkoutProgressPage = () => {
         ownerRef.current ? `/workoutroom/${uniqueUIDV4Id}/result` : "/",
         { replace: true, state: { result: resultData } }
       );
-      // Cookies.remove("roomId");
       socket.emit("disconnectData", {
         roomId: uniqueUIDV4Id,
         userId: user._id,
       });
 
-      console.log("Socket disconnected");
       socket.disconnect();
     } else {
       console.error("❌ Socket is not connected");
@@ -225,11 +245,6 @@ const WorkoutProgressPage = () => {
         <div className="progressBlock">
           <img src="/img-pack/logo/logo_black2.png" alt="logo" />
           <h1>{currentWorkout?.title}</h1>
-          {/* <Progress
-            percentPosition={{ align: 'start', type: 'outer' }}
-            percent={((workoutStatuses.lastIndexOf('Finished') + 1) / exercises.length) * 100}
-            size={100}
-          /> */}
           <Progress
             percent={
               ((workoutStatuses.lastIndexOf("Finished") + 1) /
@@ -237,6 +252,7 @@ const WorkoutProgressPage = () => {
               100
             }
             percentPosition={{ align: "end", type: "inner" }}
+            style={{ width: 0 }}
             size={[300, 20]}
             strokeColor="#001342"
           />
@@ -339,13 +355,6 @@ const WorkoutProgressPage = () => {
 
               <Divider style={{ background: "#ddd" }} />
 
-              {/* <h4 style={{ color: "#222" }}>Equipment</h4>
-              <ul style={{ color: "#555" }}>
-                {item.equipment.map((tip, index) => (
-                  <li key={index}>{tip}</li>
-                ))}
-              </ul> */}
-              {/* <Divider style={{ background: "#ddd" }} /> */}
               <div className="progress-block">
                 {owner && (
                   <Button
@@ -398,7 +407,6 @@ const WorkoutProgressPage = () => {
           justifyContent: "space-evenly",
         }}
       >
-        {/* <Statistic value={formatTime(time)} /> */}
         <div>
           Start time:
           {timeString(data?.startTime)}

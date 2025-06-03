@@ -123,6 +123,10 @@ io.on("connection", (socket) => {
     io.to(roomId).emit("roomOwner", existingRoom.owner);
   });
 
+  socket.on("hostChangedPage", ({ roomId }) => {
+    socket.broadcast.to(roomId).emit("backToRoom");
+  });
+
   socket.on("getRoomOwner", async ({ roomId }) => {
     const existingRoom = await Room.findOne({ roomId });
 
