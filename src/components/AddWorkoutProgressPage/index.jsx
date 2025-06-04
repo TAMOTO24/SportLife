@@ -212,7 +212,7 @@ const WorkoutProgressPage = () => {
         });
       }
       navigate(
-        ownerRef.current ? `/workoutroom/${uniqueUIDV4Id}/result` : "/",
+        ownerRef.current ? `/workoutroom/${uniqueUIDV4Id}/result` : "",
         { replace: true, state: { result: resultData } }
       );
       socket.emit("disconnectData", {

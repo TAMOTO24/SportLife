@@ -164,7 +164,7 @@ const CommentsPage = () => {
                 key={item._id}
                 user={commentUser}
                 commentUserId={item.id}
-                currentUserId={user._id}
+                currentUser={user}
                 text={item.text}
                 date={date}
                 onDelete={handleDeleteComment}

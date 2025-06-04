@@ -7,10 +7,10 @@ const CommentElement = ({
   date,
   text,
   onDelete,
-  currentUserId,
+  currentUser,
   commentUserId,
 }) => {
-  const isOwnComment = currentUserId === commentUserId;
+  const isOwnComment = currentUser?._id === commentUserId || currentUser?.role === "admin";
 
   return (
     <div className="commentContainer">

@@ -2,11 +2,23 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { socket } from "../../function.js";
 import axios from "axios";
-import { List, message, Button, Spin } from "antd";
+import {
+  List,
+  message,
+  Button,
+  Spin,
+  Card,
+  Space,
+  Divider,
+  Avatar,
+} from "antd";
+import { Typography } from "antd";
 import { useNavigate, useLocation, Link } from "react-router-dom";
 import { createNotification } from "../../function.js";
 import InviteUser from "../addInviteUserElement/index.jsx";
 import "./style.css";
+
+const { Title, Text } = Typography;
 
 export default function RoomPage() {
   const location = useLocation();
@@ -20,6 +32,22 @@ export default function RoomPage() {
 
   const [users, setUsers] = useState([]);
   const [isOwner, setOwner] = useState(false);
+  const [allUsers, setAllusers] = useState([]);
+
+  useEffect(() => {
+    setLoading(true);
+    const fetchData = async () => {
+      try {
+        const response = await axios.get("/allusers");
+        setAllusers(response.data);
+      } catch (error) {
+        console.error("Error in useEffect:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
 
   useEffect(() => {
     setLoading(true);
@@ -81,6 +109,8 @@ export default function RoomPage() {
       socket.off("roomOwner");
       socket.off("receiveUpdate");
       console.log("U left the room or smth went wrong");
+      //! This code can contain bugs
+      socket.disconnect();
     };
   }, [user, uniqueUIDV4Id, navigate, location]);
 
@@ -112,51 +142,112 @@ export default function RoomPage() {
   };
 
   return (
-    <div className="room-page">
-      <Spin spinning={loading} tip="Loading">
-        <h2>Створення кімнати</h2>
-        {isOwner && (
-          <InviteUser
-            userId={user?._id}
-            message={"Надіслати запрошення"}
-            sendFunction={sendRequest}
-          />
-        )}
-        <button
-          onClick={() => {
-            disconnectSocket();
-            navigate("/", { replace: true });
+    <>
+      <div className="border-room-page">
+        <div
+          className="room-page"
+          style={{
+            backgroundImage:
+              workouts?.img && workouts?.img.length >= 0
+                ? `url(${workouts.img[0]})`
+                : "none",
+            backgroundSize: "cover",
+            backgroundPosition: "center",
           }}
-        >
-          Відключитися
-        </button>
-        {isOwner && (
-          <Link
-            to={`/workoutprogress/${uniqueUIDV4Id}`}
-            state={{ currentWorkout: workouts }}
-          >
-            <Button
-              onClick={() => {
-                socket.emit("redirectAll", { roomId: uniqueUIDV4Id });
+        ></div>
+      </div>
+
+      <Spin spinning={loading} tip="Завантаження...">
+        <Card bordered className="room-content">
+          <Title level={3} style={{ textAlign: "center" }}>
+            Створення кімнати
+          </Title>
+
+          <Space direction="vertical" size="large" style={{ width: "100%" }}>
+            <Space direction="horizontal">
+              {isOwner && (
+                <InviteUser
+                  userId={user?._id}
+                  message={"Надіслати запрошення"}
+                  sendFunction={sendRequest}
+                />
+              )}
+
+              <Button
+                danger
+                type="primary"
+                onClick={() => {
+                  disconnectSocket();
+                  navigate("/", { replace: true });
+                }}
+              >
+                Відключитися
+              </Button>
+            </Space>
+
+            {isOwner && (
+              <Link
+                to={`/workoutprogress/${uniqueUIDV4Id}`}
+                state={{ currentWorkout: workouts }}
+              >
+                <Button
+                  type="primary"
+                  block
+                  onClick={() => {
+                    socket.emit("redirectAll", { roomId: uniqueUIDV4Id });
+                  }}
+                >
+                  Почати тренування
+                </Button>
+              </Link>
+            )}
+
+            <Divider>Учасники</Divider>
+
+            <List
+              bordered
+              dataSource={users}
+              renderItem={(userId, i) => {
+                const commentUser = allUsers.find((u) => u._id === userId);
+                if (!commentUser) return null;
+
+                return (
+                  <List.Item key={i}>
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "10px",
+                      }}
+                    >
+                      <Avatar
+                        size={60}
+                        src={
+                          commentUser.profile_picture ||
+                          "/img-pack/icons/user-blacktheme.png"
+                        }
+                      />
+                      <div>
+                        <strong>
+                          {commentUser.name} {commentUser.last_name || ""}
+                        </strong>
+                        <div style={{ fontSize: "12px", color: "#888" }}>
+                          {commentUser.role}
+                        </div>
+                      </div>
+                      
+                        <div style={{ fontSize: "20px", color: "#888" }}>
+                          - {i === 0  ? "Host" : "Guest"}
+                        </div>
+                    </div>
+                  </List.Item>
+                );
               }}
-            >
-              Почати тренування
-            </Button>
-          </Link>
-        )}
-        <List
-          className="demo-loadmore-list"
-          loading={loading}
-          itemLayout="horizontal"
-          dataSource={users}
-        />
-        <ul>
-          Люди в кімнаті:
-          {users.map((msg, i) => (
-            <li key={i}>{msg}</li>
-          ))}
-        </ul>
+              locale={{ emptyText: "Кімната порожня" }}
+            />
+          </Space>
+        </Card>
       </Spin>
-    </div>
+    </>
   );
 }

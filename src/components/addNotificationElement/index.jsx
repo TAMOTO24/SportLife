@@ -80,9 +80,8 @@ const NotificationElement = () => {
   //   return () => clearInterval(interval);
   // }, [user]);
 
-  const fetchNotifications = async (isMounted) => {
+  const fetchNotifications = async () => {
     if (!user) return;
-
     setLoading(true);
     try {
       const response = await axios.get(`/allnotifications/${user._id}`);
@@ -91,31 +90,18 @@ const NotificationElement = () => {
       console.error("Notification error", error);
     } finally {
       setLoading(false);
-      setTimeout(() => {
-        fetchNotifications(user, setNotifications, setLoading);
-      }, 10000);
     }
   };
-  useEffect(() => {
-    // ! Test new notification function it can contain bugs or errors
-    if (!user) return;
-
-    fetchNotifications();
-  }, [user]);
 
   useEffect(() => {
     if (!user) return;
 
-    let isMounted = true;
-
-    const checkNewNotification = async () => {
-      if (!isMounted) return;
-
+    const intervalId = setInterval(async () => {
       try {
         const res = await axios.get(`/notification/${user._id}`);
         const data = res.data;
 
-        if (data && data.type !== "error" && data.title) {
+        if (data && data.title) {
           await axios.put(`/notification/${user._id}`, {
             notificationId: data._id,
           });
@@ -130,19 +116,14 @@ const NotificationElement = () => {
         }
       } catch (error) {
         console.error("Notification error", error);
-      } finally {
-        if (isMounted) setTimeout(checkNewNotification, 5000);
       }
-    };
+    }, 5000);
 
-    checkNewNotification();
-
-    return () => {
-      isMounted = false;
-    };
+    return () => clearInterval(intervalId);
   }, [user]);
 
   const showDrawer = () => {
+    fetchNotifications();
     setOpen(true);
   };
 
@@ -201,7 +182,7 @@ const NotificationElement = () => {
                         );
                       setOpen(false);
                       setLoading(true);
-                      
+
                       fetchNotifications();
                       deleteNotification(notification?._id);
                     }}

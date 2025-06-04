@@ -160,7 +160,7 @@ const PostElement = ({ item, hoverable, theme }) => {
                 </div>
                 {user?._id === item?.created_by ||
                   (user?.role === "admin" && (
-                    <>
+                    <div>
                       <Popconfirm
                         title="Ви впевнені, що хочете видалити пост?"
                         description="Ця дія необоротна."
@@ -189,7 +189,7 @@ const PostElement = ({ item, hoverable, theme }) => {
                           Змінити
                         </Button>
                       </Link>
-                    </>
+                    </div>
                   ))}
               </div>
 

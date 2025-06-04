@@ -35,21 +35,21 @@ const WorkoutStatisticSection = ({ user }) => (
       size="large"
       style={{ width: "100%", overflow: "auto", maxHeight: "28vh" }}
     >
-      {user?.statistic.map((session, idx) => (
-        <Card
-          key={idx}
-          title={`${new Date(
-            session.startTime
-          ).toLocaleDateString()} — ${Math.round(
-            session.trainingTime / 60
-          )} хв`}
-          style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.1)" }}
-        >
-          <List
-            itemLayout="vertical"
-            dataSource={session.data}
-            renderItem={(exercise, i) => {
-              return (
+      {user?.statistic && user.statistic.length > 0 ? (
+        user.statistic.map((session, idx) => (
+          <Card
+            key={idx}
+            title={`${new Date(
+              session.startTime
+            ).toLocaleDateString()} — ${Math.round(
+              session.trainingTime / 60
+            )} хв`}
+            style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.1)" }}
+          >
+            <List
+              itemLayout="vertical"
+              dataSource={session.data}
+              renderItem={(exercise, i) => (
                 <List.Item key={i} style={{ paddingLeft: 0, paddingRight: 0 }}>
                   <Title level={5}>{exercise.name}</Title>
                   {exercise.description && (
@@ -68,11 +68,17 @@ const WorkoutStatisticSection = ({ user }) => (
                   <Text strong>Час відпочинку: </Text>
                   {exercise.restTime}
                 </List.Item>
-              );
-            }}
-          />
+              )}
+            />
+          </Card>
+        ))
+      ) : (
+        <Card>
+          <Typography.Text type="secondary">
+            Наразі немає даних про тренування.
+          </Typography.Text>
         </Card>
-      ))}
+      )}
     </Space>
   </Space>
 );

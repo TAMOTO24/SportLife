@@ -4,7 +4,7 @@
 }
 .card {
   /* flex: 1 1 30%; */
-  aspect-ratio: 1/2;
+  aspect-ratio: 1/1.4;
   /* border: 5px solid;
   border-image: linear-gradient(45deg, #3494e6, #ec6ead) 1; */
   background-size: cover;
@@ -51,13 +51,12 @@
 .card-container {
   position: relative;
   transition: 0.4s;
-  border: 5px solid;
-  /* border-image: linear-gradient(45deg, #3494e6, #ec6ead) 1; */
-  border-color: #e35454;
-  min-height: 30vh;
+  border: 5px solid #e35454;
+  min-height: 20vh;
+  min-width: 18vw;
+  width: fit-content;
+  height: fit-content;
   overflow: hidden;
-  min-width: 15vw;
-  width: 15vw;
 }
 
 .content {
