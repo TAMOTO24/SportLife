@@ -1,6 +1,6 @@
 // import { Link } from 'react-router-dom'
 import React, { useState, useEffect, useRef } from "react";
-import { Button, Input, Form, Spin } from "antd";
+import { Button, Input, Form, Spin, message } from "antd";
 import PostElement from "../addPostElement";
 import TrainerCardElement from "../addTrainerCardElement";
 import { useNavigate } from "react-router-dom";
@@ -8,7 +8,7 @@ import axios from "axios";
 import "./style.css";
 
 function Home() {
-  const [items, setItems] = useState([]);
+  const [form] = Form.useForm();
   const section1 = useRef(null);
   const section2 = useRef(null);
   const section3 = useRef(null);
@@ -33,19 +33,6 @@ function Home() {
       .finally(() => setLoading(false));
   }, []);
 
-  useEffect(() => {
-    axios
-      .get("/api/items")
-      .then((response) => setItems(response.data))
-      .catch((error) => console.error(error));
-
-    const interval = setInterval(() => {
-      setActiveIndex((prevIndex) => (prevIndex + 1) % backgrounds.length);
-    }, 3000);
-
-    return () => clearInterval(interval);
-  }, []);
-
   const handleDotClick = (index) => {
     // Change the background image on clicked current dot
     setActiveIndex(index);
@@ -57,6 +44,20 @@ function Home() {
       const targetPosition =
         ref.current.getBoundingClientRect().top + window.scrollY + offset;
       window.scrollTo({ top: targetPosition, behavior: "smooth" });
+    }
+  };
+
+  const onFinish = async (values) => {
+    if (!values.mail) return;
+
+    form.resetFields();
+
+    try {
+      const res = await axios.post("/subscribe", { email: values.mail });
+      message.success(res.data.message || "Ви успішно підписались!");
+    } catch (error) {
+      console.error(error);
+      message.error(error.response?.data?.message || "Щось пішло не так");
     }
   };
 
@@ -79,9 +80,7 @@ function Home() {
           {/*Background home swiper*/}
           <div className="page-content">
             <h1>Home</h1>
-            <div>
-              НАПИСАТИ УСІ ЕЛЕМЕНТИ НА УКРАЇНСЬКІЙ МОВІ
-            </div>
+            <div>НАПИСАТИ УСІ ЕЛЕМЕНТИ НА УКРАЇНСЬКІЙ МОВІ</div>
           </div>
           <div className="dots-container">
             {backgrounds.map((_, index) => (
@@ -108,11 +107,7 @@ function Home() {
               style={{ display: "flex", gap: "2%", justifyContent: "center" }}
             >
               {posts.slice(0, 3).map((item) => (
-                <PostElement
-                  item={item}
-                  hoverable={true}
-                  theme={false}
-                />
+                <PostElement item={item} hoverable={true} theme={false} />
               ))}
             </div>
           </div>
@@ -169,37 +164,48 @@ function Home() {
               Get it an all the action
             </p>
             <Form
+              form={form}
+              layout="vertical"
               style={{
-                width: "50%",
+                width: "100%",
+                maxWidth: "600px",
+                margin: "0 auto",
                 display: "flex",
                 flexDirection: "column",
                 alignItems: "center",
               }}
+              onFinish={onFinish}
             >
-              <Form.Item>
+              <Form.Item
+                name="mail"
+                rules={[
+                  { required: true, message: "Введіть email" },
+                  { type: "email", message: "Некоректна email адреса" },
+                ]}
+                style={{ width: "100%" }}
+              >
                 <Input
+                  placeholder="Ваша електронна пошта"
                   style={{
                     color: "white",
                     backgroundColor: "transparent",
                     border: "1px solid white",
-                    padding: "20px",
-                    minWidth: "600px",
+                    padding: "16px",
                   }}
                 />
               </Form.Item>
+
               <Button
-                block
-                ghost
+                type="ghost"
                 htmlType="submit"
                 style={{
                   color: "white",
-                  borderColor: "white",
-                  padding: "2%",
-                  maxWidth: "200px",
+                  border: "1px solid white",
+                  padding: "10px 24px",
+                  width: "fit-content",
                 }}
-                variant="outlined"
               >
-                Get Started
+                Підписати мене!
               </Button>
             </Form>
           </div>

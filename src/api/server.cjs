@@ -16,6 +16,7 @@ const Workouts = require("../models/workouts");
 const Trainers = require("../models/trainers");
 const Room = require("../models/room");
 const Request = require("../models/requests");
+const Subscriptions = require("../models/subscriptions");
 const Exercises = require("../models/exercises");
 const Notification = require("../models/notifications");
 
@@ -39,8 +40,8 @@ app.use(
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
-    user: "sportlife.corporate.mail@gmail.com",
-    pass: "fund yebs qing bmqy",
+    user: process.env.TEAMEMAIL,
+    pass: process.env.EMAILACESSCODE,
   },
 });
 const http = require("http");
@@ -543,6 +544,30 @@ app.get("/post/:postId", async (req, res) => {
   }
 });
 
+app.post("/subscribe", async (req, res) => {
+  const { email } = req.body;
+
+  if (!email) {
+    return res.status(400).json({ message: "Невалідна email-адреса" });
+  }
+
+  try {
+    const exists = await Subscriptions.findOne({ email });
+    if (exists) {
+      return res.status(200).json({ message: "Ви вже підписані" });
+    }
+
+    await Subscriptions.create({
+      email,
+      subscribedAt: new Date(),
+    });
+
+    res.status(201).json({ message: "Підписка успішна!" });
+  } catch (err) {
+    res.status(500).send(`Server error: ${err}`);
+  }
+});
+
 app.post("/newuser", async (req, res) => {
   const {
     username,
@@ -972,6 +997,49 @@ app.post("/sendemail", upload.array("files"), async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ success: false, message: "Error sending mail" });
+  }
+});
+
+app.post("/send-newsletter", async (req, res) => {
+  const { subject, message } = req.body;
+
+  if (!subject || !message) {
+    return res.status(400).json({ message: "Subject і message обов'язкові" });
+  }
+
+  try {
+    const subscribers = await Subscriptions.find();
+    const emails = subscribers.map((sub) => sub.email);
+
+    for (let email of emails) {
+      await transporter.sendMail({
+        from: process.env.EMAIL_USER,
+        to: email,
+        subject,
+        html: `
+      <div style="font-family: 'Arial', sans-serif; background-color: #f4f4f4; padding: 30px;">
+        <div style="max-width: 600px; margin: 0 auto; background: #ffffff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+          <h2 style="color: #1890ff;">Вітаємо!</h2>
+          <p style="font-size: 16px; color: #333;">
+            ${message}
+          </p>
+          <hr style="margin: 20px 0; border: none; border-top: 1px solid #ddd;" />
+          <p style="font-size: 14px; color: #888;">
+            Ви отримали цього листа, тому що підписані на розсилку.
+          </p>
+          <p style="font-size: 12px; color: #bbb;">
+            Sportlife &copy; ${new Date().getFullYear()}
+          </p>
+        </div>
+      </div>
+    `,
+      });
+    }
+
+    res.status(200).json({ message: `Розіслано ${emails.length} листів` });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Помилка при відправці" });
   }
 });
 

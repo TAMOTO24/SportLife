@@ -8,6 +8,7 @@ import WorkoutStatisticSection from "../addWorkoutStatisticSection";
 import RoleConfigurationSection from "../addRoleConfigurationSectionPage";
 import BookmarkList from "../addBookMarkSection";
 import PersonalTrainer from "../addPersonalTrainerSection";
+import SubscriptionSection from "../addSubscriptionsSection";
 
 const AccountPage = () => {
   const [form] = Form.useForm();
@@ -88,10 +89,12 @@ const AccountPage = () => {
             label: "Конфігурація ролі",
           },
           { img: "/img-pack/icons/fitness.png", label: "Мої збереження" },
+          { img: "/img-pack/icons/mail.png", label: "Розсилка" },
         ].map((item, index) => {
-          // ! Change it to user?.role === "trainer" later
-          if (item.label === "Особистий тренер" && !user?.role === "trainer")
-            return null;
+          // // ! Change it to user?.role === "trainer" later
+          // if (item.label === "Особистий тренер" && !user?.role === "trainer")
+          //   return null;
+          if (item.label === "Розсилка" && !user?.role === "admin") return null;
 
           return (
             <a
@@ -141,6 +144,12 @@ const AccountPage = () => {
           <Spin spinning={loading}>
             <BookmarkList bookmarks={bookmarks} />
           </Spin>
+        </div>
+        <div
+          id="Розсилка"
+          className={selected === "Розсилка" ? "" : "hidePage"}
+        >
+          <SubscriptionSection />
         </div>
       </div>
     </div>
