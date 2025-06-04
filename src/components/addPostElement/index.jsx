@@ -158,28 +158,39 @@ const PostElement = ({ item, hoverable, theme }) => {
                   <div className="postUsername">@{creator?.username}</div>
                   <div className="postDate">{calculateTimeAgo(item.date)}</div>
                 </div>
-                {user?._id === item?.created_by && (
-                  <Popconfirm
-                    title="Ви впевнені, що хочете видалити пост?"
-                    description="Ця дія необоротна."
-                    onConfirm={(e) => {
-                      e.stopPropagation();
-                      deletePost(item?._id);
-                    }}
-                    okText="Так"
-                    cancelText="Скасувати"
-                    okButtonProps={{ danger: true }}
-                  >
-                    <Button
-                      type="text"
-                      danger
-                      icon={<DeleteOutlined />}
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      Видалити
-                    </Button>
-                  </Popconfirm>
-                )}
+                {user?._id === item?.created_by ||
+                  (user?.role === "admin" && (
+                    <>
+                      <Popconfirm
+                        title="Ви впевнені, що хочете видалити пост?"
+                        description="Ця дія необоротна."
+                        onConfirm={(e) => {
+                          e.stopPropagation();
+                          deletePost(item?._id);
+                        }}
+                        okText="Так"
+                        cancelText="Скасувати"
+                        okButtonProps={{ danger: true }}
+                      >
+                        <Button
+                          type="text"
+                          danger
+                          icon={<DeleteOutlined />}
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          Видалити
+                        </Button>
+                      </Popconfirm>
+                      <Link to={`/newsandinf/edit/${item?._id}`}>
+                        <Button
+                          color="primary"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          Змінити
+                        </Button>
+                      </Link>
+                    </>
+                  ))}
               </div>
 
               <div className={`postText ${!theme && "black-theme-title"}`}>

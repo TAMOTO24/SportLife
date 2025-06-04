@@ -184,7 +184,6 @@ const AccountInfoSection = () => {
             label="Profile Description"
             rules={[
               {
-                required: true,
                 message: "Please enter your profile description!",
               },
             ]}

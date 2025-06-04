@@ -52,7 +52,9 @@ const RoleConfigurationSection = ({ user }) => {
     formData.append("email", user.email);
     formData.append("subject", values.reason);
     formData.append("note", values.note);
+    formData.append("role", values.request);
 
+    if (values.dragger)
     values.dragger.forEach((fileWrapper) => {
       formData.append("files", fileWrapper.originFileObj);
     });
@@ -95,8 +97,8 @@ const RoleConfigurationSection = ({ user }) => {
               виберіть "Адміністратор".
             </p>
             <Form.Item
-              name="reason"
-              label="Request Reason"
+              name="request"
+              label="Виберіть потрібну роль."
               rules={[{ required: true }]}
             >
               <Select placeholder="Select a option and change input text above">

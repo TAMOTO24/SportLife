@@ -20,6 +20,7 @@ import RoomPage from "./components/addWorkoutRoomPage";
 import WorkoutResult from "./components/addFinalWorkoutResultPage"
 import UsersPage from "./components/addUsersPage";
 import UserProfile from "./components/addUserProfilePage";
+import EditPost from "./components/addPostEditPage";
 
 function App() {
   return (
@@ -41,6 +42,7 @@ function App() {
           <Route path="/newsandinf/comments" element={<CommentsPage />} />
           <Route element={<ProtectedRoute />}>
             <Route path="/workoutprogress/:roomId" element={<WorkoutProgressPage />} />
+            <Route path="/newsandinf/edit/:postId" element={<EditPost />} />
             <Route path="/account" element={<AccountPage />} />
             <Route path="/createpostpage" element={<CreatePostPage />} />
             <Route path="/workoutroom/:roomId" element={<RoomPage />} />

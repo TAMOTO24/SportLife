@@ -208,7 +208,7 @@ io.on("connection", (socket) => {
     if (!userId) return;
     const user = await User.findById(userId);
 
-    console.log("userId - ", userId, " - data - ",  data, "- user -", user);
+    console.log("userId - ", userId, " - data - ", data, "- user -", user);
 
     if (!data || !user) {
       return;
@@ -433,7 +433,7 @@ app.post("/createpagepost", async (req, res) => {
       username: answerUser.username,
       gallery: filePaths,
       userIcon: answerUser.icon || "",
-      created_by: userId
+      created_by: userId,
     });
     await newPost.save();
   } catch (error) {
@@ -451,7 +451,7 @@ app.get("/api/getposts", async (req, res) => {
   }
 });
 
-app.delete("/post/:postId", async(req, res) => {
+app.delete("/post/:postId", async (req, res) => {
   const { postId } = req.params;
 
   if (!postId) {
@@ -476,7 +476,7 @@ app.delete("/deletecomment/:postId/:comment", async (req, res) => {
     const post = await Post.findById(postId);
     if (!post) return res.status(404).json({ message: "Пост не знайдено" });
 
-    post.comment = post.comment.filter(c => c.text.toString() !== comment);
+    post.comment = post.comment.filter((c) => c.text.toString() !== comment);
     await post.save();
 
     res.json({ message: "Коментар видалено", updatedPost: post });
@@ -779,12 +779,12 @@ app.get("/rejectchangerequest/:id", async (req, res) => {
   }
 });
 
-app.get("/acceptchangerequest/:id", async (req, res) => {
-  const { id } = req.params;
+app.get("/acceptchangerequest/:id/:role", async (req, res) => {
+  const { id, role } = req.params;
 
   try {
-    if (!id) {
-      return res.status(204).json({ message: "No Id as query" });
+    if (!id || !role) {
+      return res.status(204).json({ message: "No Id or role as query" });
     }
 
     const request = await Request.findOne({ userId: id });
@@ -798,8 +798,8 @@ app.get("/acceptchangerequest/:id", async (req, res) => {
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
-    user.role = "trainer"; // Update user role to trainer
-    user.trainerRequestId = null; // Clear trainer request ID
+    user.role = role; // Update user role to trainer
+    if (role === "trainer") user.trainerRequestId = null; // Clear trainer request ID
     await user.save();
 
     res.send("Роль успішно підтверджена!");
@@ -901,7 +901,7 @@ app.put("/bookmark/:userId", async (req, res) => {
 });
 
 app.post("/sendemail", upload.array("files"), async (req, res) => {
-  const { id, email, subject, note } = req.body;
+  const { id, email, subject, note, role } = req.body;
   const files = req.files;
 
   if (!email || !subject || !note || !id || !files || files.length === 0) {
@@ -918,25 +918,25 @@ app.post("/sendemail", upload.array("files"), async (req, res) => {
 
     console.log("Attachments:", attachments);
     const baseUrl = process.env.BASE_SERVER_URL || "http://localhost:5000";
-    const linkAccept = `${baseUrl}/acceptchangerequest/${id}`;
+    const linkAccept = `${baseUrl}/acceptchangerequest/${id}/${role}`;
     const linkReject = `${baseUrl}/rejectchangerequest/${id}`;
 
     // ! TODO make prettier mail page
     const htmlContent = `
       <div style="font-family: Arial, sans-serif; padding: 20px;">
         <p>Щоб підтвердити свою електронну пошту, натисніть на кнопку нижче:</p>
-        <div style="display: flex; gap: 10px;">
+        <div style="display: flex; gap: 20px;">
 
         <a href="${linkAccept}" 
           style="display:inline-block; padding: 10px 20px; background-color: #28a745; color: white; 
           text-decoration: none; border-radius: 5px; font-weight: bold;">
-          Подтвердить по документам роль тренера
+          Подтвердить по документам зміну ролі
         </a>
 
         <a href="${linkReject}" 
           style="display:inline-block; padding: 10px 20px; background-color:rgb(167, 40, 40); color: white; 
                   text-decoration: none; border-radius: 5px; font-weight: bold;">
-          Відхилити запит на тренера
+          Відхилити запит на зміну
         </a>
         </div>
         <p>Якщо ви не запитували підтвердження, будь ласка, проігноруйте це повідомлення.</p>
@@ -953,25 +953,53 @@ app.post("/sendemail", upload.array("files"), async (req, res) => {
       attachments,
     });
 
-    const findRequest = await Request.findOne({ userId: id });
-    if (!findRequest) {
-      const user = await User.findById(id);
-      const newRequest = new Request({
-        email: email,
-        userId: user._id,
-        requestReason: "trainer",
-        status: "pending",
-      });
+    // const findRequest = await Request.findOne({ userId: id });
+    // if (!findRequest) {
+    const user = await User.findById(id);
+    const newRequest = new Request({
+      email: email,
+      userId: user._id,
+      requestReason: role,
+      status: "pending",
+    });
 
-      user.trainerRequestId = newRequest._id; // Save request id to user
-      await user.save(); // Save user with updated request id
-      await newRequest.save();
-    }
+    if (role === "trainer") user.trainerRequestId = newRequest._id; // Save request id to user
+    await user.save(); // Save user with updated request id
+    await newRequest.save();
+    // }
 
     res.json({ success: true, message: "Email sent successfully" });
   } catch (err) {
     console.error(err);
     res.status(500).json({ success: false, message: "Error sending mail" });
+  }
+});
+
+app.put("/post/:postId", async (req, res) => {
+  const { postId } = req.params;
+
+  if (!postId) {
+    return res.status(404).json({ message: "Id is important" });
+  }
+
+  try {
+    const post = await Post.findById(postId);
+
+    if (!post) {
+      return res.status(404).json({
+        message: "Post didn't exist anymore or something went wrong!",
+      });
+    }
+    post.text = req.body.text || post.text;
+    post.date = req.body.date || post.date;
+    post.gallery = req.body.gallery || post.gallery;
+    post.like = req.body.like || post.like;
+    post.created_by = req.body.created_by || post.created_by;
+
+    await post.save();
+    res.status(200).json({ message: "Post updated successfully!", post });
+  } catch (err) {
+    res.status(500).json({ success: false, message: "Error changing post" });
   }
 });
 
