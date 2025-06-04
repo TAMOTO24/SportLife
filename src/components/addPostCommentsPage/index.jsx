@@ -22,7 +22,6 @@ const CommentsPage = () => {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    console.log(postId);
     if (!postId) return;
     setLoading(true);
     axios

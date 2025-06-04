@@ -26,7 +26,6 @@ const PersonalTrainer_User = ({ user }) => {
   const [chosenUser, setChosenUser] = useState(undefined);
 
   const handleSubmit = (values) => {
-    console.log("Відправлено:", values.note);
     form.resetFields();
     createNotification(
       values.note,
@@ -112,7 +111,6 @@ const PersonalTrainer_User = ({ user }) => {
               userId={user?._id}
               message={"Запросити"}
               onSelectUser={(id) => {
-                console.log("Вибраний юзер:", id);
                 setChosenUser(id);
               }}
             />

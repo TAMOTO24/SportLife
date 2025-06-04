@@ -119,7 +119,6 @@ const NotificationElement = () => {
           await axios.put(`/notification/${user._id}`, {
             notificationId: data._id,
           });
-          console.log("Notification:", data._id);
           Notification(
             data.message,
             data.title,

@@ -162,7 +162,6 @@ const WorkoutProgressPage = () => {
       Array.isArray(workoutStatuses) &&
       serverData
     ) {
-      console.log("setNewDAta");
       socket.emit("updateData", {
         roomId: uniqueUIDV4Id,
         userId: user._id,

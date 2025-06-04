@@ -694,22 +694,25 @@ app.post("/notification", async (req, res) => {
   const { access, title, message, userId, url, type, action, fromWho } =
     req.body;
 
-  const newNotification = new Notification({
-    access: access === "all" ? "all" : userId,
-    title,
-    date: new Date(),
-    message,
-    url,
-    type,
-    fromWho,
-    readStatus: [],
-    action,
-  });
-  await newNotification.save();
-
-  res
-    .status(201)
-    .json({ message: "Notification created successfully", newNotification });
+  try {
+    const newNotification = new Notification({
+      access: access === "all" ? access : userId,
+      title,
+      date: new Date(),
+      message,
+      url,
+      type,
+      fromWho,
+      readStatus: [],
+      action,
+    });
+    await newNotification.save();
+    res
+      .status(201)
+      .json({ message: "Notification created successfully", newNotification });
+  } catch (err) {
+    return res.status(500).json({ message: "Notification error!" });
+  }
 });
 
 app.delete("/notification/:notificationId", async (req, res) => {
