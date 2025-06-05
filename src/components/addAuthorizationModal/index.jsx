@@ -56,7 +56,8 @@ const AuthModal = ({ visible, onCancel }) => {
       width={350}
     >
       <div style={{ textAlign: "center" }}>
-        <h1>Welcome back</h1>
+        <h1>Ласкаво просимо!</h1>
+        <h5>Введіть пошту для її знаходження</h5>
       </div>
       <Form onFinish={handleLogin} layout="vertical">
         {/* Email field */}
@@ -69,16 +70,15 @@ const AuthModal = ({ visible, onCancel }) => {
         >
           <Input
             prefix={<MailOutlined />}
-            placeholder="Email address"
+            placeholder="Поштова адреса"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            // disabled={isEmailValid}
           />
         </Form.Item>
 
         {/* Registration */}
         <p style={{ textAlign: "center" }}>
-          Don't have an account? <Link to="/authpage" onClick={onCancel}>Sign Up</Link>
+          Немає облікового запису? <Link to="/authpage" onClick={onCancel}>Зареєструватися</Link>
         </p>
 
         {/* Continue button */}
@@ -88,7 +88,7 @@ const AuthModal = ({ visible, onCancel }) => {
           onClick={handleEmailCheck}
           loading={loading}
         >
-          Continue
+          Продовжити
         </Button>
 
       </Form>
@@ -104,7 +104,7 @@ const AuthModal = ({ visible, onCancel }) => {
 
       {/* Terms and Privacy */}
       <p style={{ marginTop: 20, fontSize: 12, textAlign: "center" }}>
-        <a href="#">Terms of Use</a> | <a href="#">Privacy Policy</a>
+        <a href="#">Умови використання</a> | <a href="#">Політика конфіденційності</a>
       </p>
     </Modal>
   );

@@ -22,7 +22,6 @@ const { Title, Paragraph } = Typography;
 const ClassPage = () => {
   const location = useLocation();
   const { workoutId } = useParams();
-  // const [RoomId] = useState(Cookies.get("roomId"));
   const { workout } = location.state || {};
   const [workoutState, setWorkoutState] = useState(workout);
   const uniqueUIDV4Id = uuidv4();
@@ -35,15 +34,6 @@ const ClassPage = () => {
       })
       .catch((error) => console.error(error));
   }, []);
-
-  // useEffect(() => {
-  //   const existingRoomId = Cookies.get("roomId");
-  //   if (!existingRoomId) {
-  //     Cookies.set("roomId", uniqueUIDV4Id, { expires: 0.25 });
-  //   } else {
-  //     setUniqueUIDV4Id(existingRoomId);
-  //   }
-  // }, []);
 
   return workoutState ? (
     <div
@@ -60,9 +50,6 @@ const ClassPage = () => {
       <div className="classBlock">
         <div className="classUpperPanel">
           <img src="/img-pack/logo/logo2_white.png" alt="Logo" id="logo" />
-          <div id="login-text">
-            Don't have an account? <a href="#">Register</a>!
-          </div>
         </div>
         <hr />
 
@@ -71,16 +58,16 @@ const ClassPage = () => {
             {workoutState.title}
           </Title>
           <Paragraph style={{ color: "#a8acb1", fontSize: "18px" }}>
-            <strong>Trainer:</strong> {workoutState.trainer}
+            <strong>Тренер:</strong> {workoutState.trainer}
           </Paragraph>
           <Paragraph style={{ color: "#a8acb1", fontSize: "18px" }}>
-            <strong>Description:</strong> {workoutState.description}
+            <strong>Опис:</strong> {workoutState.description}
           </Paragraph>
         </div>
 
         <div className="typeSection">
           <Title level={3} style={{ color: "white", marginTop: "40px" }}>
-            Workout Types
+            Типи тренування
           </Title>
           <Row gutter={16}>
             {workoutState.type.map((type, index) => (
@@ -100,7 +87,7 @@ const ClassPage = () => {
                   }}
                 >
                   <Paragraph style={{ color: "#a8acb1", fontSize: "16px" }}>
-                    This section focuses on {type.toLowerCase()} exercises.
+                    Цей розділ зосереджений на вправах типу {type.toLowerCase()}.
                   </Paragraph>
                 </Card>
               </Col>
@@ -110,7 +97,7 @@ const ClassPage = () => {
 
         <div className="gallerySection">
           <Title level={3} style={{ color: "white", marginTop: "40px" }}>
-            Image Gallery
+            Галерея зображень
           </Title>
           <Row gutter={16}>
             {workoutState.img.map((image, index) => (
@@ -129,20 +116,19 @@ const ClassPage = () => {
 
         <div className="detailsSection">
           <Title level={3} style={{ color: "white", marginTop: "40px" }}>
-            Additional Details
+            Додаткова інформація
           </Title>
           <Paragraph style={{ color: "#a8acb1", fontSize: "18px" }}>
-            <strong>Warm up Duration:</strong>{" "}
-            {workoutState.workoutplan["Warm up"]} min
+            <strong>Тривалість розминки:</strong>{" "}
+            {workoutState.workoutplan["Warm up"]} хв
           </Paragraph>
           <Paragraph style={{ color: "#a8acb1", fontSize: "18px" }}>
-            <strong>Exercise Machines: </strong>
-            {""}
+            <strong>Тренажери:</strong>{" "}
             {workoutState.exercise_machines.join(", ")}
           </Paragraph>
           <hr />
           <Paragraph style={{ color: "#a8acb1", fontSize: "30px" }}>
-            <strong>Body activity: </strong>
+            <strong>Активність тіла:</strong>
           </Paragraph>
           <div style={{ display: "flex", justifyContent: "center" }}>
             <PieChart width={800} height={400}>
@@ -165,8 +151,7 @@ const ClassPage = () => {
                 to={`/workoutroom/${uniqueUIDV4Id}`}
                 state={{ workouts: workoutState }}
               >
-                {/* {RoomId ? "Join created room" : "Create new room"} */}
-                Create new room
+                Створити нову кімнату
               </Link>
             </Button>
           </Space>

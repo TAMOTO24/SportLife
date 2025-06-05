@@ -51,6 +51,7 @@ export function deleteNotification(notificationId) {
 }
 
 export function trainerRequest(userId, trainerId, action) {
+  console.log("useriD - FROM WHO -", userId, "trainer - ", trainerId, "- action - ", action);
   axios
     .put(`/usersetpersonaltrainer`, {userId, trainerId, action})
     .then((response) => {

@@ -104,7 +104,7 @@ const AccountInfoSection = () => {
   return (
     <>
       <Card
-        title="Account Info"
+        title="Інформація аккаунту"
         style={{ marginBlock: "15px", padding: "10px" }}
         loading={loading}
       >
@@ -120,19 +120,19 @@ const AccountInfoSection = () => {
               <Space direction="vertical" size={8} style={{ width: "300px" }}>
                 <h2>{user?.username}</h2>
                 <p>
-                  <b>Email: </b>
+                  <b>Пошта: </b>
                   {user?.email}
                 </p>
                 <p>
-                  <b>Full Name: </b>
+                  <b>ФІО: </b>
                   {user?.name} {user?.last_name}
                 </p>
                 <p>
-                  <b>Description: </b>
+                  <b>Опис профілю: </b>
                   {user?.profileDescription}
                 </p>
                 <p>
-                  <b>Tag: </b>
+                  <b>Роль: </b>
                   <Tag color="blue" bordered={false}>
                     {user.role}
                   </Tag>
@@ -146,12 +146,12 @@ const AccountInfoSection = () => {
                   setUploadedFile(e);
                 }}
               >
-                <Button icon={<EditOutlined />}>Change Avatar</Button>
+                <Button icon={<EditOutlined />}>Змінити фото профілю</Button>
               </Upload>
               <Button icon={<DeleteOutlined />} danger>
-                Remove
+                Видалити
               </Button>
-              <Button type="primary"  onClick={() => setPreviewOpen(true)}>Preview</Button>
+              <Button type="primary"  onClick={() => setPreviewOpen(true)}>Попередній перегляд</Button>
             </Space>
           </Col>
         </Row>
@@ -164,31 +164,31 @@ const AccountInfoSection = () => {
           onFinish={handleSubmit}
           loading={loading}
         >
-          <Form.Item name="name" label="First Name">
+          <Form.Item name="name" label="Ім'я">
             <Input placeholder="First Name" />
           </Form.Item>
-          <Form.Item name="last_name" label="Last Name">
+          <Form.Item name="last_name" label="Фамілія">
             <Input placeholder="Last Name" />
           </Form.Item>
-          <Form.Item name="username" label="Username">
+          <Form.Item name="username" label="Нікнейм">
             <Input prefix={<UserOutlined />} placeholder="Username" />
           </Form.Item>
-          <Form.Item name="email" label="Email">
+          <Form.Item name="email" label="Почта">
             <Input prefix={<MailOutlined />} placeholder="Email address" />
           </Form.Item>
-          <Form.Item name="phone" label="Phone Number">
+          <Form.Item name="phone" label="Телефон">
             <Input prefix={<PhoneOutlined />} placeholder="Phone Number" />
           </Form.Item>
           <Form.Item
             name="profileDescription"
-            label="Profile Description"
+            label="Опис профілю"
             rules={[
               {
-                message: "Please enter your profile description!",
+                message: "Будь ласка, введіть опис вашого профілю!",
               },
             ]}
           >
-            <Input.TextArea placeholder="Tell us about yourself..." rows={4} />
+            <Input.TextArea placeholder="Скажіть нам про себе..." rows={4} />
           </Form.Item>
           <Form.Item>
             <Row justify="space-between">

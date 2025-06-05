@@ -1,5 +1,6 @@
 import React from "react";
 import dayjs from "dayjs";
+import { formatTime } from "../../function";
 import { Card, Typography, Space, List, Divider } from "antd";
 
 const { Title, Text } = Typography;
@@ -19,7 +20,7 @@ const WorkoutResultsSection = ({ user }) => {
               key={idx}
               title={`📅 ${dayjs(session.startTime).format(
                 "DD.MM.YYYY"
-              )} • 🕒 ${Math.ceil(session.trainingTime / 60)} хв`}
+              )} • 🕒 ${formatTime(session.trainingTime)}`}
               style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.1)" }}
             >
               <List

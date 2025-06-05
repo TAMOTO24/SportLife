@@ -112,7 +112,6 @@ const AccountPage = () => {
         })}
       </div>
       <div id="pages">
-        {/* <h1>{selected}</h1> */}
         <div
           id="Інформація аккаунту"
           className={selected === "Інформація аккаунту" ? "" : "hidePage"}

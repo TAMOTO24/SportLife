@@ -55,7 +55,7 @@ const CreatePostPage = () => {
       const postData = {
         description: values.description,
         filePaths: urls,
-        userId: user?._id
+        userId: user?._id,
       };
 
       axios
@@ -76,7 +76,7 @@ const CreatePostPage = () => {
           style={{ width: "800px" }}
           onFinish={handleSubmit}
         >
-          <Form.Item name="description" label="Post Description">
+          <Form.Item name="description" label="Опис посту">
             <Input.TextArea
               placeholder="Have to share something..."
               rows={4}
@@ -84,7 +84,7 @@ const CreatePostPage = () => {
             />
           </Form.Item>
           {/* <Form.Item name="upload" valuePropName="fileList" /> */}
-          <Form.Item label="Dragger">
+          <Form.Item label="Додати файли">
             <Form.Item
               name="upload"
               valuePropName="fileList"
@@ -96,10 +96,10 @@ const CreatePostPage = () => {
                   <InboxOutlined />
                 </p>
                 <p className="ant-upload-text">
-                  Click or drag file to this area to upload
+                  Натисніть або перетягніть файл у цю область для завантаження
                 </p>
                 <p className="ant-upload-hint">
-                  Support for a single or bulk upload.
+                  Підтримка одноразового або масового завантаження.
                 </p>
               </Upload.Dragger>
             </Form.Item>
@@ -120,9 +120,8 @@ const CreatePostPage = () => {
                 width: "100%",
               }}
             >
-              +
+              Створини новий пост
             </Button>
-            <Divider>Images</Divider>
           </Form.Item>
         </Form>
       </div>

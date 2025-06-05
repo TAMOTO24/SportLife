@@ -34,13 +34,13 @@ function Home() {
   }, []);
 
   const handleDotClick = (index) => {
-    // Change the background image on clicked current dot
+    // Змінити фон при натисканні на точку
     setActiveIndex(index);
   };
 
   const scrollTo = (ref) => {
     if (ref.current) {
-      const offset = -80; // Offset from the top of the page
+      const offset = -80; // Відступ від верху сторінки
       const targetPosition =
         ref.current.getBoundingClientRect().top + window.scrollY + offset;
       window.scrollTo({ top: targetPosition, behavior: "smooth" });
@@ -68,7 +68,7 @@ function Home() {
           <button onClick={() => scrollTo(section1)}>1</button>
           <button onClick={() => scrollTo(section2)}>2</button>
           <button onClick={() => scrollTo(section3)}>3</button>
-          <button onClick={() => scrollTo(section3)}>4</button>
+          <button onClick={() => scrollTo(section4)}>4</button>
         </div>
 
         <div
@@ -77,10 +77,10 @@ function Home() {
           id="FPage"
           style={{ backgroundImage: backgrounds[activeIndex], height: "90vh" }}
         >
-          {/*Background home swiper*/}
+          {/*Фон домашньої сторінки з перемикачем*/}
           <div className="page-content">
-            <h1>Home</h1>
-            <div>НАПИСАТИ УСІ ЕЛЕМЕНТИ НА УКРАЇНСЬКІЙ МОВІ</div>
+            <h1>Головна</h1>
+            <div>НАПИСАТИ УСІ ЕЛЕМЕНТИ УКРАЇНСЬКОЮ МОВОЮ</div>
           </div>
           <div className="dots-container">
             {backgrounds.map((_, index) => (
@@ -92,26 +92,28 @@ function Home() {
             ))}
           </div>
         </div>
-        <div class="section" ref={section2}>
+
+        <div className="section" ref={section2}>
           <div
-            class="background"
+            className="background"
             style={{
               backgroundImage:
                 "url(/img-pack/trainers/strong-man-pulling-rope_23-2147671924.jpg)",
             }}
           />
-          <div class="blog-section-block">
-            <p className="blog-title">out blog</p>
-            <p className="blog-subtitle">Look for the news & posts</p>
+          <div className="blog-section-block">
+            <p className="blog-title">Наш блог</p>
+            <p className="blog-subtitle">Шукайте новини та публікації</p>
             <div
               style={{ display: "flex", gap: "2%", justifyContent: "center" }}
             >
               {posts.slice(0, 3).map((item) => (
-                <PostElement item={item} hoverable={true} theme={false} />
+                <PostElement key={item.id} item={item} hoverable={true} theme={false} />
               ))}
             </div>
           </div>
         </div>
+
         <div ref={section3} className="section" style={{ height: "85vh" }}>
           <div
             style={{
@@ -122,9 +124,9 @@ function Home() {
             }}
           >
             <div>
-              <div className="blog-title">Our Team</div>
+              <div className="blog-title">Наша команда</div>
               <div className="blog-subtitle">
-                Choose to train with experts you want
+                Обирайте тренуватись з експертами, яких бажаєте
               </div>
             </div>
             <Button
@@ -136,14 +138,15 @@ function Home() {
               }}
               style={{ padding: "2%", fontSize: "100%" }}
             >
-              View all of our experts
+              Переглянути усіх наших експертів
             </Button>
           </div>
           <TrainerCardElement />
         </div>
+
         <div ref={section4} className="section" style={{ height: "50vh" }}>
           <div
-            class="background"
+            className="background"
             style={{
               backgroundImage:
                 "url(/img-pack/trainers/woman-helping-man-gym.jpg)",
@@ -158,10 +161,10 @@ function Home() {
             }}
           >
             <p style={{ fontSize: "2rem" }}>
-              sigh your email to get news right into ur mailbox
+              Введіть вашу електронну пошту, щоб отримувати новини прямо у вашу поштову скриньку
             </p>
             <p style={{ fontSize: "5rem" }} id="titleItem">
-              Get it an all the action
+              Будьте в курсі усіх подій
             </p>
             <Form
               form={form}
@@ -205,7 +208,7 @@ function Home() {
                   width: "fit-content",
                 }}
               >
-                Підписати мене!
+                Підписатися!
               </Button>
             </Form>
           </div>

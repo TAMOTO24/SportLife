@@ -25,7 +25,13 @@ const Auth = () => {
         setUser(response.data.user);
       })
       .catch((error) => console.error("Auth error", error))
-      .finally(() => {setLoading(false)});
+      .finally(() => {
+        setLoading(false);
+      });
+
+    return () => {
+      isOpen(false);
+    };
   }, []);
   const handleAuthClick = async () => {
     await logout(navigate);
@@ -51,10 +57,10 @@ const Auth = () => {
             <div className="dropdownAuthBlock">
               <p>@{user.username}</p>
               <Link to="/account">
-                <div id="DPAuthLink">Account</div>
+                <div id="DPAuthLink">Аккаунт</div>
               </Link>
               <a onClick={handleAuthClick}>
-                <div id="DPAuthLink">Exit</div>
+                <div id="DPAuthLink">Вийти</div>
               </a>
             </div>
           )}

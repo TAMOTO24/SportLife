@@ -18,7 +18,7 @@ const PersonalTrainer = ({ user }) => {
       {user?.role === "trainer" ? (
         <PersonalTrainerBlock user={client} />
       ) : (
-        <PersonalTrainer_User user={client} />
+        <PersonalTrainer_User user={user} />
       )}
     </>
   );

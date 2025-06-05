@@ -26,13 +26,19 @@ const PersonalTrainer_User = ({ user }) => {
   const [chosenUser, setChosenUser] = useState(undefined);
 
   const handleSubmit = (values) => {
+    console.log("in and ", chosenUser, user);
+    if (!chosenUser) {
+      console.log("error");
+      message.error("Щось пішло не так спробуйте ще раз через декілька секунд");
+      return;
+    }
     form.resetFields();
     createNotification(
       values.note,
       "Прохання на тему персонального тренера.",
       "info",
       chosenUser,
-      user?._id,
+      user._id,
       "",
       "personalTrainerRequest"
     );
@@ -44,7 +50,7 @@ const PersonalTrainer_User = ({ user }) => {
       <h1>
         <b>Персональний тренер</b>
       </h1>
-      {"// ! If user have personal trainer then output his info show to user his personal trainer!"}
+
       {!user?.personalTrainerId && (
         <Result
           status="404"
@@ -61,16 +67,6 @@ const PersonalTrainer_User = ({ user }) => {
           }
         >
           <Paragraph>
-            <Text
-              strong
-              style={{
-                fontSize: 16,
-              }}
-            >
-              The content you submitted has the following error:
-            </Text>
-          </Paragraph>
-          <Paragraph>
             <CloseCircleOutlined className="site-result-demo-error-icon" />
             Заявка не подана, подайте будь-ласка заявку
           </Paragraph>
@@ -78,13 +74,18 @@ const PersonalTrainer_User = ({ user }) => {
       )}
       <div>
         Статус запиту{" "}
-        {user?.personalTrainerId === "rejected" || !user?.personalTrainerId ? (
+        {user?.personalTrainerId === "rejected" ? (
           <Tag bordered={false} color="error" style={{ fontSize: 20 }}>
-            {"Відхилено"}
+            Відхилено
+          </Tag>
+        ) : user?.personalTrainerId === undefined ||
+          user?.personalTrainerId === null ? (
+          <Tag bordered={false} color="default" style={{ fontSize: 20 }}>
+            Ви ще не відправили запит!
           </Tag>
         ) : (
           <Tag bordered={false} color="success" style={{ fontSize: 20 }}>
-            {"Підтверджено"}
+            Підтверджено
           </Tag>
         )}
       </div>
@@ -110,6 +111,7 @@ const PersonalTrainer_User = ({ user }) => {
             <InviteUser
               userId={user?._id}
               message={"Запросити"}
+              onlyTrainer={true}
               onSelectUser={(id) => {
                 setChosenUser(id);
               }}

@@ -18,7 +18,6 @@ import {
 import { useNavigate, useSearchParams, Link } from "react-router-dom";
 import Cookies from "js-cookie";
 import "./style.css";
-// import { set } from "mongoose";
 import AuthContext from "../../authprovider.js";
 
 const { Option } = Select;
@@ -33,7 +32,7 @@ const AuthPage = () => {
   const [loading, setLoading] = useState(false);
   const [authType, setAuthType] = useState("signin");
 
-  const phonePrefixes = Array.from({ length: 999 }, (_, i) => { //phone prefixes all
+  const phonePrefixes = Array.from({ length: 999 }, (_, i) => {
     const value = i + 1;
     return (
       <Option key={value} value={value}>
@@ -44,15 +43,12 @@ const AuthPage = () => {
 
   const prefixSelector = (
     <Form.Item name="prefix" noStyle>
-      <Select style={{ width: 70 }}>
-        {phonePrefixes}
-      </Select>
+      <Select style={{ width: 70 }}>{phonePrefixes}</Select>
     </Form.Item>
   );
 
   useEffect(() => {
     const existingToken = Cookies.get("token");
-    // Auth protection for the page
     if (existingToken) {
       navigate("/");
     }
@@ -63,14 +59,12 @@ const AuthPage = () => {
     setLoading(true);
 
     if (authType === "signin") {
-      // Login user
       try {
         await login(values.email, values.password, navigate, message);
       } catch (err) {
-        message.error("Error during login.");
+        message.error("Помилка під час входу.");
       }
     } else {
-      // Register new user
       try {
         await signup(
           values.email,
@@ -86,7 +80,7 @@ const AuthPage = () => {
           message
         );
       } catch (err) {
-        message.error("Error during login.", err);
+        message.error("Помилка під час реєстрації.");
       }
     }
 
@@ -98,7 +92,7 @@ const AuthPage = () => {
       <div className="auth-container">
         <div>
           <div style={{ textAlign: "center" }}>
-            <h1>{authType !== "signup" ? "Log in" : "Register"}</h1>
+            <h1>{authType !== "signup" ? "Вхід" : "Реєстрація"}</h1>
           </div>
           <Form
             onFinish={onFinish}
@@ -106,89 +100,85 @@ const AuthPage = () => {
             initialValues={{ email: searchParams.get("email") }}
             style={{ width: "600px" }}
           >
-            {/* Email field */}
             {authType === "signup" && (
               <>
                 <Form.Item
-                  label="Nickname"
+                  label="Нікнейм"
                   name="username"
-                  tooltip="What do you want others to call you?"
+                  tooltip="Ім'я, яке будуть бачити інші користувачі"
                   rules={[
                     {
                       required: true,
-                      message: "Please input your nickname!",
+                      message: "Введіть нікнейм!",
                       whitespace: true,
                     },
                   ]}
                 >
-                  <Input prefix={<UserOutlined />} placeholder="username" />
+                  <Input prefix={<UserOutlined />} placeholder="Нікнейм" />
                 </Form.Item>
                 <Form.Item
                   name="name"
-                  label="Name"
+                  label="Ім'я"
                   rules={[
                     {
                       required: true,
-                      message: "Please input your name!",
+                      message: "Введіть ім’я!",
                     },
                   ]}
                 >
-                  <Input style={{ width: "100%" }} placeholder="name" />
+                  <Input placeholder="Ім’я" />
                 </Form.Item>
                 <Form.Item
                   name="lastname"
-                  label="Last Name"
+                  label="Прізвище"
                   rules={[
                     {
                       required: true,
-                      message: "Please input your last name!",
+                      message: "Введіть прізвище!",
                     },
                   ]}
                 >
-                  <Input style={{ width: "100%" }} placeholder="lastname" />
+                  <Input placeholder="Прізвище" />
                 </Form.Item>
               </>
             )}
             <Form.Item
-              label="Email"
+              label="Електронна пошта"
               name="email"
               rules={[
-                { required: true, message: "Please enter your email!" },
-                { type: "email", message: "Invalid email format!" },
+                { required: true, message: "Введіть електронну пошту!" },
+                { type: "email", message: "Невірний формат пошти!" },
               ]}
             >
               <Input
                 prefix={<MailOutlined />}
-                placeholder="Email address"
+                placeholder="Електронна пошта"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                // disabled={isEmailValid}
               />
             </Form.Item>
             <Form.Item
-              label="Password"
+              label="Пароль"
               name="password"
               rules={[
-                { required: true, message: "Please enter your password!" },
-                { min: 6, message: "Password must be at least 6 characters!" },
+                { required: true, message: "Введіть пароль!" },
+                { min: 6, message: "Пароль має бути не менше 6 символів!" },
               ]}
             >
-              <Input.Password
-                prefix={<LockOutlined />}
-                placeholder="Password"
-              />
+              <Input.Password prefix={<LockOutlined />} placeholder="Пароль" />
             </Form.Item>
+
             {authType === "signup" && (
               <>
                 <Form.Item
-                  label="Confirm Password"
+                  label="Підтвердіть пароль"
                   name="password2"
-                  tooltip="Enter same password twice to comfirm ur password"
+                  tooltip="Введіть пароль повторно"
                   dependencies={["password"]}
                   rules={[
                     {
                       required: true,
-                      message: "Please enter your password again!",
+                      message: "Підтвердіть пароль!",
                     },
                     ({ getFieldValue }) => ({
                       validator(_, value) {
@@ -196,59 +186,40 @@ const AuthPage = () => {
                           return Promise.resolve();
                         }
                         return Promise.reject(
-                          new Error(
-                            "The new password that you entered do not match!"
-                          )
+                          new Error("Паролі не співпадають!")
                         );
                       },
                     }),
                   ]}
                 >
-                  <Input.Password placeholder="Password" />
+                  <Input.Password placeholder="Пароль ще раз" />
                 </Form.Item>
 
                 <Form.Item
                   name="phone"
-                  label="Phone Number"
+                  label="Номер телефону"
                   rules={[
                     {
                       required: true,
-                      message: "Please input your phone number!",
+                      message: "Введіть номер телефону!",
                     },
                   ]}
                 >
                   <Input
                     addonBefore={prefixSelector}
-                    style={{ width: "100%" }}
-                    placeholder="phone number"
+                    placeholder="Номер телефону"
                   />
                 </Form.Item>
-                <Form.Item name="profilePic" label="Profile Picture">
-                  <Upload
-                    name="file"
-                    action="/upload"
-                    listType="picture"
-                    showUploadList={false}
-                    // onChange={handleUploadChange}
-                    beforeUpload={() => false} // Prevent auto-uploading
-                  >
-                    <Button
-                      icon={<UploadOutlined />}
-                      style={{ width: "100%", borderRadius: "8px" }}
-                    >
-                      Upload Profile Picture
-                    </Button>
-                  </Upload>
-                </Form.Item>
+
                 <Form.Item
                   name="gender"
-                  label="Gender"
+                  label="Стать"
                   rules={[{ required: true }]}
                 >
-                  <Select placeholder="Pick optional human gender">
-                    <Option value="male">male</Option>
-                    <Option value="female">female</Option>
-                    <Option value="other">other</Option>
+                  <Select placeholder="Оберіть стать">
+                    <Option value="male">Чоловіча</Option>
+                    <Option value="female">Жіноча</Option>
+                    <Option value="other">Інше</Option>
                   </Select>
                 </Form.Item>
 
@@ -261,19 +232,18 @@ const AuthPage = () => {
                         value
                           ? Promise.resolve()
                           : Promise.reject(
-                              new Error("Should accept agreement")
+                              new Error("Потрібно прийняти умови")
                             ),
                     },
                   ]}
                 >
                   <Checkbox>
-                    I have read the <a href="">agreement</a>
+                    Я ознайомлений з <a href="">угодою</a>
                   </Checkbox>
                 </Form.Item>
               </>
             )}
 
-            {/* Continue button */}
             <Button
               type={authType === "signin" ? "primary" : "default"}
               block
@@ -285,28 +255,29 @@ const AuthPage = () => {
                   .length
               }
             >
-              {authType === "signin" ? "Log In" : "Sign Up"}
+              {authType === "signin" ? "Увійти" : "Зареєструватися"}
             </Button>
           </Form>
+
           <p style={{ marginTop: 10, textAlign: "center" }}>
             {authType === "signin"
-              ? "Don't have an account?"
-              : "Already have an account?"}{" "}
+              ? "Ще не маєте облікового запису?"
+              : "Вже маєте обліковий запис?"}{" "}
             <a
               href="#"
               onClick={() =>
                 setAuthType(authType === "signin" ? "signup" : "signin")
               }
             >
-              {authType === "signin" ? "Sign Up" : "Sign In"}
+              {authType === "signin" ? "Реєстрація" : "Вхід"}
             </a>
           </p>
         </div>
 
         <div>
           <p style={{ marginTop: 20, fontSize: 12, textAlign: "center" }}>
-            <Link to="/authpage">Terms of Use</Link> |{" "}
-            <Link href="#">Privacy Policy</Link>
+            <Link to="/authpage">Умови використання</Link> |{" "}
+            <Link to="#">Політика конфіденційності</Link>
           </p>
         </div>
       </div>

@@ -1,11 +1,46 @@
-import { Card, Avatar, Divider, Tag, List, Typography, Statistic, Row, Col, Tooltip } from "antd";
-import { BarChartOutlined, ClockCircleOutlined, FireOutlined } from "@ant-design/icons";
+import {
+  Card,
+  Avatar,
+  Divider,
+  Tag,
+  List,
+  Typography,
+  Statistic,
+  Row,
+  Col,
+  Empty,
+} from "antd";
+import {
+  BarChartOutlined,
+  ClockCircleOutlined,
+  FireOutlined,
+} from "@ant-design/icons";
 import OverallMuscleStats from "../addOverallMuscleStatsElement";
 
 const { Title, Text, Paragraph } = Typography;
 
 const PersonalTrainerBlock = ({ user }) => {
-  if (!user) return null;
+  if (!user) {
+    return (
+      <div
+        style={{
+          height: "80vh",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          background: "#f9f9f9",
+          borderRadius: "12px",
+          border: "1px solid #eee",
+          margin: "20px",
+        }}
+      >
+        <Empty
+          image={Empty.PRESENTED_IMAGE_SIMPLE}
+          description="Записаного користувача не знайдено"
+        />
+      </div>
+    );
+  }
 
   const trainings = user.statistic || [];
   const lastTraining = trainings[trainings.length - 1];
@@ -29,9 +64,7 @@ const PersonalTrainerBlock = ({ user }) => {
     });
   });
 
-  const sortedMuscles = Object.entries(muscleMap).sort(
-    (a, b) => b[1] - a[1]
-  );
+  const sortedMuscles = Object.entries(muscleMap).sort((a, b) => b[1] - a[1]);
 
   return (
     <>

@@ -6,31 +6,46 @@ import { LeftOutlined } from "@ant-design/icons";
 import "./style.css";
 
 const { Title, Paragraph } = Typography;
-const { Meta } = Card;
 
 const InfoTrainersPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { trainer_info } = location.state || {};
 
+  if (!trainer_info) {
+    return (
+      <div className="container" style={{ padding: 20 }}>
+        <Button
+          icon={<LeftOutlined />}
+          onClick={() => navigate(-1)}
+          style={{ marginBottom: 20 }}
+        >
+          Back
+        </Button>
+        <Paragraph>Інформація про тренера відсутня.</Paragraph>
+      </div>
+    );
+  }
+
   return (
     <>
-      {/* <Button icon={<LeftOutlined />}>Back</Button> */}
-      <div class="trainers-nav" onClick={() => navigate(-1)}>
-        <div class="back-button">
-          <LeftOutlined /> Back
+      <div className="trainers-nav" onClick={() => navigate(-1)} style={{ cursor: "pointer", padding: "10px 20px" }}>
+        <div className="back-button" style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          <LeftOutlined />
+          Back
         </div>
       </div>
-      <div className="container">
-        <Card hoverable>
+      <div className="container" style={{ display: "flex", gap: 24, padding: 20 }}>
+        <Card
+          style={{ flex: 1, maxWidth: 600 }}
+          hoverable
+          title={<Title level={2}>Інформація про тренера</Title>}
+        >
           <Paragraph>
-            <strong>Title:</strong> {trainer_info.title}
+            <strong>Титул:</strong> {trainer_info.title}
           </Paragraph>
           <Paragraph>
-            <strong>Training Type:</strong> {trainer_info.training_type}
-          </Paragraph>
-          <Paragraph>
-            <strong>Info:</strong> {trainer_info.info}
+            <strong>Тип тренування:</strong> {trainer_info.training_type}
           </Paragraph>
           <Paragraph>
             <strong>User ID:</strong> {trainer_info.userId}
@@ -39,37 +54,12 @@ const InfoTrainersPage = () => {
             <strong>Trainer ID:</strong> {trainer_info._id}
           </Paragraph>
         </Card>
+
         <Card
-          style={{ width: "30%" }}
-          hoverable
-          cover={<Image alt="example" src={trainer_info.profile_img} />}
+          style={{ width: "50vw" }}
+          cover={<Image alt={trainer_info.title} src={trainer_info.profile_img} />}
         >
-          <Title level={2} className="title">
-            Trainer Information
-          </Title>
-          {trainer_info ? (
-            <>
-              <Paragraph>
-                <strong>Title:</strong> {trainer_info.title}
-              </Paragraph>
-              <Paragraph>
-                <strong>Training Type:</strong> {trainer_info.training_type}
-              </Paragraph>
-              <Paragraph>
-                <strong>Info:</strong> {trainer_info.info}
-              </Paragraph>
-              <Paragraph>
-                <strong>User ID:</strong> {trainer_info.userId}
-              </Paragraph>
-              <Paragraph>
-                <strong>Trainer ID:</strong> {trainer_info._id}
-              </Paragraph>
-            </>
-          ) : (
-            <Paragraph className="no-info">
-              No trainer information available.
-            </Paragraph>
-          )}
+          <strong>Інформація:</strong> {trainer_info.info}
         </Card>
       </div>
     </>

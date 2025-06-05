@@ -30,7 +30,7 @@ const TrainerCardElement = () => {
             {loading ? (
               <Loading />
             ) : trainers.length === 0 ? (
-              <p>No trainers available</p>
+              <p>Немає доступних тренерів</p>
             ) : (
               <div className="gallery">
                 {trainers.map((item, index) => (

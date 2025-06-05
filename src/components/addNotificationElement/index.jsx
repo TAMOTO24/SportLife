@@ -203,6 +203,7 @@ const NotificationElement = () => {
                           notification?.access,
                           "accept"
                         );
+                      console.log(notification);
                       fetchNotifications();
                       deleteNotification(notification?._id);
                     }}
