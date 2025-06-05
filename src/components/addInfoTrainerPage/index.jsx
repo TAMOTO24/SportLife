@@ -20,7 +20,7 @@ const InfoTrainersPage = () => {
           onClick={() => navigate(-1)}
           style={{ marginBottom: 20 }}
         >
-          Back
+          Назад
         </Button>
         <Paragraph>Інформація про тренера відсутня.</Paragraph>
       </div>

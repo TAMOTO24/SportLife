@@ -95,7 +95,7 @@ const AccountPage = () => {
           // // ! Change it to user?.role === "trainer" later
           // if (item.label === "Особистий тренер" && !user?.role === "trainer")
           //   return null;
-          if (item.label === "Розсилка" && !user?.role === "admin") return null;
+          if (item.label === "Розсилка" && user?.role !== "admin") return null;
 
           return (
             <a

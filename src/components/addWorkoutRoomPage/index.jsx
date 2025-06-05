@@ -150,7 +150,7 @@ export default function RoomPage() {
             backgroundImage:
               workouts?.img && workouts?.img.length >= 0
                 ? `url(${workouts.img[0]})`
-                : "none",
+                : "/img-pack/page1.jpg",
             backgroundSize: "cover",
             backgroundPosition: "center",
           }}

@@ -30,9 +30,10 @@ const Auth = () => {
       });
 
     return () => {
-      isOpen(false);
+      setIsOpen(false);
     };
   }, []);
+
   const handleAuthClick = async () => {
     await logout(navigate);
   };

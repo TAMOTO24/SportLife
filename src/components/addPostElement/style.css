@@ -122,7 +122,7 @@
   background: black;
   transition: width 0.4s ease-in-out, padding 0.4s ease-in-out,
     border-radius 0.4s ease-in-out;
-  width: 50px;
+  width: 70px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -139,7 +139,7 @@
 }
 
 .addPostButton:hover {
-  width: 200px;
+  width: 300px;
   padding-inline: 30px;
   border-radius: 25px;
   background: rgb(100, 100, 255);
@@ -153,7 +153,7 @@
 }
 
 .addPostButton:hover::before {
-  content: "Add new post";
+  content: "Створити пост";
   opacity: 1;
   animation: textAppear 0.5s ease-in-out forwards;
 }

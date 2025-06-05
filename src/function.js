@@ -1,7 +1,6 @@
 import { io } from "socket.io-client";
-import { notification, Space, Button } from "antd";
+import { notification } from "antd";
 import axios from "axios";
-import Cookies from "js-cookie";
 
 const socket = io(`http://localhost:${process.env.PORT || 5000}`, {
   autoConnect: false,
@@ -72,42 +71,14 @@ export function Notification(
   message,
   title,
   type = "info",
-  notificationId = "",
-  roomId = "",
-  action = ""
 ) {
   const key = `open${Date.now()}`;
-
-  // const body = (
-  //   <Space>
-  //     <Button
-  //       type="link"
-  //       size="small"
-  //       onClick={() => deleteNotification(notificationId)}
-  //     >
-  //       Destroy All
-  //     </Button>
-  //     <Button
-  //       type="primary"
-  //       size="small"
-  //       onClick={() => {
-  //         if (action === "roomRequest") setInvitedRoomId(roomId);
-  //         else if (action === "personalTrainerRequest")
-  //           personalTrainerRequest
-  //         deleteNotification(notificationId);
-  //       }}
-  //     >
-  //       Confirm
-  //     </Button>
-  //   </Space>
-  // );
 
   notification[type]({
     message: title,
     description: message,
     key,
     duration: 7,
-    // ...(roomId ? {} : { btn: body }),
   });
 }
 

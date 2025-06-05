@@ -22,11 +22,7 @@ const BookmarkList = ({ bookmarks }) => {
       <div className="bookmark-list">
         {bookmarks.map((item) => {
           if (item.type === "post") {
-            return (
-              <div key={item._id} className="bookmark-item post">
-                <PostElement item={item} hoverable={true} theme={true} />
-              </div>
-            );
+            return <PostElement item={item} hoverable={true} theme={true} />;
           }
 
           if (item.type === "workout") {

@@ -79,8 +79,14 @@ function Home() {
         >
           {/*Фон домашньої сторінки з перемикачем*/}
           <div className="page-content">
-            <h1>Головна</h1>
-            <div>НАПИСАТИ УСІ ЕЛЕМЕНТИ УКРАЇНСЬКОЮ МОВОЮ</div>
+            <h1><b>Головна</b></h1>
+            <div>
+              Ласкаво просимо до SportLife — вашого надійного помічника у світі
+              спорту та здорового способу життя. Тут ви знайдете індивідуальні
+              тренування, професійних тренерів та корисні поради для досягнення
+              ваших фітнес-цілей.<br/> Приєднуйтесь до нашої спільноти, щоб
+              вдосконалюватися щодня!
+            </div>
           </div>
           <div className="dots-container">
             {backgrounds.map((_, index) => (
@@ -108,7 +114,12 @@ function Home() {
               style={{ display: "flex", gap: "2%", justifyContent: "center" }}
             >
               {posts.slice(0, 3).map((item) => (
-                <PostElement key={item.id} item={item} hoverable={true} theme={false} />
+                <PostElement
+                  key={item.id}
+                  item={item}
+                  hoverable={true}
+                  theme={false}
+                />
               ))}
             </div>
           </div>
@@ -161,7 +172,8 @@ function Home() {
             }}
           >
             <p style={{ fontSize: "2rem" }}>
-              Введіть вашу електронну пошту, щоб отримувати новини прямо у вашу поштову скриньку
+              Введіть вашу електронну пошту, щоб отримувати новини прямо у вашу
+              поштову скриньку
             </p>
             <p style={{ fontSize: "5rem" }} id="titleItem">
               Будьте в курсі усіх подій
