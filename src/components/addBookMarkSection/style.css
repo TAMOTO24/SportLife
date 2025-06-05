@@ -63,3 +63,52 @@
   padding-left: 20px;
   list-style: disc;
 }
+
+.bookmark-title {
+  font-size: 2rem;
+  margin-bottom: 1.5rem;
+  text-align: center;
+  color: #333;
+}
+
+.workout-img img {
+  width: 160px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 10px;
+}
+
+.bookmark-empty {
+  text-align: center;
+  padding: 3rem;
+  color: #777;
+}
+.bookmark-item-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  color: #333;
+}
+
+.workout-title {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 0.3rem;
+  color: #1e1e1e;
+}
+
+.workout-description {
+  font-size: 15px;
+  color: #555;
+}
+
+.workout-trainer {
+  font-size: 14px;
+  color: #444;
+}
+
+.workout-date {
+  font-size: 13px;
+  color: #888;
+  margin-top: 4px;
+}

@@ -6,6 +6,7 @@ import "./style.css";
 import Loading from "../addLoadingElement/index";
 import { formatTime, socket, timeString } from "../../function";
 import PeerCamera from "../addCameraComponent/index";
+import dayjs from "dayjs";
 
 const WorkoutProgressPage = () => {
   const [uniqueUIDV4Id] = useState(useParams().roomId);
@@ -16,7 +17,7 @@ const WorkoutProgressPage = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const location = useLocation();
   const navigate = useNavigate();
-  const [startTime, setStartTime] = useState(Date.now());
+  const [startTime, setStartTime] = useState(dayjs().unix());
 
   const [currentWorkout, setCurrentWorkout] = useState(
     location.state?.currentWorkout || {}
@@ -36,7 +37,8 @@ const WorkoutProgressPage = () => {
         !roomData.data.exercises ||
         !roomData.data.status ||
         !roomData.data.startTime
-      ) return;
+      )
+        return;
 
       setExercises(roomData.data.exercises);
       setWorkoutStatuses(roomData.data.status);
@@ -193,12 +195,12 @@ const WorkoutProgressPage = () => {
         userId: user._id,
         data: exercises,
         startTime: data?.startTime,
-        finalTimeResult: formatTime(Date.now() - data?.startTime),
+        finalTimeResult: formatTime(dayjs().unix() - data?.startTime),
       });
 
       const resultData = {
         startTime: data?.startTime,
-        trainingTime: Date.now() - data?.startTime,
+        trainingTime: dayjs().unix() - data?.startTime,
         data: exercises,
         userId: user._id,
         roomId: uniqueUIDV4Id,
@@ -211,10 +213,10 @@ const WorkoutProgressPage = () => {
           data: resultData,
         });
       }
-      navigate(
-        ownerRef.current ? `/workoutroom/${uniqueUIDV4Id}/result` : "",
-        { replace: true, state: { result: resultData } }
-      );
+      navigate(ownerRef.current ? `/workoutroom/${uniqueUIDV4Id}/result` : "", {
+        replace: true,
+        state: { result: resultData },
+      });
       socket.emit("disconnectData", {
         roomId: uniqueUIDV4Id,
         userId: user._id,
@@ -412,6 +414,9 @@ const WorkoutProgressPage = () => {
         </div>
         <div>
           Sets: {currentIndex} / {exercises.length}
+        </div>
+        <div>
+          time: {Math.abs(dayjs(data?.startTime).diff(dayjs(), "seconds"))}
         </div>
         <div>© 2025 Sportlife. All rights reserved.</div>
         <div>

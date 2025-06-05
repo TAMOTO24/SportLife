@@ -9,6 +9,7 @@ import RoleConfigurationSection from "../addRoleConfigurationSectionPage";
 import BookmarkList from "../addBookMarkSection";
 import PersonalTrainer from "../addPersonalTrainerSection";
 import SubscriptionSection from "../addSubscriptionsSection";
+import WorkoutResultsSection from "../addWorkoutResultsSection";
 
 const AccountPage = () => {
   const [form] = Form.useForm();
@@ -22,7 +23,6 @@ const AccountPage = () => {
     const fetchUserData = async () => {
       try {
         const response = await axios.get("/currentuserdata");
-        console.log("User data:", response.data.user);
         setUser(response.data.user);
       } catch (error) {
         message.error("Error retrieving user data");
@@ -36,12 +36,9 @@ const AccountPage = () => {
   useEffect(() => {
     if (!user) return;
 
-    console.log("IN");
-
     const fetchBookMarks = async () => {
       try {
         const response = await axios.get(`/allbookmarks/${user?._id}`);
-        console.log("awdawdawdaw", response.data.bookmarks);
         setBookMarks(response.data.bookmarks);
       } catch (error) {
         message.error("Error recieving bookmarks");
@@ -79,6 +76,10 @@ const AccountPage = () => {
           {
             img: "/img-pack/icons/dumbbell.png",
             label: "Особистий тренер",
+          },
+          {
+            img: "/img-pack/icons/physical-activity.png",
+            label: "Мої пройдені тренування",
           },
           {
             img: "/img-pack/icons/statistical.png",
@@ -123,6 +124,12 @@ const AccountPage = () => {
           className={selected === "Особистий тренер" ? "" : "hidePage"}
         >
           <PersonalTrainer user={user} />
+        </div>
+        <div
+          id="Мої пройдені тренування"
+          className={selected === "Мої пройдені тренування" ? "" : "hidePage"}
+        >
+          <WorkoutResultsSection user={user} />
         </div>
 
         <div
