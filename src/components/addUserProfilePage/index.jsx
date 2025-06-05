@@ -1,7 +1,21 @@
 // UserProfile.jsx
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { Card, Avatar, Typography, Divider, Skeleton, Space } from "antd";
+import {
+  Card,
+  Avatar,
+  Typography,
+  Divider,
+  Skeleton,
+  Space,
+  Tag,
+  Modal,
+  Button,
+  message,
+  Form,
+  Input,
+  Select,
+} from "antd";
 import {
   CalendarOutlined,
   SkinOutlined,
@@ -9,15 +23,39 @@ import {
 } from "@ant-design/icons";
 import PostElement from "../addPostElement";
 import axios from "axios";
+import { createNotification } from "../../function";
+
+const { TextArea } = Input;
+const { Option } = Select;
 
 const { Title, Text, Paragraph } = Typography;
 
 const UserProfile = () => {
   const { userId } = useParams();
+  const [form] = Form.useForm();
   const [user, setUser] = useState(null);
   const [posts, setPosts] = useState([]);
+  const [currentuserdata, setCurrentUser] = useState(undefined);
   const [loadingUser, setLoadingUser] = useState(true);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [loadingPosts, setLoadingPosts] = useState(true);
+
+  const roles = [{ label: "user" }, { label: "trainer" }, { label: "admin" }];
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      setLoadingUser(true);
+      try {
+        const response = await axios.get("/currentuserdata");
+        setCurrentUser(response.data.user);
+      } catch (error) {
+        message.error("Error retrieving user data");
+      } finally {
+        setLoadingUser(false);
+      }
+    };
+    fetchUserData();
+  }, []);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -46,6 +84,31 @@ const UserProfile = () => {
     fetchUserPosts();
   }, [userId]);
 
+  const showModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const onFinish = (values) => {
+    axios.put(`/changerole/${user?._id}`, { role: values.newRole });
+
+    message.success(`Роль користувача ${user?.username} змінена успішно`);
+    createNotification(
+      `Причиною було зазначено - ${values.message}`,
+      `Вашу роль було змінено адміном ${currentuserdata?.username}!`,
+      "warning",
+      user?._id,
+      "",
+      "",
+      ""
+    );
+    form.resetFields();
+    setIsModalOpen(false);
+  };
+
+  const handleCancel = () => {
+    setIsModalOpen(false);
+  };
+
   return (
     <div style={{ maxWidth: 900, margin: "0 auto", padding: 24 }}>
       <Card
@@ -71,6 +134,11 @@ const UserProfile = () => {
               {user?.name} {user?.last_name}
             </Title>
             <Text type="secondary">@{user?.username}</Text>
+            <Text type="secondary">
+              <Tag color="blue" bordered={false}>
+                {user?.role}
+              </Tag>
+            </Text>
             <br />
             <Text>{user?.email}</Text>
             <Paragraph style={{ marginTop: 8 }}>
@@ -91,7 +159,74 @@ const UserProfile = () => {
               <Text>
                 <BookOutlined /> Постів: <strong>{posts?.length || 0}</strong>
               </Text>
+              {currentuserdata?.role === "admin" && currentuserdata._id !== user._id  && (
+                <Button color="default" variant="filled" onClick={showModal}>
+                  Змінити роль
+                </Button>
+              )}
             </Space>
+
+            <Modal
+              closable={{ "aria-label": "Custom Close Button" }}
+              open={isModalOpen}
+              footer={null}
+              onCancel={handleCancel}
+            >
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "10px",
+                }}
+              >
+                <Avatar
+                  size={60}
+                  src={
+                    user?.profile_picture ||
+                    "/img-pack/icons/user-blacktheme.png"
+                  }
+                />
+                <div>
+                  <strong>
+                    {user?.name} {user?.last_name || ""}
+                  </strong>
+                  <div style={{ fontSize: "12px", color: "#888" }}>
+                    {user?.role}
+                  </div>
+                </div>
+              </div>
+              <Form onFinish={onFinish} layout="vertical" form={form}>
+                <Form.Item
+                  label="Замінити на"
+                  name="newRole"
+                  rules={[{ required: true, message: "Оберіть тип" }]}
+                >
+                  <Select placeholder="Виберіть роль">
+                    {roles
+                      .filter((role) => role.label !== user?.role)
+                      .map((role) => (
+                        <Option key={role.value} value={role.label}>
+                          {role.label}
+                        </Option>
+                      ))}
+                  </Select>
+                </Form.Item>
+
+                <Form.Item
+                  label="Причина"
+                  name="message"
+                  rules={[
+                    { required: true, message: "Введіть текст повідомлення" },
+                  ]}
+                >
+                  <TextArea rows={4} placeholder="Тому, що..." />
+                </Form.Item>
+
+                <Button block loading={loadingUser} htmlType="submit">
+                  Змінити
+                </Button>
+              </Form>
+            </Modal>
           </div>
         </Space>
       </Card>

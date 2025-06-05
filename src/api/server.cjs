@@ -267,6 +267,26 @@ app.get("/room/:id", async (req, res) => {
   }
 });
 
+app.put("/changerole/:userId", async (req, res) => {
+  const { userId } = req.params;
+  const { role } = req.body;
+
+  if (!userId || !role) {
+    res.status(400).send(`Server error ${error}`);
+  }
+
+  try {
+    const user = await User.findById(userId);
+
+    user.role = role;
+    await user.save();
+
+    return res.status(200).json({ message: "Role successfully changed!" });
+  } catch (err) {
+    res.status(500).send(`Server error ${err}`);
+  }
+});
+
 app.put("/usersetpersonaltrainer", async (req, res) => {
   const { userId, trainerId, action } = req.body;
 

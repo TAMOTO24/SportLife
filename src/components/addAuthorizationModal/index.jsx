@@ -93,15 +93,14 @@ const AuthModal = ({ visible, onCancel }) => {
 
       </Form>
 
-      <Divider>OR</Divider>
+      {/* <Divider>OR</Divider>
 
-      {/* Social login buttons */}
       <Button icon={<GoogleOutlined />} block style={{ marginBottom: 10 }}>
         Continue with Google
       </Button>
       <Button icon={<PhoneOutlined />} block>
         Continue with phone
-      </Button>
+      </Button> */}
 
       {/* Terms and Privacy */}
       <p style={{ marginTop: 20, fontSize: 12, textAlign: "center" }}>
