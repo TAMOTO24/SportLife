@@ -110,7 +110,13 @@ export default function RoomPage() {
       socket.off("receiveUpdate");
       console.log("U left the room or smth went wrong");
       //! This code can contain bugs
-      socket.disconnect();
+      socket.emit("clearEmptyRoom", {
+        roomId: uniqueUIDV4Id,
+        userId: user._id,
+      });
+      setTimeout(() => {
+        socket.disconnect();
+      }, 500);
     };
   }, [user, uniqueUIDV4Id, navigate, location]);
 
@@ -141,16 +147,19 @@ export default function RoomPage() {
     }
   };
 
+  console.log(workouts?.img
+              ? `url(${workouts.img[0]})`
+              : "/img-pack/page1.jpg",)
+
   return (
     <>
       <div className="border-room-page">
         <div
           className="room-page"
           style={{
-            backgroundImage:
-              workouts?.img && workouts?.img.length >= 0
-                ? `url(${workouts.img[0]})`
-                : "/img-pack/page1.jpg",
+            backgroundImage: workouts?.img
+              ? `url(${workouts.img[0]})`
+              : "url(/img-pack/page1.jpg)",
             backgroundSize: "cover",
             backgroundPosition: "center",
           }}
@@ -235,10 +244,10 @@ export default function RoomPage() {
                           {commentUser.role}
                         </div>
                       </div>
-                      
-                        <div style={{ fontSize: "20px", color: "#888" }}>
-                          - {i === 0  ? "Host" : "Guest"}
-                        </div>
+
+                      <div style={{ fontSize: "20px", color: "#888" }}>
+                        - {i === 0 ? "Host" : "Guest"}
+                      </div>
                     </div>
                   </List.Item>
                 );

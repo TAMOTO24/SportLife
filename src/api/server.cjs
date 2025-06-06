@@ -222,6 +222,17 @@ io.on("connection", (socket) => {
     user.save();
   });
 
+  socket.on("clearEmptyRoom", async ({ roomId, userId }) => {
+    if (roomId) {
+      const room = await Room.findOne({ roomId });
+
+      if (room && room.owner.toString() === userId) {
+        await Room.deleteOne({ roomId });
+        socket.broadcast.to(roomId).emit("roomClosed");
+      }
+    }
+  });
+
   socket.on("disconnect", () => {
     console.log("Клієнт відключився:", socket.id);
   });
