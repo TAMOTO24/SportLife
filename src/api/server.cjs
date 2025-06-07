@@ -137,41 +137,32 @@ io.on("connection", (socket) => {
     const room = `chat_${chatId}`;
     const newMessage = { date, fromId, message };
 
-    const updated = await Chats.findByIdAndUpdate(
-      chatId,
-      {
-        $push: {
-          history: {
-            fromId,
-            message,
-            date,
-          },
-        },
-      }
-    );
-
-    await updated.save();
     io.to(room).emit("receive_message", newMessage);
   });
 
-  socket.on("save_chat", async ({ history, chatId }) => {
+  socket.on("save_chat", async ({ message, date, fromId, chatId }) => {
     try {
-      if (!chatId || !history || !Array.isArray(history)) {
-        console.error("Недійсні дані для збереження чату");
+      if (!chatId || !message || !fromId || !date) {
+        console.error("Недійсні дані для збереження повідомлення");
         return;
       }
 
+      const newMessage = { message, date, fromId };
+
       const updated = await Chats.findByIdAndUpdate(
         chatId,
-        { history },
+        { $push: { history: newMessage } },
         { new: true }
       );
 
       if (!updated) {
         console.error(`Чат з ID ${chatId} не знайдено`);
       }
+
+      console.log("Повідомлення додано до історії:", newMessage);
+      io.to(`chat_${chatId}`).emit("receive_message", newMessage);
     } catch (error) {
-      console.error("Помилка при збереженні чату:", error);
+      console.error("Помилка при збереженні повідомлення:", error);
     }
   });
 

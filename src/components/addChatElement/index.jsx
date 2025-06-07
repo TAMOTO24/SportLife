@@ -36,7 +36,6 @@ export default function ChatElement() {
       setLoading(true);
       try {
         const response = await axios.get("/currentuserdata");
-        console.log("on CALL", response.data.user);
         setUser(response.data.user);
         if (!activeChatId) setActiveChatId(response.data.user?.chats[0]);
       } catch (error) {
@@ -61,18 +60,10 @@ export default function ChatElement() {
     fetchData();
   }, []);
 
-  const onSave = () => {
-    socket.emit("save_chat", {
-      history: currentChat.history,
-      chatId: currentChat._id,
-    });
-  };
-
   useEffect(() => {
     if (!user || !currentChat) return;
 
     if (!socket.connected) {
-      console.log("CONNECT");
       socket.connect();
     }
 
@@ -88,16 +79,23 @@ export default function ChatElement() {
           duration: 7,
         });
       }
-      setCurrentChat((prevChat) => ({
-        ...prevChat,
-        history: [...(prevChat?.history || []), message],
-      }));
-      onSave();
+      setCurrentChat((prevChat) => {
+        if (!prevChat) return prevChat;
+
+        const alreadyExists = prevChat.history.some(
+          (msg) => msg.date === message.date
+        );
+        if (alreadyExists) return prevChat;
+
+        return {
+          ...prevChat,
+          history: [...prevChat.history, message],
+        };
+      });
     };
     socket.on("receive_message", handleReceiveMessage);
 
     socket.on("update_chats", ({ newChat }) => {
-      console.log("Updating RN!", newChat, activeChatId);
       allChats.current = [...allChats.current, newChat];
       onChanging(user?._id, activeChatId, true);
     });
@@ -135,6 +133,7 @@ export default function ChatElement() {
       }
     };
     fetchChatData();
+    console.log("FUNCTION TRIGGERET")
     setTrigger(false);
   }, [user, activeChatId, trigger]);
 
@@ -145,7 +144,12 @@ export default function ChatElement() {
       date: dayjs().unix(),
       fromId: user?._id,
     });
-    onSave();
+    socket.emit("save_chat", {
+      chatId: currentChat._id,
+      message: values.message,
+      date: dayjs().unix(),
+      fromId: user._id,
+    });
     form.resetFields();
   };
 
@@ -159,6 +163,8 @@ export default function ChatElement() {
   const changeChat = async (id, change = false) => {
     if (activeChatId === id) return;
 
+    setTrigger(true);
+
     if (change) onChanging(user?._id, id, true);
 
     if (!user?.chats.includes(id)) {
@@ -167,25 +173,8 @@ export default function ChatElement() {
         chats: prevData?.chats ? [...prevData.chats, id] : [id],
       }));
     }
-    console.log("was like that, ", activeChatId);
     setActiveChatId(id);
   };
-
-  //   if (!currentChat) {
-  //     socket.connect();
-  //     return (
-  //       <Drawer
-  //         open={open}
-  //         onClose={() => setOpen(false)}
-  //         placement="bottom"
-  //         height={500}
-  //       >
-  //         <div style={{ textAlign: "center", paddingTop: 50 }}>
-  //           <p>Завантаження чату...</p>
-  //         </div>
-  //       </Drawer>
-  //     );
-  //   }
 
   return (
     <>
@@ -247,7 +236,6 @@ export default function ChatElement() {
                     secondUser: id,
                     oldId: currentChat._id,
                   });
-                  console.log("chosen", id);
                   changeChat(id);
                 }}
               >
