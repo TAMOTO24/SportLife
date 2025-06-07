@@ -21,7 +21,8 @@ const userSchema = new mongoose.Schema({
   trainerRequestId: String,
   bookmarks: Array,
   personalTrainerId: String,
-  clientId: String
+  clientId: String,
+  chats: Array
 });
 
 module.exports = mongoose.models.accounts || mongoose.model('accounts', userSchema);

@@ -3,16 +3,11 @@ import "./style.css";
 import { Link, useLocation } from "react-router-dom";
 import Auth from "../propsAuthModal";
 import NotificationElement from "../addNotificationElement";
-import Cookies from 'js-cookie'
+import Cookies from "js-cookie";
+import ChatElement from "../addChatElement";
 
-import { useState } from "react";
 function Header() {
-  const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
-
-  // if (location.pathname === "/protectedroute") {
-  //   return <Outlet />;
-  // }
 
   return (
     <div>
@@ -51,14 +46,14 @@ function Header() {
               {location.pathname !== "/authpage" &&
                 location.pathname !== "/account" && <Auth />}
             </li>
-            <li>
-              {Cookies.get('token') && <NotificationElement />}
-            </li>
+            <li>{Cookies.get("token") && <NotificationElement />}</li>
           </ul>
         </nav>
       )}
 
-      {/* <Outlet /> */}
+      {(!location.pathname.startsWith("/classpage") &&
+        !location.pathname.startsWith("/workoutroom") &&
+        !location.pathname.startsWith("/workoutprogress")) && <ChatElement />}
     </div>
   );
 }

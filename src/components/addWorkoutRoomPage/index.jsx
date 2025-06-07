@@ -110,13 +110,13 @@ export default function RoomPage() {
       socket.off("receiveUpdate");
       console.log("U left the room or smth went wrong");
       //! This code can contain bugs
-      socket.emit("clearEmptyRoom", {
-        roomId: uniqueUIDV4Id,
-        userId: user._id,
-      });
-      setTimeout(() => {
-        socket.disconnect();
-      }, 500);
+      // socket.emit("clearEmptyRoom", {
+      //   roomId: uniqueUIDV4Id,
+      //   userId: user._id,
+      // });
+      // setTimeout(() => {
+      //   socket.disconnect();
+      // }, 500);
     };
   }, [user, uniqueUIDV4Id, navigate, location]);
 
@@ -146,10 +146,6 @@ export default function RoomPage() {
       console.error("❌ Socket is not connected");
     }
   };
-
-  console.log(workouts?.img
-              ? `url(${workouts.img[0]})`
-              : "/img-pack/page1.jpg",)
 
   return (
     <>

@@ -6,14 +6,16 @@ import "./style.css";
 import { Modal, message, Card, Popconfirm, Button } from "antd";
 import { DeleteOutlined } from "@ant-design/icons";
 import BookMark from "../addBookMarkElement/index";
+import { HeartTwoTone } from "@ant-design/icons";
 
 const PostElement = ({ item, hoverable, theme }) => {
   // THEME - false ? black/red theme : white/black theme
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [currentImage, setCurrentImage] = useState("");
   const [loading, setLoading] = useState(true);
+  const [localItem, setLocalItem] = useState(item);
   const [likes, setLikes] = useState(() =>
-    Array.isArray(item?.like) ? item.like.length : 0
+    Array.isArray(localItem?.like) ? localItem.like.length : 0
   );
   const [user, setUser] = useState(undefined);
   const [creator, setCreator] = useState({});
@@ -23,7 +25,7 @@ const PostElement = ({ item, hoverable, theme }) => {
     const fetchUseIdData = async () => {
       setLoading(true);
       try {
-        const response = await axios.get(`/userbyid/${item?.created_by}`);
+        const response = await axios.get(`/userbyid/${localItem?.created_by}`);
         setCreator(response.data);
       } catch (error) {
         message.error(error.response.data.message);
@@ -64,7 +66,6 @@ const PostElement = ({ item, hoverable, theme }) => {
 
   const postLike = (userid, id) => {
     const token = Cookies.get("token");
-    setLoading(true);
     if (!token) {
       message.warning("You need to be logged in to like a post.");
       return;
@@ -81,12 +82,10 @@ const PostElement = ({ item, hoverable, theme }) => {
         { headers: { Authorization: `Bearer ${token}` } }
       )
       .then((response) => {
+        setLocalItem(response.data.post);
         setLikes(response.data.likeCount);
       })
-      .catch((error) => console.error(error))
-      .finally(() => {
-        setLoading(false);
-      });
+      .catch((error) => console.error(error));
   };
   const calculateTimeAgo = (value) => {
     const now = new Date();
@@ -121,19 +120,20 @@ const PostElement = ({ item, hoverable, theme }) => {
         className={!theme && "black-theme-block"}
         style={{ maxWidth: "975px" }}
         bordered={theme}
+        loading={loading}
         onClick={() => {
           if (hoverable) {
             navigate("/newsandinf/comments", {
               state: {
-                postId: item._id,
-                date: calculateTimeAgo(item.date),
+                postId: localItem._id,
+                date: calculateTimeAgo(localItem.date),
                 user: user,
               },
             });
           }
         }}
       >
-        <div className="post" key={item.id}>
+        <div className="post" key={localItem.id}>
           <div className="postPhoto">
             <img
               loading="lazy"
@@ -156,49 +156,51 @@ const PostElement = ({ item, hoverable, theme }) => {
                     {creator?.name || "Uknown"}
                   </div>
                   <div className="postUsername">@{creator?.username}</div>
-                  <div className="postDate">{calculateTimeAgo(item.date)}</div>
+                  <div className="postDate">
+                    {calculateTimeAgo(localItem.date)}
+                  </div>
                 </div>
-                {user?._id === item?.created_by ||
-                  (user?.role === "admin" && (
-                    <div>
-                      <Popconfirm
-                        title="Ви впевнені, що хочете видалити пост?"
-                        description="Ця дія необоротна."
-                        onConfirm={(e) => {
-                          e.stopPropagation();
-                          deletePost(item?._id);
-                        }}
-                        okText="Так"
-                        cancelText="Скасувати"
-                        okButtonProps={{ danger: true }}
+                {(user?._id === localItem?.created_by ||
+                  user?.role === "admin") && (
+                  <div>
+                    <Popconfirm
+                      title="Ви впевнені, що хочете видалити пост?"
+                      description="Ця дія необоротна."
+                      onConfirm={(e) => {
+                        e.stopPropagation();
+                        deletePost(localItem?._id);
+                      }}
+                      okText="Так"
+                      cancelText="Скасувати"
+                      okButtonProps={{ danger: true }}
+                    >
+                      <Button
+                        type="text"
+                        danger
+                        icon={<DeleteOutlined />}
+                        onClick={(e) => e.stopPropagation()}
                       >
-                        <Button
-                          type="text"
-                          danger
-                          icon={<DeleteOutlined />}
-                          onClick={(e) => e.stopPropagation()}
-                        >
-                          Видалити
-                        </Button>
-                      </Popconfirm>
-                      <Link to={`/newsandinf/edit/${item?._id}`}>
-                        <Button
-                          color="primary"
-                          onClick={(e) => e.stopPropagation()}
-                        >
-                          Змінити
-                        </Button>
-                      </Link>
-                    </div>
-                  ))}
+                        Видалити
+                      </Button>
+                    </Popconfirm>
+                    <Link to={`/newsandinf/edit/${localItem?._id}`}>
+                      <Button
+                        color="primary"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        Змінити
+                      </Button>
+                    </Link>
+                  </div>
+                )}
               </div>
 
               <div className={`postText ${!theme && "black-theme-title"}`}>
-                {item.text}
+                {localItem.text}
               </div>
             </div>
             <div className="postGallery">
-              {item.gallery.map((image, index) => (
+              {localItem.gallery.map((image, index) => (
                 <img
                   key={index}
                   src={image}
@@ -216,14 +218,16 @@ const PostElement = ({ item, hoverable, theme }) => {
                 className="postLike"
                 onClick={(e) => {
                   e.stopPropagation();
-                  postLike(user?._id, item._id);
+                  postLike(user?._id, localItem._id);
                 }}
               >
-                <img
-                  src="/img-pack/icons/like.png"
-                  className={!theme && "black-theme"}
-                  loading="lazy"
-                  alt=""
+                <HeartTwoTone
+                  twoToneColor={
+                    localItem?.like?.includes(user?._id)
+                      ? "#eb2f96"
+                      : !theme && "#ffffff"
+                  }
+                  style={{ fontSize: 30 }}
                 />
                 <div>{likes}</div>
               </a>
@@ -234,7 +238,7 @@ const PostElement = ({ item, hoverable, theme }) => {
                   loading="lazy"
                   alt=""
                 />
-                <div>{item.comment.length}</div>
+                <div>{localItem.comment.length}</div>
               </Link>
               <a className="postShare">
                 <img
@@ -245,7 +249,7 @@ const PostElement = ({ item, hoverable, theme }) => {
                 />
               </a>
               <a className="postSave" onClick={(e) => e.stopPropagation()}>
-                <BookMark element={item} theme={theme} />
+                <BookMark element={localItem} theme={theme} />
               </a>
             </div>
           </div>

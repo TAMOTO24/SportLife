@@ -19,6 +19,7 @@ const Request = require("../models/requests");
 const Subscriptions = require("../models/subscriptions");
 const Exercises = require("../models/exercises");
 const Notification = require("../models/notifications");
+const Chats = require("../models/chats");
 
 dotenv.config();
 const app = express();
@@ -66,6 +67,113 @@ PeerServer({
 
 io.on("connection", (socket) => {
   let currentHostId = null;
+
+  socket.on("join_chat", async ({ userId, chatId }) => {
+    const room = `chat_${chatId}`;
+    socket.join(room);
+
+    const chatfilter = await Chats.findById(chatId);
+
+    io.to(room).emit("change_chat", chatfilter);
+    console.log(`User ${userId} joined ${room}`);
+  });
+
+  socket.on("new_chat", async ({ firstUser, secondUser, oldId }) => {
+    try {
+      const chatfilter = await Chats.findOne({
+        chating: { $all: [firstUser, secondUser] },
+      });
+
+      if (chatfilter) return;
+
+      socket.leave(`chat_${oldId}`);
+      console.log(`Leaving room: ${oldId}`);
+
+      const chat = new Chats({
+        history: [],
+        chating: [firstUser, secondUser],
+      });
+
+      socket.join(`chat_${chat?._id}`);
+      console.log(`Joining room: ${chat?._id}`);
+      console.log("+++++++++++++++++++++++++++++++++++");
+
+      const first = await User.findById(firstUser);
+      const second = await User.findById(secondUser);
+
+      if (!first.chats) first.chats = [];
+      if (!second.chats) second.chats = [];
+
+      if (!first.chats.some((user) => user.id === second._id)) {
+        first.chats.push(secondUser);
+      }
+
+      if (!second.chats.some((user) => user.id === first._id)) {
+        second.chats.push(firstUser);
+      }
+
+      await first.save();
+      await second.save();
+      await chat.save();
+      socket.emit("update_chats", { newChat: chat });
+    } catch (error) {
+      console.error("Error creating new chat:", error);
+    }
+  });
+  socket.on("recconnect", ({ old, newRoom }) => {
+    if (old) {
+      socket.leave(`chat_${old}`);
+      console.log(`Leaving room: ${old}`);
+    }
+
+    if (newRoom) {
+      socket.join(`chat_${newRoom}`);
+      console.log(`Joining room: ${newRoom}`);
+    }
+    console.log("==============");
+  });
+
+  socket.on("send_message", async ({ chatId, message, date, fromId }) => {
+    const room = `chat_${chatId}`;
+    const newMessage = { date, fromId, message };
+
+    const updated = await Chats.findByIdAndUpdate(
+      chatId,
+      {
+        $push: {
+          history: {
+            fromId,
+            message,
+            date,
+          },
+        },
+      }
+    );
+
+    await updated.save();
+    io.to(room).emit("receive_message", newMessage);
+  });
+
+  socket.on("save_chat", async ({ history, chatId }) => {
+    try {
+      if (!chatId || !history || !Array.isArray(history)) {
+        console.error("Недійсні дані для збереження чату");
+        return;
+      }
+
+      const updated = await Chats.findByIdAndUpdate(
+        chatId,
+        { history },
+        { new: true }
+      );
+
+      if (!updated) {
+        console.error(`Чат з ID ${chatId} не знайдено`);
+      }
+    } catch (error) {
+      console.error("Помилка при збереженні чату:", error);
+    }
+  });
 
   socket.on("join-stream", ({ roomId, userId }) => {
     socket.to(roomId).emit("user-connected", userId);
@@ -391,6 +499,30 @@ app.get("/workoutbyid/:workoutid", async (req, res) => {
   }
 });
 
+app.get("/chat/:id/:companionId", async (req, res) => {
+  const { id, companionId } = req.params;
+  if (!id || !companionId) {
+    return res.status(400).send("id is required!");
+  }
+  try {
+    const chat = await Chats.findOne({
+      chating: { $all: [id, companionId] },
+    });
+    res.json({ chatData: chat });
+  } catch (error) {
+    res.status(500).send(`Server error - ${error}`);
+  }
+});
+
+app.get("/getallchats", async (req, res) => {
+  try {
+    const chats = await Chats.find();
+    res.json(chats);
+  } catch (error) {
+    res.status(500).send(`Server error - ${error}`);
+  }
+});
+
 app.put("/api/like", async (req, res) => {
   const { userid, id } = req.body;
 
@@ -418,6 +550,7 @@ app.put("/api/like", async (req, res) => {
     res.json({
       message: "Post liked/unliked successfully",
       likeCount: post.like.length,
+      post: post,
     });
   } catch (error) {
     console.error(error);
