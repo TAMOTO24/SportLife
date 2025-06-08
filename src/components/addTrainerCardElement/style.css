@@ -34,7 +34,7 @@
 }
 .card-container:hover .content {
   opacity: 1;
-  width: 75%;
+  width: 90%;
   height: 85%;
   border: 2px solid whitesmoke;
   border-radius: 10px;
@@ -45,6 +45,7 @@
 
 .trainer-element {
   padding-top: 5%;
+  overflow-x: auto;
   padding-bottom: 10%;
 }
 
@@ -53,7 +54,7 @@
   transition: 0.4s;
   border: 5px solid #e35454;
   min-height: 20vh;
-  min-width: 18vw;
+  min-width: 15vw;
   width: fit-content;
   height: fit-content;
   overflow: hidden;

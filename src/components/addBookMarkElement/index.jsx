@@ -17,7 +17,7 @@ const BookMark = ({ element, theme = true }) => {
           response.data.user?.bookmarks?.includes(element?._id)
         );
       } catch (error) {
-        message.error("Error retrieving user data");
+        console.log("Error retrieving user data");
       }
     };
     fetchUserData();

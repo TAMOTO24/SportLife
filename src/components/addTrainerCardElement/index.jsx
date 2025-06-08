@@ -42,7 +42,7 @@ const TrainerCardElement = () => {
                       />
                       <div className="content">
                         <h2>{item.title}</h2>
-                        <p>{item.info}</p>
+                        <p>{item.bio}</p>
                       </div>
                     </div>
                   </Link>

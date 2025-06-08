@@ -8,6 +8,7 @@ import {
   Input,
   Form,
   notification,
+  message,
 } from "antd";
 import {
   MessageOutlined,
@@ -18,6 +19,8 @@ import axios from "axios";
 import { socket } from "../../function.js";
 import dayjs from "dayjs";
 import InviteUser from "../addInviteUserElement/index.jsx";
+import Cookies from "js-cookie"
+import { v4 as uuidv4 } from "uuid";
 import "./style.css";
 
 export default function ChatElement() {
@@ -61,24 +64,14 @@ export default function ChatElement() {
   }, []);
 
   useEffect(() => {
-    if (!user || !currentChat) return;
-
-    if (!socket.connected) {
+    if (!socket.connected || user) {
       socket.connect();
     }
+    if (!user || !currentChat) return;
 
     socket.emit("join_chat", { userId: user?._id, chatId: currentChat?._id });
 
     const handleReceiveMessage = (message) => {
-      if (!open && message.fromId !== user._id) {
-        const foundUser = users.find((i) => i._id === message.fromId);
-        const key = `msg_${Date.now()}`;
-        notification.open({
-          description: `@${foundUser.username} : ${message.message}`,
-          key,
-          duration: 7,
-        });
-      }
       setCurrentChat((prevChat) => {
         if (!prevChat) return prevChat;
 
@@ -86,6 +79,15 @@ export default function ChatElement() {
           (msg) => msg.date === message.date
         );
         if (alreadyExists) return prevChat;
+        if (!open && message.fromId !== user._id) {
+          const foundUser = users.find((i) => i._id === message.fromId);
+          const key = `msg_${Date.now()}`;
+          notification.open({
+            description: `@${foundUser.username} : ${message.message}`,
+            key,
+            duration: 7,
+          });
+        }
 
         return {
           ...prevChat,
@@ -96,6 +98,7 @@ export default function ChatElement() {
     socket.on("receive_message", handleReceiveMessage);
 
     socket.on("update_chats", ({ newChat }) => {
+      console.log("update");
       allChats.current = [...allChats.current, newChat];
       onChanging(user?._id, activeChatId, true);
     });
@@ -105,7 +108,7 @@ export default function ChatElement() {
       socket.off("update_chats");
       socket.off("changeChat");
     };
-  }, [user, currentChat, open, users]);
+  }, [user, currentChat, open, users, activeChatId]);
 
   const onChanging = (userId = "", id = "", re = false) => {
     if (!allChats.current || !activeChatId) return;
@@ -116,9 +119,9 @@ export default function ChatElement() {
         c.chating.length === 2 && target.every((id) => c.chating.includes(id))
     );
     if (re) {
-      socket.emit("recconnect", { old: currentChat._id, newRoom: chat._id });
+      socket.emit("recconnect", { old: currentChat?._id, newRoom: chat?._id });
     }
-    setCurrentChat(chat);
+    setCurrentChat(chat || {});
   };
 
   useEffect(() => {
@@ -133,7 +136,7 @@ export default function ChatElement() {
       }
     };
     fetchChatData();
-    console.log("FUNCTION TRIGGERET")
+    console.log("FUNCTION TRIGGERET");
     setTrigger(false);
   }, [user, activeChatId, trigger]);
 
@@ -145,7 +148,7 @@ export default function ChatElement() {
       fromId: user?._id,
     });
     socket.emit("save_chat", {
-      chatId: currentChat._id,
+      chatId: currentChat?._id || "",
       message: values.message,
       date: dayjs().unix(),
       fromId: user._id,
@@ -176,6 +179,8 @@ export default function ChatElement() {
     setActiveChatId(id);
   };
 
+  if (!Cookies.get("token")) return;
+
   return (
     <>
       <FloatButton.Group
@@ -191,10 +196,10 @@ export default function ChatElement() {
         open={open}
         onClose={() => {
           setOpen(false);
-          if (socket.connected)
+          if (socket.connected && currentChat?._id)
             socket.emit("save_chat", {
-              history: currentChat.history,
-              chatId: currentChat._id,
+              history: currentChat?.history,
+              chatId: currentChat?._id,
             });
         }}
         placement="bottom"
@@ -234,7 +239,7 @@ export default function ChatElement() {
                   socket.emit("new_chat", {
                     firstUser: user?._id,
                     secondUser: id,
-                    oldId: currentChat._id,
+                    oldId: currentChat?._id || "",
                   });
                   changeChat(id);
                 }}

@@ -51,9 +51,9 @@ function Header() {
         </nav>
       )}
 
-      {(!location.pathname.startsWith("/classpage") &&
+      {!location.pathname.startsWith("/classpage") &&
         !location.pathname.startsWith("/workoutroom") &&
-        !location.pathname.startsWith("/workoutprogress")) && <ChatElement />}
+        !location.pathname.startsWith("/workoutprogress") && <ChatElement />}
     </div>
   );
 }

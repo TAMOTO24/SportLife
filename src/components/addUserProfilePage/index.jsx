@@ -49,7 +49,7 @@ const UserProfile = () => {
         const response = await axios.get("/currentuserdata");
         setCurrentUser(response.data.user);
       } catch (error) {
-        message.error("Error retrieving user data");
+        console.log("Error retrieving user data");
       } finally {
         setLoadingUser(false);
       }
@@ -159,11 +159,12 @@ const UserProfile = () => {
               <Text>
                 <BookOutlined /> Постів: <strong>{posts?.length || 0}</strong>
               </Text>
-              {currentuserdata?.role === "admin" && currentuserdata._id !== user._id  && (
-                <Button color="default" variant="filled" onClick={showModal}>
-                  Змінити роль
-                </Button>
-              )}
+              {currentuserdata?.role === "admin" &&
+                currentuserdata._id !== user._id && (
+                  <Button color="default" variant="filled" onClick={showModal}>
+                    Змінити роль
+                  </Button>
+                )}
             </Space>
 
             <Modal

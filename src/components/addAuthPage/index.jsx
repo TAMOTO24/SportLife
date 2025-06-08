@@ -73,7 +73,7 @@ const AuthPage = () => {
           values.lastname,
           values.password,
           values.prefix + values.phone,
-          "path",
+          "",
           values.gender,
           "user",
           navigate,

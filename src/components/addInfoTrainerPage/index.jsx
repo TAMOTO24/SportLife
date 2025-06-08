@@ -1,8 +1,8 @@
 import React from "react";
-import { Typography, Button, Card, Image } from "antd";
+import { Typography, Button, Card, Image, Divider } from "antd";
 import { useLocation, useNavigate } from "react-router-dom";
-import "antd/dist/reset.css";
 import { LeftOutlined } from "@ant-design/icons";
+import "antd/dist/reset.css";
 import "./style.css";
 
 const { Title, Paragraph } = Typography;
@@ -32,15 +32,18 @@ const InfoTrainersPage = () => {
       <div className="trainers-nav" onClick={() => navigate(-1)} style={{ cursor: "pointer", padding: "10px 20px" }}>
         <div className="back-button" style={{ display: "flex", alignItems: "center", gap: 8 }}>
           <LeftOutlined />
-          Back
+          Назад
         </div>
       </div>
-      <div className="container" style={{ display: "flex", gap: 24, padding: 20 }}>
+
+      <div className="container" style={{ display: "flex", gap: 24, padding: 20, flexWrap: "wrap" }}>
         <Card
-          style={{ flex: 1, maxWidth: 600 }}
           hoverable
           title={<Title level={2}>Інформація про тренера</Title>}
         >
+          <Paragraph>
+            <strong>Ім’я:</strong> {trainer_info.name}
+          </Paragraph>
           <Paragraph>
             <strong>Титул:</strong> {trainer_info.title}
           </Paragraph>
@@ -53,13 +56,43 @@ const InfoTrainersPage = () => {
           <Paragraph>
             <strong>Trainer ID:</strong> {trainer_info._id}
           </Paragraph>
+          <Divider />
+          <Paragraph>
+            <strong>Освіта:</strong> {trainer_info.education}
+          </Paragraph>
+          <Paragraph>
+            <strong>Цільова аудиторія:</strong> {trainer_info.targetAudience}
+          </Paragraph>
         </Card>
 
         <Card
-          style={{ width: "50vw" }}
-          cover={<Image alt={trainer_info.title} src={trainer_info.profile_img} />}
+          cover={
+            <Image
+              alt={trainer_info.title}
+              src={trainer_info.profile_img}
+              style={{ objectFit: "cover", maxHeight: 900 }}
+            />
+          }
         >
-          <strong>Інформація:</strong> {trainer_info.info}
+          <Paragraph>
+            <strong>Біографія:</strong> {trainer_info.bio}
+          </Paragraph>
+
+          <Divider />
+          <Paragraph><strong>Філософія тренувань:</strong></Paragraph>
+          <ul>
+            {trainer_info.philosophy?.map((item, idx) => (
+              <li key={idx}>{item}</li>
+            ))}
+          </ul>
+
+          <Divider />
+          <Paragraph><strong>Досягнення:</strong></Paragraph>
+          <ul>
+            {trainer_info.achievements?.map((item, idx) => (
+              <li key={idx}>{item}</li>
+            ))}
+          </ul>
         </Card>
       </div>
     </>

@@ -25,7 +25,7 @@ const AccountPage = () => {
         const response = await axios.get("/currentuserdata");
         setUser(response.data.user);
       } catch (error) {
-        message.error("Error retrieving user data");
+        console.log("Error retrieving user data");
       } finally {
         setLoading(false);
       }

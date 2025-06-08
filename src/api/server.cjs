@@ -86,7 +86,7 @@ io.on("connection", (socket) => {
 
       if (chatfilter) return;
 
-      socket.leave(`chat_${oldId}`);
+      if (oldId) socket.leave(`chat_${oldId}`);
       console.log(`Leaving room: ${oldId}`);
 
       const chat = new Chats({
@@ -94,7 +94,7 @@ io.on("connection", (socket) => {
         chating: [firstUser, secondUser],
       });
 
-      socket.join(`chat_${chat?._id}`);
+      if (oldId) socket.join(`chat_${chat?._id}`);
       console.log(`Joining room: ${chat?._id}`);
       console.log("+++++++++++++++++++++++++++++++++++");
 

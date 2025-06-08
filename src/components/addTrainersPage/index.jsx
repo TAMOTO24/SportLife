@@ -1,5 +1,5 @@
-import React from 'react';
-import TrainerCardElement from '../addTrainerCardElement';
+import React from "react";
+import TrainerCardElement from "../addTrainerCardElement";
 import { Divider, Typography, Row, Col } from "antd";
 import { UserOutlined } from "@ant-design/icons";
 
@@ -18,23 +18,29 @@ const TrainersPage = () => {
         }}
       >
         <Title level={1} style={{ fontSize: "48px", marginBottom: 10 }}>
-          <UserOutlined style={{ fontSize: 42, marginRight: 12, color: "#1890ff" }} />
+          <UserOutlined
+            style={{ fontSize: 42, marginRight: 12, color: "#1890ff" }}
+          />
           Наші Тренери
         </Title>
-        <Paragraph style={{ fontSize: "18px", color: "#555", maxWidth: 800, margin: "0 auto" }}>
-          Знайомтеся з нашими професійними тренерами, які допоможуть вам досягти найкращих результатів у вашій фітнес-подорожі. Вони мотивують, надихають і підтримують кожного на шляху до мети.
+        <Paragraph
+          style={{
+            fontSize: "18px",
+            color: "#555",
+            maxWidth: 800,
+            margin: "0 auto",
+          }}
+        >
+          Знайомтеся з нашими професійними тренерами, які допоможуть вам досягти
+          найкращих результатів у вашій фітнес-подорожі. Вони мотивують,
+          надихають і підтримують кожного на шляху до мети.
         </Paragraph>
       </div>
 
       <Divider style={{ marginTop: 40, marginBottom: 40 }} />
 
       <div>
-        <Row gutter={[24, 24]} justify="center">
-          {/* Компонент відображення тренерів */}
-          <Col xs={24} sm={24} md={20} lg={20} xl={20}>
-            <TrainerCardElement />
-          </Col>
-        </Row>
+        <TrainerCardElement />
       </div>
     </div>
   );
