@@ -1,13 +1,26 @@
-import React from "react";
+import React, { useEffect } from "react";
 import "./style.css";
 import { Link, useLocation } from "react-router-dom";
 import Auth from "../propsAuthModal";
 import NotificationElement from "../addNotificationElement";
 import Cookies from "js-cookie";
 import ChatElement from "../addChatElement";
+import { socket } from "../../function";
 
 function Header() {
   const location = useLocation();
+
+  useEffect(() => {
+    if (
+      location.pathname.startsWith("/classpage") ||
+      location.pathname.startsWith("/workoutroom") ||
+      location.pathname.startsWith("/workoutprogress")
+    ) {
+      if (socket.connected) {
+        socket.disconnect();
+      }
+    }
+  }, [location.pathname]);
 
   return (
     <div>
@@ -50,7 +63,6 @@ function Header() {
           </ul>
         </nav>
       )}
-
       {!location.pathname.startsWith("/classpage") &&
         !location.pathname.startsWith("/workoutroom") &&
         !location.pathname.startsWith("/workoutprogress") && <ChatElement />}

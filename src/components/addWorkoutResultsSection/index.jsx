@@ -36,9 +36,6 @@ const WorkoutResultsSection = ({ user }) => {
                       <Text type="secondary">{exercise.description}</Text>
                     )}
                     <br/>
-                    <Text strong>Тренер: </Text>
-                    {exercise.trainer || "—"}
-                    <br />
                     <Text strong>Сети / Повторення: </Text>
                     {exercise.sets} × {exercise.reps}
                     <br />

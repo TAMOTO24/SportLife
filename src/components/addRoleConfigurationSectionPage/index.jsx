@@ -55,9 +55,9 @@ const RoleConfigurationSection = ({ user }) => {
     formData.append("role", values.request);
 
     if (values.dragger)
-    values.dragger.forEach((fileWrapper) => {
-      formData.append("files", fileWrapper.originFileObj);
-    });
+      values.dragger.forEach((fileWrapper) => {
+        formData.append("files", fileWrapper.originFileObj);
+      });
 
     try {
       const response = await Axios.post("/sendemail", formData, {
@@ -122,7 +122,12 @@ const RoleConfigurationSection = ({ user }) => {
                 getValueFromEvent={normFile}
                 noStyle
               >
-                <Upload.Dragger name="files">
+                <Upload.Dragger
+                  name="files"
+                  customRequest={({ onSuccess }) =>
+                    setTimeout(() => onSuccess("ok"), 0)
+                  }
+                >
                   <p className="ant-upload-drag-icon">
                     <InboxOutlined />
                   </p>
@@ -140,7 +145,7 @@ const RoleConfigurationSection = ({ user }) => {
                 <Button type="primary" htmlType="submit">
                   Submit
                 </Button>
-                <Button htmlType="button">Reset</Button>
+                <Button htmlType="button" onClick={() => {form.resetFields()}}>Reset</Button>
               </Space>
             </Form.Item>
           </Form>

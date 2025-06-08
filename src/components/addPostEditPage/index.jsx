@@ -6,14 +6,13 @@ import {
   Input,
   DatePicker,
   Button,
-  Spin,
   Typography,
   message,
   Image,
   List,
   Popconfirm,
 } from "antd";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate  } from "react-router-dom";
 import Loading from "../addLoadingElement"
 
 const { TextArea } = Input;
@@ -25,6 +24,7 @@ const EditPost = () => {
   const [loading, setLoading] = useState(true);
   const [gallery, setGallery] = useState([]);
   const [initialData, setInitialData] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     axios.get(`/post/${postId}`).then((res) => {
@@ -57,6 +57,7 @@ const EditPost = () => {
     try {
       await axios.put(`/post/${postId}`, updatedPost);
       message.success("Пост оновлено успішно!");
+      navigate(-1);
     } catch (error) {
       console.error(error);
       message.error("Помилка під час оновлення поста");

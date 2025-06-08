@@ -118,7 +118,7 @@ const PostElement = ({ item, hoverable, theme }) => {
       <Card
         hoverable={hoverable}
         className={!theme && "black-theme-block"}
-        style={{ maxWidth: "975px" }}
+        style={{ maxWidth: "975px", flex: 1 }}
         bordered={theme}
         loading={loading}
         onClick={() => {
@@ -240,14 +240,6 @@ const PostElement = ({ item, hoverable, theme }) => {
                 />
                 <div>{localItem.comment.length}</div>
               </Link>
-              <a className="postShare">
-                <img
-                  src="/img-pack/icons/share.png"
-                  className={!theme ? "black-theme" : ""}
-                  loading="lazy"
-                  alt=""
-                />
-              </a>
               <a className="postSave" onClick={(e) => e.stopPropagation()}>
                 <BookMark element={localItem} theme={theme} />
               </a>

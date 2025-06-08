@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 // import "./style.css";
-import { Modal, message } from "antd";
-import { Outlet, Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import Cookies from "js-cookie";
 import PostElement from "../addPostElement";
 

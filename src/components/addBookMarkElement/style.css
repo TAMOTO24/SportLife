@@ -1,0 +1,9 @@
+.bookmark {
+  width: 40px !important;
+  height: 40px !important;
+  cursor: pointer;
+}
+
+.bookmark:active {
+  filter: sepia(1) saturate(10000%) hue-rotate(-10deg) brightness(0.8);
+}

@@ -587,7 +587,7 @@ app.post("/createpagepost", async (req, res) => {
       text: description,
       user: answerUser.name || "",
       username: answerUser.username,
-      gallery: filePaths,
+      gallery: filePaths || [],
       userIcon: answerUser.icon || "",
       created_by: userId,
     });

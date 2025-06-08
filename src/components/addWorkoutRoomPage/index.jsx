@@ -62,10 +62,12 @@ export default function RoomPage() {
       });
   }, []);
   useEffect(() => {
+    console.log("IN ROOM USEEFFECT", socket.connected);
     if (!user) return;
 
     if (!socket.connected) {
       socket.connect();
+      console.log("CONNECT");
     } else {
       socket.emit("getAllRoomUsers", { roomId: uniqueUIDV4Id });
     }

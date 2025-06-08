@@ -6,6 +6,7 @@ import "./style.css";
 import Loading from "../addLoadingElement/index";
 import { formatTime, socket, timeString } from "../../function";
 import PeerCamera from "../addCameraComponent/index";
+import { CheckCircleOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
 
 const WorkoutProgressPage = () => {
@@ -270,7 +271,11 @@ const WorkoutProgressPage = () => {
             }`}
           >
             <img
-              src="/img-pack/trainers/full-shot-woman-with-laptop.jpg"
+              src={
+                item?.img_tip_url ||
+                "/img-pack/trainers/full-shot-woman-with-laptop.jpg"
+              }
+              lazy
               alt="trainingImg"
             />
             <div className="item-content">
@@ -385,14 +390,41 @@ const WorkoutProgressPage = () => {
             </div>
           </div>
         ))}
-        {owner && (
-          <Button
-            onClick={endTraining}
-            disabled={!workoutStatuses.every((status) => status === "Finished")}
-          >
-            End training
-          </Button>
-        )}
+        <div style={{width: "100%", display: "flex", alignItems: "center",padding: "5vh 15%"}}>
+          {owner && (
+            <Button
+              type="primary"
+              icon={<CheckCircleOutlined />}
+              onClick={endTraining}
+              disabled={
+                !workoutStatuses.every((status) => status === "Finished")
+              }
+              style={{
+                backgroundColor: "#52c41a",
+                borderColor: "#389e0d",
+                color: "white",
+                fontWeight: "bold",
+                width: "100%",
+                fontSize: "16px",
+                padding: "8px 20px",
+                borderRadius: "8px",
+                transition: "all 0.3s ease",
+                opacity: !workoutStatuses.every(
+                  (status) => status === "Finished"
+                )
+                  ? 0.2
+                  : 1,
+                cursor: !workoutStatuses.every(
+                  (status) => status === "Finished"
+                )
+                  ? "not-allowed"
+                  : "pointer",
+              }}
+            >
+              End Training
+            </Button>
+          )}
+        </div>
       </div>
       <footer
         style={{

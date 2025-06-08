@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { message } from "antd";
+import "./style.css";
 import axios from "axios";
 
 const BookMark = ({ element, theme = true }) => {
@@ -48,7 +49,8 @@ const BookMark = ({ element, theme = true }) => {
         src={`/img-pack/icons/${
           bookMarkStatus ? nameTheme + "_saved.png" : nameTheme + ".png"
         }`}
-        style={{ width: "40px", height: "40px", cursor: "pointer" }}
+        className="bookmark"
+
         onClick={fetchBookmark}
       />
     </button>

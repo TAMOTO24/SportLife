@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from "react";
-import { Form, Input, Button, Upload, Divider, message } from "antd";
+import { Form, Input, Button, Upload, message } from "antd";
 import { InboxOutlined } from "@ant-design/icons";
 import { uploadFileToCloudinary } from "../../uploadFile";
+import { useNavigate, Link } from "react-router-dom";
 import "./style.css";
 import axios from "axios";
 
 const CreatePostPage = () => {
   const [loading, setLoading] = useState(false);
   const [user, setUser] = useState({});
+  const navigate = useNavigate();
 
   const normFile = (e) => {
     console.log("normFile event:", e);
@@ -46,21 +48,24 @@ const CreatePostPage = () => {
       return message.error("Please write some text in description.");
 
     try {
-      const urls = await Promise.all(
-        values.upload.map((fileWrapper) =>
-          handleUploadMultiple(fileWrapper.originFileObj)
-        )
-      );
+      const urls = values.upload?.length
+        ? await Promise.all(
+            values.upload.map((fileWrapper) =>
+              handleUploadMultiple(fileWrapper.originFileObj)
+            )
+          )
+        : [];
 
       const postData = {
         description: values.description,
-        filePaths: urls,
+        filePaths: urls || [],
         userId: user?._id,
       };
 
       axios
         .post("/createpagepost", postData)
         .catch((error) => console.error("Auth error", error));
+      navigate(-1);
     } catch (error) {
       message.error("Upload error!");
       console.error(error);

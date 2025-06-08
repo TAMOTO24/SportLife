@@ -1,47 +1,48 @@
 const faqs = [
   {
-    question: "What are the benefits of regular physical activity?",
+    question: "Які переваги регулярної фізичної активності?",
     answer:
-      "Improves cardiovascular health, strengthens muscles, and boosts mental well-being.",
+      "Покращує серцево-судинне здоров'я, зміцнює м'язи та підвищує психічне благополуччя.",
   },
   {
-    question: "How can I prevent sports injuries?",
+    question: "Як запобігти спортивним травмам?",
     answer:
-      "Warm up, use proper equipment, follow safety guidelines, and avoid overtraining.",
+      "Розминка, використання відповідного обладнання, дотримання правил безпеки та уникнення перенавантажень.",
   },
   {
-    question: "What is cross-training and why is it beneficial?",
+    question: "Що таке крос-тренування і чому воно корисне?",
     answer:
-      "Combines different exercises to improve fitness, reduce injuries, and avoid monotony.",
+      "Поєднує різні вправи для покращення фізичної форми, зменшення ризику травм і уникнення монотонності.",
   },
   {
-    question: "How much exercise is recommended for adults?",
+    question: "Скільки фізичної активності рекомендується дорослим?",
     answer:
-      "At least 150 min of moderate or 75 min of vigorous activity weekly.",
+      "Щонайменше 150 хвилин помірної або 75 хвилин інтенсивної активності на тиждень.",
   },
   {
-    question: "What are some good post-workout recovery tips?",
-    answer: "Hydrate, eat balanced meals, stretch, and get quality sleep.",
+    question: "Які поради щодо відновлення після тренування?",
+    answer:
+      "Пийте достатньо води, їжте збалансовану їжу, розтягуйтесь і добре спіть.",
   },
   {
-    question: "What to eat before and after a workout?",
-    answer: `Firstly, make sure that you ate your last large meal 2-3 hours before your workout. Otherwise, you can feel uncomfortable whilst training
+    question: "Що їсти до і після тренування?",
+    answer: `По-перше, переконайтесь, що ваш останній щільний прийом їжі був за 2–3 години до тренування. Інакше ви можете відчути дискомфорт під час занять.
 
-Consuming some simple carbohydrates about an hour prior to working out is a great habit to get into – think fresh or dried fruit, some granola, or a cereal bar. This will provide you with some readily available energy during your session.
+Споживання простих вуглеводів приблизно за годину до тренування — гарна звичка: свіже або сушене фруктове, трохи граноли чи батончик злаків. Це забезпечить вас швидкодоступною енергією під час сесії.
 
-Post workout, you need to re-build and refuel. Slower releasing carbohydrates to replenish any lost muscle glycogen – or glucose – along with protein helps kickstart the muscle rebuilding process
+Після тренування потрібно відновити та поповнити запаси. Повільні вуглеводи допомагають заповнити втрачені запаси глікогену, а білок — запустити процес відновлення м’язів.
 
-Foods such as brown pasta, brown rice and potatoes for your carbohydrates, and meats such as fish or chicken and beans, and pulses for your protein.`,
+Хорошими джерелами є: коричнева паста, рис, картопля — для вуглеводів, риба, курятина, боби та бобові — для білків.`,
   },
   {
-    question: "What type of training increases muscle mass?",
-    answer: `Resistance training is likely the best training modality to increase muscle mass.
+    question: "Який тип тренувань збільшує м'язову масу?",
+    answer: `Силові тренування — найефективніший спосіб збільшення м’язової маси.
 
-Completing some form of resistance training 2-3 times a week is a great place to start if you’re new to this type of training.
+Варто почати з занять 2–3 рази на тиждень, якщо ви новачок у цій сфері.
 
-As a beginner sticking to compound movements – squats, deadlifts, rows and presses – as they target multiple muscle groups.
+Для початку краще зосередитися на базових вправах — присідання, тяги, жими, які залучають кілька груп м’язів одночасно.
 
-Be sure to stick to correct form and be sure to gradually increase the weight or difficulty of an exercise variation you choose over time to build muscle.`,
+Важливо дотримуватись правильної техніки та поступово збільшувати вагу або складність вправ, щоб досягти м’язового росту.`,
   },
 ];
 
