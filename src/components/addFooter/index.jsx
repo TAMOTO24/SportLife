@@ -23,7 +23,7 @@ function Footer() {
 
   return (
     <>
-      {location.pathname !== "/workoutprogress" && (
+      {!location.pathname.startsWith("/workoutprogress") && (
         <footer className="footer">
           <div>
             <img

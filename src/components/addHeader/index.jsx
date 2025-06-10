@@ -24,7 +24,7 @@ function Header() {
 
   return (
     <div>
-      {location.pathname !== "/workoutprogress" && (
+      {!location.pathname.startsWith("/workoutprogress") && (
         <nav className="nav">
           <ul>
             <img src="/img-pack/logo/logo_white.png" alt="Logo" id="Logo" />

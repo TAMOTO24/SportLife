@@ -18,7 +18,7 @@ import { createNotification } from "../../function.js";
 import InviteUser from "../addInviteUserElement/index.jsx";
 import "./style.css";
 
-const { Title, Text } = Typography;
+const { Title } = Typography;
 
 export default function RoomPage() {
   const location = useLocation();
@@ -110,15 +110,6 @@ export default function RoomPage() {
       socket.off("chatHistory");
       socket.off("roomOwner");
       socket.off("receiveUpdate");
-      console.log("U left the room or smth went wrong");
-      //! This code can contain bugs
-      // socket.emit("clearEmptyRoom", {
-      //   roomId: uniqueUIDV4Id,
-      //   userId: user._id,
-      // });
-      // setTimeout(() => {
-      //   socket.disconnect();
-      // }, 500);
     };
   }, [user, uniqueUIDV4Id, navigate, location]);
 

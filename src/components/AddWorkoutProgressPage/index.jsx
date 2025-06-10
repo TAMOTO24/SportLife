@@ -6,7 +6,7 @@ import "./style.css";
 import Loading from "../addLoadingElement/index";
 import { formatTime, socket, timeString } from "../../function";
 import PeerCamera from "../addCameraComponent/index";
-import { CheckCircleOutlined } from "@ant-design/icons";
+import { CheckCircleOutlined, EyeOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
 
 const WorkoutProgressPage = () => {
@@ -27,6 +27,7 @@ const WorkoutProgressPage = () => {
   const ownerRef = useRef(null);
   const [owner, setOwner] = useState(null);
   const [serverData, setServerData] = useState(false);
+  const [userCount, setUserCount] = useState(0);
 
   const fillAllData = async () => {
     setIsLoading(true);
@@ -122,6 +123,10 @@ const WorkoutProgressPage = () => {
       const isOwner = ownerId.toString() === user._id;
       ownerRef.current = isOwner;
       setOwner(isOwner);
+    });
+
+    socket.on("room-user-count", (count) => {
+      setUserCount(count);
     });
 
     socket.on("backToRoom", () => {
@@ -389,7 +394,14 @@ const WorkoutProgressPage = () => {
             </div>
           </div>
         ))}
-        <div style={{width: "100%", display: "flex", alignItems: "center",padding: "5vh 15%"}}>
+        <div
+          style={{
+            width: "100%",
+            display: "flex",
+            alignItems: "center",
+            padding: "5vh 15%",
+          }}
+        >
           {owner && (
             <Button
               type="primary"
@@ -450,14 +462,15 @@ const WorkoutProgressPage = () => {
           time: {Math.abs(dayjs(data?.startTime).diff(dayjs(), "seconds"))}
         </div>
         <div>© 2025 Sportlife. All rights reserved.</div>
-        <div>
+        <div><EyeOutlined /> {" "} {userCount}</div>
+        {owner && (<div>
           Live right now!
           <img
             src="/img-pack/icons/Red_circle.gif"
             alt=""
             style={{ width: "30px", height: "30px" }}
           />
-        </div>
+        </div>)}
       </footer>
     </div>
   );

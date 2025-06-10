@@ -67,6 +67,10 @@ PeerServer({
 
 io.on("connection", (socket) => {
   let currentHostId = null;
+  const getRoomUserCount = (roomId) => {
+    const room = io.sockets.adapter.rooms.get(roomId);
+    return room ? room.size : 0;
+  };
 
   socket.on("join_chat", async ({ userId, chatId }) => {
     const room = `chat_${chatId}`;
@@ -198,6 +202,8 @@ io.on("connection", (socket) => {
 
       console.log("Create new room with - ", userId, " - owner");
 
+      const count = getRoomUserCount(roomId);
+      io.to(roomId).emit("room-user-count", count);
       io.to(newRoom.roomId).emit("chatHistory", newRoom.users);
       io.to(newRoom.roomId).emit("roomOwner", newRoom.owner);
       socket.emit("receiveData", newRoom.data);
@@ -241,6 +247,9 @@ io.on("connection", (socket) => {
       existingRoom.data = data;
       await existingRoom.save();
     }
+
+    const count = getRoomUserCount(roomId);
+    io.to(roomId).emit("room-user-count", count);
     io.to(roomId).to(roomId).emit("receiveUpdate", data);
   });
 
@@ -271,6 +280,8 @@ io.on("connection", (socket) => {
       existingRoom.markModified("data");
       await existingRoom.save();
 
+      const count = getRoomUserCount(roomId);
+      io.to(roomId).emit("room-user-count", count);
       io.to(roomId).emit("receiveData", existingRoom.data);
     }
   );
@@ -295,6 +306,9 @@ io.on("connection", (socket) => {
 
     existingRoom.users = existingRoom.users.filter((user) => user !== userId);
     await existingRoom.save();
+
+    const count = getRoomUserCount(roomId);
+    io.to(roomId).emit("room-user-count", count);
 
     io.to(roomId).emit("chatHistory", existingRoom.users);
 
