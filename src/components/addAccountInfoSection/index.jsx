@@ -11,7 +11,7 @@ import {
   Col,
   Space,
   Tag,
-  Modal
+  Modal,
 } from "antd";
 import {
   MailOutlined,
@@ -66,6 +66,21 @@ const AccountInfoSection = () => {
     return <Loading />;
   }
 
+  const onFinish = async (values) => {
+    setLoading(true);
+    try {
+      await axios.put(`/user/${user?._id}/password`, {
+        oldPassword: values.oldPassword,
+        newPassword: values.newPassword,
+      });
+      message.success("Пароль успішно змінено");
+    } catch (err) {
+      message.error(err.response?.data?.message || "Помилка при зміні пароля");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleSubmit = async (values) => {
     // main handlesubmit that saves files using api construct and create post in MongoDB
     // if (images.length === 0) return message.error("Please upload at least one image.");
@@ -102,59 +117,110 @@ const AccountInfoSection = () => {
 
   return (
     <>
-      <Card
-        title="Інформація аккаунту"
-        style={{ marginBlock: "15px", padding: "10px" }}
-        loading={loading}
-      >
-        <Row gutter={[20, 20]}>
-          <Col span={3} style={{ textAlign: "center", alignContent: "center" }}>
-            <Avatar
-              size={150}
-              src={uploadedPhoto ? uploadedPhoto : user.profile_picture}
-            />
-          </Col>
-          <Col span={3}>
-            <Space direction="horizontal" size={8}>
-              <Space direction="vertical" size={8} style={{ width: "300px" }}>
-                <h2>{user?.username}</h2>
-                <p>
-                  <b>Пошта: </b>
-                  {user?.email}
-                </p>
-                <p>
-                  <b>ФІО: </b>
-                  {user?.name} {user?.last_name}
-                </p>
-                <p>
-                  <b>Опис профілю: </b>
-                  {user?.profileDescription}
-                </p>
-                <p>
-                  <b>Роль: </b>
-                  <Tag color="blue" bordered={false}>
-                    {user.role}
-                  </Tag>
-                </p>
+      <div style={{ display: "flex", gap: "20px" }}>
+        <Card
+          title="Інформація аккаунту"
+          style={{ marginBlock: "15px", padding: "10px", flex: 1 }}
+          loading={loading}
+        >
+          <Row gutter={[20, 20]}>
+            <Col
+              span={3}
+              style={{ textAlign: "center", alignContent: "center" }}
+            >
+              <Avatar
+                size={150}
+                src={uploadedPhoto ? uploadedPhoto : user.profile_picture}
+              />
+            </Col>
+            <Col span={3}>
+              <Space direction="horizontal" size={8}>
+                <Space direction="vertical" size={8} style={{ width: "300px" }}>
+                  <h2>{user?.username}</h2>
+                  <p>
+                    <b>Пошта: </b>
+                    {user?.email}
+                  </p>
+                  <p>
+                    <b>ФІО: </b>
+                    {user?.name} {user?.last_name}
+                  </p>
+                  <p>
+                    <b>Опис профілю: </b>
+                    {user?.profileDescription}
+                  </p>
+                  <p>
+                    <b>Роль: </b>
+                    <Tag color="blue" bordered={false}>
+                      {user.role}
+                    </Tag>
+                  </p>
+                </Space>
+                <Upload
+                  name="file"
+                  maxCount={1}
+                  beforeUpload={beforeUpload}
+                  onChange={(e) => {
+                    setUploadedFile(e);
+                  }}
+                >
+                  <Button icon={<EditOutlined />}>Змінити фото профілю</Button>
+                </Upload>
+                <Button icon={<DeleteOutlined />} danger>
+                  Видалити
+                </Button>
+                <Button type="primary" onClick={() => setPreviewOpen(true)}>
+                  Попередній перегляд
+                </Button>
               </Space>
-              <Upload
-                name="file"
-                maxCount={1}
-                beforeUpload={beforeUpload}
-                onChange={(e) => {
-                  setUploadedFile(e);
-                }}
-              >
-                <Button icon={<EditOutlined />}>Змінити фото профілю</Button>
-              </Upload>
-              <Button icon={<DeleteOutlined />} danger>
-                Видалити
+            </Col>
+          </Row>
+        </Card>
+        <Card title="Зміна пароля" style={{ maxWidth: 800,  marginBlock: "15px", padding: "10px", flex: 1 }}>
+          <Form layout="vertical" onFinish={onFinish}>
+            <Form.Item
+              label="Старий пароль"
+              name="oldPassword"
+              rules={[{ required: true, message: "Введіть старий пароль" }]}
+            >
+              <Input.Password />
+            </Form.Item>
+
+            <Form.Item
+              label="Новий пароль"
+              name="newPassword"
+              rules={[{ required: true, message: "Введіть новий пароль" }]}
+            >
+              <Input.Password />
+            </Form.Item>
+
+            <Form.Item
+              label="Підтвердження нового пароля"
+              name="confirmPassword"
+              dependencies={["newPassword"]}
+              rules={[
+                { required: true, message: "Підтвердіть новий пароль" },
+                ({ getFieldValue }) => ({
+                  validator(_, value) {
+                    if (!value || getFieldValue("newPassword") === value) {
+                      return Promise.resolve();
+                    }
+                    return Promise.reject("Паролі не співпадають");
+                  },
+                }),
+              ]}
+            >
+              <Input.Password />
+            </Form.Item>
+
+            <Form.Item>
+              <Button type="primary" htmlType="submit" loading={loading} block>
+                Змінити пароль
               </Button>
-              <Button type="primary"  onClick={() => setPreviewOpen(true)}>Попередній перегляд</Button>
-            </Space>
-          </Col>
-        </Row>
-      </Card>
+            </Form.Item>
+          </Form>
+        </Card>
+      </div>
       <Card title="Edit">
         <Form
           form={form}

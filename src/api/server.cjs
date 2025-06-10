@@ -793,7 +793,7 @@ app.post("/login", async (req, res) => {
     if (!user) {
       return res
         .status(400)
-        .json({ message: "There is no such email, register first!" });
+        .json({ message: "Такої пошти немає, спочатку зареєструйтеся!" });
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
@@ -837,12 +837,31 @@ app.get("/currentuserdata", async (req, res) => {
     if (!user) {
       return res
         .status(400)
-        .json({ message: "There is no such email, register first!" });
+        .json({ message: "Такої пошти немає, спочатку зареєструйтеся!" });
     }
 
     res.json({ message: "Access given", user });
   } catch (error) {
     return res.status(401).json({ message: "Token error" });
+  }
+});
+
+app.put('/user/:id/password', async (req, res) => {
+  try {
+    const { oldPassword, newPassword } = req.body;
+    const user = await User.findById(req.params.id);
+    if (!user) return res.status(404).json({ message: 'User not found' });
+
+    const isMatch = await bcrypt.compare(oldPassword, user.password);
+    if (!isMatch) return res.status(400).json({ message: 'Wrong old password' });
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    user.password = hashedPassword;
+    await user.save();
+
+    res.json({ message: 'Password updated successfully' });
+  } catch (err) {
+    res.status(500).json({ message: 'Server error' });
   }
 });
 

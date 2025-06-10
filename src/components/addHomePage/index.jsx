@@ -25,6 +25,7 @@ function Home() {
     "url(./img-pack/page3.jpg)",
     "url(./img-pack/page4.png)",
   ];
+  const dotsCount = backgrounds.length;
   useEffect(() => {
     axios
       .get("/api/getposts")
@@ -37,6 +38,14 @@ function Home() {
     // Змінити фон при натисканні на точку
     setActiveIndex(index);
   };
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setActiveIndex((prevIndex) => (prevIndex + 1) % dotsCount);
+    }, 4000);
+
+    return () => clearInterval(interval);
+  }, [dotsCount]);
 
   const scrollTo = (ref) => {
     if (ref.current) {
@@ -79,13 +88,16 @@ function Home() {
         >
           {/*Фон домашньої сторінки з перемикачем*/}
           <div className="page-content">
-            <h1><b>Головна</b></h1>
+            <h1>
+              <b>Головна</b>
+            </h1>
             <div>
               Ласкаво просимо до SportLife — вашого надійного помічника у світі
               спорту та здорового способу життя. Тут ви знайдете індивідуальні
               тренування, професійних тренерів та корисні поради для досягнення
-              ваших фітнес-цілей.<br/> Приєднуйтесь до нашої спільноти, щоб
-              вдосконалюватися щодня!
+              ваших фітнес-цілей.
+              <br /> Приєднуйтесь до нашої спільноти, щоб вдосконалюватися
+              щодня!
             </div>
           </div>
           <div className="dots-container">

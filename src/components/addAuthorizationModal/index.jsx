@@ -32,10 +32,10 @@ const AuthModal = ({ visible, onCancel }) => {
     setTimeout(() => {
       if (emailItem.includes(email)) {
         navigate("/authpage?email=" + email);
-        message.success("Email found! Please enter your password.");
+        message.success("Пошту знайдено введіть ваш пароль!");
         onCancel();
       } else {
-        message.error("Email not found.");
+        message.error("Пошти не знайдено, зареєструйтеся!");
         setNoAccount(true);
       }
       setLoading(false);
@@ -62,7 +62,7 @@ const AuthModal = ({ visible, onCancel }) => {
   return (
     <>
       <Modal
-        title="Authentication"
+        title="Авторизація"
         open={visible}
         onCancel={onCancel}
         footer={null}

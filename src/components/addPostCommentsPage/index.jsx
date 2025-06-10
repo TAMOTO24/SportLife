@@ -109,7 +109,7 @@ const CommentsPage = () => {
     <div className="commentsPage">
       <PostElement item={post} hoverable={false} theme={true} />
 
-      {user && (
+      {user._id && (
         <div className="commentInputContainer">
           <Avatar
             src={user?.profile_picture || "/img-pack/icons/user-blacktheme.png"}

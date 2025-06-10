@@ -7,17 +7,29 @@ import PostElement from "../addPostElement";
 
 function NewsInfoPage() {
   const [posts, setPosts] = useState([]);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    setLoading(true);
-    axios
-      .get("/api/getposts")
-      .then((response) => setPosts(response.data))
-      .catch((error) => console.error(error))
-      .finally(() => setLoading(false));
-  }, []);
+    const fetchData = () => {
+      axios
+        .get("/api/getposts", {
+          headers: {
+            "Cache-Control": "no-cache",
+            Pragma: "no-cache",
+            Expires: "0",
+          },
+          params: {
+            t: new Date().getTime(),
+          },
+        })
+        .then((response) => setPosts([...response.data]))
+        .catch((error) => console.error(error));
+    };
 
+    fetchData();
+    const interval = setInterval(fetchData, 5000);
+
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <div className="newsInfoPage">
@@ -27,7 +39,7 @@ function NewsInfoPage() {
         </Link>
       )}
       {posts.map((item) => (
-        <PostElement item={item} hoverable={true} theme={true}/>
+        <PostElement item={item} hoverable={true} theme={true} />
       ))}
     </div>
   );
