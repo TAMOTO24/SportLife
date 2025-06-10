@@ -111,7 +111,7 @@ const PeerCamera = ({ roomId, isHost, access }) => {
     };
   }, [peer, socket, isHost]);
 
-  if (!access) return;
+  if (access === false) return;
 
   return (
     <div

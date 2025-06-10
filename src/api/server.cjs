@@ -200,8 +200,6 @@ io.on("connection", (socket) => {
       });
       await newRoom.save();
 
-      console.log("Create new room with - ", userId, " - owner");
-
       const count = getRoomUserCount(roomId);
       io.to(roomId).emit("room-user-count", count);
       io.to(newRoom.roomId).emit("chatHistory", newRoom.users);
@@ -212,7 +210,6 @@ io.on("connection", (socket) => {
         existingRoom.users.push(userId);
         await existingRoom.save();
       }
-      console.log("enter and give chatHistory");
 
       io.to(existingRoom.roomId).emit("chatHistory", existingRoom.users);
       io.to(existingRoom.roomId).emit("roomOwner", existingRoom.owner);
@@ -253,17 +250,7 @@ io.on("connection", (socket) => {
     io.to(roomId).to(roomId).emit("receiveUpdate", data);
   });
 
-  socket.on(
-    "updateData",
-    async ({
-      roomId,
-      userId,
-      data,
-      currentWorkout,
-      startTime = null,
-      finalTimeResult = null,
-      status,
-    }) => {
+  socket.on( "updateData", async ({ roomId, userId, data, currentWorkout, startTime = null, finalTimeResult = null, status}) => {
       const existingRoom = await Room.findOne({ roomId });
 
       if (!existingRoom || !data) return;

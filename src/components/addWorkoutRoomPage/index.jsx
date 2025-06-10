@@ -11,7 +11,7 @@ import {
   Space,
   Divider,
   Avatar,
-  Switch
+  Switch,
 } from "antd";
 import { Typography } from "antd";
 import { useNavigate, useLocation, Link } from "react-router-dom";
@@ -186,8 +186,14 @@ export default function RoomPage() {
               >
                 Відключитися
               </Button>
-              <span style={{ marginRight: 8, color: "black" }}>Перемикач камери:</span>
-              <Switch checked={cameraAccess} onChange={handleToggle} />
+              {isOwner && (
+                <>
+                  <span style={{ marginRight: 8, color: "black" }}>
+                    Перемикач камери:
+                  </span>
+                  <Switch checked={cameraAccess} onChange={handleToggle} />
+                </>
+              )}
             </Space>
 
             {isOwner && (
