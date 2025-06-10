@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Progress, Divider, Button, message } from "antd";
+import { Progress, Divider, Button, message, Switch } from "antd";
 import { useLocation, useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import "./style.css";
@@ -18,6 +18,7 @@ const WorkoutProgressPage = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const location = useLocation();
   const navigate = useNavigate();
+  const { cameraAccess } = location.state || true;
   const [startTime, setStartTime] = useState(dayjs().unix());
 
   const [currentWorkout, setCurrentWorkout] = useState(
@@ -246,17 +247,18 @@ const WorkoutProgressPage = () => {
         user={user}
         isHost={ownerRef.current}
         roomId={uniqueUIDV4Id}
+        access={cameraAccess}
       />
       <div className="progress-nav-block">
         <div className="progressBlock">
           <img src="/img-pack/logo/logo_black2.png" alt="logo" />
           <h1>{currentWorkout?.title}</h1>
           <Progress
-            percent={
+            percent={Math.round(
               ((workoutStatuses.lastIndexOf("Finished") + 1) /
                 exercises.length) *
-              100
-            }
+                100
+            )}
             percentPosition={{ align: "end", type: "inner" }}
             style={{ width: 0 }}
             size={[300, 20]}
@@ -462,15 +464,20 @@ const WorkoutProgressPage = () => {
           time: {Math.abs(dayjs(data?.startTime).diff(dayjs(), "seconds"))}
         </div>
         <div>© 2025 Sportlife. All rights reserved.</div>
-        <div><EyeOutlined /> {" "} {userCount}</div>
-        {owner && (<div>
-          Live right now!
-          <img
-            src="/img-pack/icons/Red_circle.gif"
-            alt=""
-            style={{ width: "30px", height: "30px" }}
-          />
-        </div>)}
+        <div>
+          <EyeOutlined /> {userCount}
+        </div>
+
+        {owner && (
+          <div>
+            Live right now!
+            <img
+              src="/img-pack/icons/Red_circle.gif"
+              alt=""
+              style={{ width: "30px", height: "30px" }}
+            />
+          </div>
+        )}
       </footer>
     </div>
   );

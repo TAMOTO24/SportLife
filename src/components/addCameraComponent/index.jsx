@@ -4,7 +4,7 @@ import Peer from "peerjs";
 import { socket } from "../../function";
 import Draggable from "react-draggable";
 
-const PeerCamera = ({ roomId, isHost }) => {
+const PeerCamera = ({ roomId, isHost, access }) => {
   const localVideoRef = useRef(null);
   const mediaStreamRef = useRef(null);
   const [peer, setPeer] = useState(null);
@@ -93,6 +93,7 @@ const PeerCamera = ({ roomId, isHost }) => {
         });
       });
     }
+    
     return () => {
       socket.off("user-connected");
       socket.off("host-available");
@@ -109,6 +110,8 @@ const PeerCamera = ({ roomId, isHost }) => {
       }
     };
   }, [peer, socket, isHost]);
+
+  if (!access) return;
 
   return (
     <div

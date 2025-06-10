@@ -11,6 +11,7 @@ import {
   Space,
   Divider,
   Avatar,
+  Switch
 } from "antd";
 import { Typography } from "antd";
 import { useNavigate, useLocation, Link } from "react-router-dom";
@@ -33,6 +34,7 @@ export default function RoomPage() {
   const [users, setUsers] = useState([]);
   const [isOwner, setOwner] = useState(false);
   const [allUsers, setAllusers] = useState([]);
+  const [cameraAccess, setCameraAccess] = useState(false);
 
   useEffect(() => {
     setLoading(true);
@@ -138,6 +140,10 @@ export default function RoomPage() {
       console.error("❌ Socket is not connected");
     }
   };
+  const handleToggle = (checked) => {
+    setCameraAccess(checked);
+    console.log("Camera access:", checked);
+  };
 
   return (
     <>
@@ -180,12 +186,14 @@ export default function RoomPage() {
               >
                 Відключитися
               </Button>
+              <span style={{ marginRight: 8, color: "black" }}>Перемикач камери:</span>
+              <Switch checked={cameraAccess} onChange={handleToggle} />
             </Space>
 
             {isOwner && (
               <Link
                 to={`/workoutprogress/${uniqueUIDV4Id}`}
-                state={{ currentWorkout: workouts }}
+                state={{ currentWorkout: workouts, cameraAccess }}
               >
                 <Button
                   type="primary"
