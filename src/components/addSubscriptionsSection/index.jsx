@@ -95,7 +95,7 @@ const SubscriptionSection = () => {
         </Form>
       </Card>
 
-      <Card title="Відправити розсилку" style={{ width: "100%" }}>
+      <Card title="Відправити розсилку пошти" style={{ width: "100%" }}>
         <Form layout="vertical" onFinish={onFinishEmail}>
           <Form.Item
             label="Тема листа"

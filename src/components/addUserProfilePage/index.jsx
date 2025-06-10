@@ -160,7 +160,7 @@ const UserProfile = () => {
                 <BookOutlined /> Постів: <strong>{posts?.length || 0}</strong>
               </Text>
               {currentuserdata?.role === "admin" &&
-                currentuserdata._id !== user._id && (
+                currentuserdata?._id !== user?._id && (
                   <Button color="default" variant="filled" onClick={showModal}>
                     Змінити роль
                   </Button>

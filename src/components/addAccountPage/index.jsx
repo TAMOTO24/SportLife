@@ -92,9 +92,6 @@ const AccountPage = () => {
           { img: "/img-pack/icons/fitness.png", label: "Мої збереження" },
           { img: "/img-pack/icons/mail.png", label: "Розсилка" },
         ].map((item, index) => {
-          // // ! Change it to user?.role === "trainer" later
-          // if (item.label === "Особистий тренер" && !user?.role === "trainer")
-          //   return null;
           if (item.label === "Розсилка" && user?.role !== "admin") return null;
 
           return (

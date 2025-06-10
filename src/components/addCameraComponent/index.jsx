@@ -104,7 +104,6 @@ const PeerCamera = ({ roomId, isHost }) => {
 
       if (mediaStreamRef.current) {
         mediaStreamRef.current.getTracks().forEach((track) => {
-          // ! ERROR This code should stop tracking video for all users especially for host, it doesn't solve the problem
           track.stop();
         });
       }

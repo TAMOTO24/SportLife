@@ -18,7 +18,6 @@ export function createNotification(
   action = "",
   access = ""
 ) {
-  // ! Need testing for errors
   axios
     .post("/notification", {
       message,
@@ -62,7 +61,6 @@ export function trainerRequest(userId, trainerId, action) {
 }
 
 export function setInvitedRoomId(roomId) {
-  // Cookies.set("roomId", roomId, { expires: 0.1 });
   socket.disconnect(); //Disconnect from previous room
   window.location.href = `/workoutroom/${roomId}`;
 }

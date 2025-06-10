@@ -148,7 +148,6 @@ const WorkoutProgressPage = () => {
       socket.off("roomClosed");
       socket.disconnect();
       // This code runs when the component is unmounted due to a route change
-      // ! Still this code need to be tested, if error will appear this would be critical
       if (ownerRef.current) {
         socket.emit("hostChangedPage", { roomId: uniqueUIDV4Id });
       }

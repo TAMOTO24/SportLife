@@ -123,7 +123,6 @@ export default function RoomPage() {
   }, [user, uniqueUIDV4Id, navigate, location]);
 
   const sendRequest = (id) => {
-    // ! TEST THIS CODE UP - it can contain an error
     createNotification(
       "Запрошення",
       "Запрошення на приєднання до кімнати",

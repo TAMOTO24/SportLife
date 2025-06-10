@@ -1010,7 +1010,6 @@ app.get("/allbookmarks/:userId", async (req, res) => {
       (id) => new mongoose.Types.ObjectId(id)
     );
 
-    // ! TODO: Make sure that order is the one specified in bookmarkIds array
     const posts = await Post.find({ _id: { $in: bookmarkIds } });
     const workouts = await Workouts.find({ _id: { $in: bookmarkIds } });
 
@@ -1104,27 +1103,59 @@ app.post("/sendemail", upload.array("files"), async (req, res) => {
     const linkAccept = `${baseUrl}/acceptchangerequest/${id}/${role}`;
     const linkReject = `${baseUrl}/rejectchangerequest/${id}`;
 
-    // ! TODO make prettier mail page
     const htmlContent = `
-      <div style="font-family: Arial, sans-serif; padding: 20px;">
-        <p>Щоб підтвердити свою електронну пошту, натисніть на кнопку нижче:</p>
-        <div style="display: flex; gap: 20px;">
+  <div style="font-family: Arial, sans-serif; background-color: #f9f9f9; padding: 40px;">
+    <div style="
+      max-width: 600px;
+      margin: 0 auto;
+      background: white;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    ">
+      <h2 style="color: #333;">Підтвердження зміни ролі</h2>
+      <p style="font-size: 16px; color: #555;">
+        Щоб підтвердити свою електронну пошту та зміну ролі, натисніть на одну з кнопок нижче:
+      </p>
 
+      <div style="display: flex; gap: 16px; margin: 30px 0;">
         <a href="${linkAccept}" 
-          style="display:inline-block; padding: 10px 20px; background-color: #28a745; color: white; 
-          text-decoration: none; border-radius: 5px; font-weight: bold;">
-          Подтвердить по документам зміну ролі
+          style="
+            display: inline-block;
+            padding: 12px 24px;
+            background-color: #28a745;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: bold;
+            text-align: center;
+            flex: 1;
+          ">
+          ✅ Підтвердити
         </a>
 
         <a href="${linkReject}" 
-          style="display:inline-block; padding: 10px 20px; background-color:rgb(167, 40, 40); color: white; 
-                  text-decoration: none; border-radius: 5px; font-weight: bold;">
-          Відхилити запит на зміну
+          style="
+            display: inline-block;
+            padding: 12px 24px;
+            background-color: #d32f2f;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: bold;
+            text-align: center;
+            flex: 1;
+          ">
+          ❌ Відхилити
         </a>
-        </div>
-        <p>Якщо ви не запитували підтвердження, будь ласка, проігноруйте це повідомлення.</p>
       </div>
-    `;
+
+      <p style="font-size: 14px; color: #999;">
+        Якщо ви не надсилали цей запит, просто проігноруйте цей лист.
+      </p>
+    </div>
+  </div>
+`;
 
     await transporter.sendMail({
       from: `"SportLife" ${email}`,

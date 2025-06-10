@@ -21,6 +21,7 @@ import WorkoutResult from "./components/addFinalWorkoutResultPage"
 import UsersPage from "./components/addUsersPage";
 import UserProfile from "./components/addUserProfilePage";
 import EditPost from "./components/addPostEditPage";
+import NotFound from "./components/addErrorPage";
 
 function App() {
   return (
@@ -40,6 +41,7 @@ function App() {
           <Route path="/trainerspage" element={<TrainersPage />} />
           <Route path="/trainerspage/info" element={<InfoTrainerPage />} />
           <Route path="/newsandinf/comments" element={<CommentsPage />} />
+          <Route path="*" element={<NotFound />} />
           <Route element={<ProtectedRoute />}>
             <Route path="/workoutprogress/:roomId" element={<WorkoutProgressPage />} />
             <Route path="/newsandinf/edit/:postId" element={<EditPost />} />
