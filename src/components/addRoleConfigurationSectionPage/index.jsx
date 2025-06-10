@@ -12,7 +12,7 @@ import {
   Tag,
   Spin,
 } from "antd";
-import Axios from "axios";
+import axios from "axios";
 
 const { Option } = Select;
 const { TextArea } = Input;
@@ -35,7 +35,7 @@ const RoleConfigurationSection = ({ user }) => {
     const fetchRequests = async () => {
       setLoading(true);
       try {
-        const response = await Axios.get(`/request/${user?.trainerRequestId}`);
+        const response = await axios.get(`/request/${user?.trainerRequestId}`);
         setRequests(response.data);
       } catch (error) {
         console.error("Error fetching requests:", error);
@@ -60,7 +60,7 @@ const RoleConfigurationSection = ({ user }) => {
       });
 
     try {
-      const response = await Axios.post("/sendemail", formData, {
+      const response = await axios.post("/sendemail", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
@@ -76,7 +76,7 @@ const RoleConfigurationSection = ({ user }) => {
   return (
     <div className="roleConfigurationSection">
       <div className="roleConfigurationBlock">
-        <Card title="Role Configuration" className="roleConfigurationCard">
+        <Card title="Конфігурація ролі" className="roleConfigurationCard">
           <Form
             form={form}
             layout="vertical"
@@ -88,7 +88,7 @@ const RoleConfigurationSection = ({ user }) => {
               Запишіть нам причину чому ви хочете стати тренером у нашій
               компанії
             </p>
-            <Form.Item name="note" label="Note" rules={[{ required: true }]}>
+            <Form.Item name="note" label="Записка до звернення" rules={[{ required: true }]}>
               <TextArea rows={4} />
             </Form.Item>
             <p className="roleConfigurationSectionText">
@@ -102,11 +102,11 @@ const RoleConfigurationSection = ({ user }) => {
               rules={[{ required: true }]}
             >
               <Select placeholder="Select a option and change input text above">
-                <Option value="trainer">request Trainer role</Option>
-                <Option value="admin">request Admin role</Option>
+                <Option value="trainer">Запит на роль тренер</Option>
+                <Option value="admin">Запит на роль адміністратор</Option>
               </Select>
             </Form.Item>
-            <Form.Item name="email" label="Email" rules={[{ required: true }]}>
+            <Form.Item name="email" label="Пошта" rules={[{ required: true }]}>
               <Input disabled={true} />
             </Form.Item>
 
@@ -115,7 +115,7 @@ const RoleConfigurationSection = ({ user }) => {
               Будь ласка, надішліть нам своє резюме або інші документи, які
               підтверджують вашу кваліфікацію. Ви можете завантажити їх тут.
             </p>
-            <Form.Item label="Dragger">
+            <Form.Item label="Закиньте документами">
               <Form.Item
                 name="dragger"
                 valuePropName="fileList"
@@ -132,10 +132,10 @@ const RoleConfigurationSection = ({ user }) => {
                     <InboxOutlined />
                   </p>
                   <p className="ant-upload-text">
-                    Click or drag file to this area to upload
+                    Натисніть або перетягніть документи у цю область, щоб завантажити
                   </p>
                   <p className="ant-upload-hint">
-                    Support for a single or bulk upload.
+                    Підтримка одноразового або масового завантаження.
                   </p>
                 </Upload.Dragger>
               </Form.Item>
@@ -159,28 +159,27 @@ const RoleConfigurationSection = ({ user }) => {
         <div className="roleConfigurationBlock">
           <Card>
             <h1>
-              <b>Current Role:</b>{" "}
+              <b>Ваша роль зараз:</b>{" "}
               <Tag color="blue" style={{ fontSize: "20px" }}>
                 {user.role}
               </Tag>
             </h1>
             <p>
-              If you want to change your role, please fill out the form on the
-              left and submit your request.
+              Якщо ви хочете змінити свою роль, будь ласка, заповніть форму ліворуч та надішліть свій запит.
             </p>
             <p>
-              Your current role is <b className="roleText">{user.role}</b>. If
-              you need to change it, please contact support.
+              Ваша роль зараз <b className="roleText">{user.role}</b>. Якщо
+             вам потрібно це змінити, зверніться до служби підтримки за допомогою форми зліва
             </p>
             <h3>
-              <b>Available Roles:</b>
+              <b>Доступні ролі:</b>
             </h3>
             <ul>
               <li>
-                <Tag color="green">Trainer</Tag>
+                <Tag color="green">Тренер</Tag>
               </li>
               <li>
-                <Tag color="orange">Admin</Tag>
+                <Tag color="orange">Адміністратор</Tag>
               </li>
             </ul>
             {user?.trainerRequestId && (

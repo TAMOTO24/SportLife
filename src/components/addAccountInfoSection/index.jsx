@@ -11,7 +11,6 @@ import {
   Col,
   Space,
   Tag,
-  Image,
   Modal
 } from "antd";
 import {
@@ -199,11 +198,6 @@ const AccountInfoSection = () => {
                   </Button>
                   {/* <Button htmlType="button">Cancel</Button> */}
                 </Space>
-              </Col>
-              <Col>
-                <Button type="primary" danger>
-                  Delete
-                </Button>
               </Col>
             </Row>
           </Form.Item>

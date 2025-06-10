@@ -19,7 +19,7 @@ import axios from "axios";
 import { socket } from "../../function.js";
 import dayjs from "dayjs";
 import InviteUser from "../addInviteUserElement/index.jsx";
-import Cookies from "js-cookie"
+import Cookies from "js-cookie";
 import { v4 as uuidv4 } from "uuid";
 import "./style.css";
 
@@ -211,12 +211,14 @@ export default function ChatElement() {
           <div>
             {user?.chats.map((id, index) => {
               const foundUser = users.find((user) => user._id === id);
-              if (!foundUser) return null;
+              if (!foundUser || !currentChat) return null;
               return (
                 <div
                   key={id}
                   className={`userAvatar ${
-                    currentChat?.chating.includes(id) ? "active" : ""
+                    currentChat?.chating && currentChat.chating.includes(id)
+                      ? "active"
+                      : ""
                   }`}
                   onClick={() => changeChat(id, true)}
                 >
@@ -253,7 +255,7 @@ export default function ChatElement() {
           <div className="chatBlock">
             <div className="chat-history">
               {socket.connected ? (
-                currentChat && currentChat.history.length > 0 ? (
+                currentChat?.history && currentChat.history.length > 0 ? (
                   currentChat.history.map((item) => {
                     const isMyMessage = item.fromId === user?._id;
                     const foundUser = users.find((i) => i._id === item.fromId);
