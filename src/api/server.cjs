@@ -229,12 +229,10 @@ io.on("connection", (socket) => {
   socket.on("update-camera-status", async ({ roomId, status }) => {
     const existingRoom = await Room.findOne({ roomId });
 
-    if (existingRoom?.data && status) {
+    if (existingRoom?.data && status !== undefined) {
       existingRoom.data.cameraStatus = status;
       existingRoom.markModified("data");
       await existingRoom.save();
-
-      console.log(`Room ${roomId} camera status updated to: ${status}`);
 
       io.to(roomId).emit("camera-status-updated", status);
     }
@@ -301,19 +299,9 @@ io.on("connection", (socket) => {
     console.log("roomId", roomId);
     const existingRoom = await Room.findOne({ roomId });
 
-    if (!existingRoom) {
-      console.log(
-        "Room is deleted?? !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
-      );
-      return;
-    }
+    if (!existingRoom) return;
+    if (!existingRoom.roomId) return;
 
-    console.log(
-      "disconect Data: ---- ",
-      existingRoom.owner.toString() === userId,
-      existingRoom.owner.toString(),
-      userId
-    );
     if (existingRoom.owner.toString() === userId) {
       await Room.deleteOne({ roomId });
 
@@ -323,6 +311,9 @@ io.on("connection", (socket) => {
       return;
     }
 
+    const updatedRoom = await Room.findOne({ roomId });
+    if (!updatedRoom) return;
+
     existingRoom.users = existingRoom.users.filter((user) => user !== userId);
     await existingRoom.save();
 
@@ -331,8 +322,14 @@ io.on("connection", (socket) => {
 
     io.to(roomId).emit("chatHistory", existingRoom.users);
 
-    if (existingRoom.users.length === 0) {
-      await Room.deleteOne({ roomId });
+    const room = io.sockets.adapter.rooms.get(roomId);
+    const numClients = room ? room.size : 0;
+    if (existingRoom.users.length === 0 || numClients === 0) {
+      try {
+        await Room.deleteOne({ roomId });
+      } catch (err) {
+        console.error("Ошибка при удалении комнаты:", err);
+      }
     }
     // * find and delete user from room if he disconnected
   });
@@ -352,16 +349,16 @@ io.on("connection", (socket) => {
     user.save();
   });
 
-  socket.on("clearEmptyRoom", async ({ roomId, userId }) => {
-    if (roomId) {
-      const room = await Room.findOne({ roomId });
+  // socket.on("clearEmptyRoom", async ({ roomId, userId }) => {
+  //   if (roomId) {
+  //     const room = await Room.findOne({ roomId });
 
-      if (room && room.owner.toString() === userId) {
-        await Room.deleteOne({ roomId });
-        socket.broadcast.to(roomId).emit("roomClosed");
-      }
-    }
-  });
+  //     if (room && room.owner.toString() === userId) {
+  //       await Room.deleteOne({ roomId });
+  //       socket.broadcast.to(roomId).emit("roomClosed");
+  //     }
+  //   }
+  // });
 
   socket.on("disconnect", () => {
     console.log("Клієнт відключився:", socket.id);
@@ -1195,8 +1192,14 @@ app.post("/sendemail", upload.array("files"), async (req, res) => {
         <strong>Дані користувача:</strong><br/>
         - ПІБ: ${userData?.name} ${userData?.last_name}<br/>
         - Нікнейм: ${userData?.username}<br/>
-        - Пошта: <a href="mailto:${userData?.email}" style="color:#2c7be5; text-decoration:none;">${userData?.email}</a><br/>
-        - Контактний телефон: <a href="tel:${userData?.phone}" style="color:#2c7be5; text-decoration:none;">${userData?.phone}</a>
+        - Пошта: <a href="mailto:${
+          userData?.email
+        }" style="color:#2c7be5; text-decoration:none;">${
+      userData?.email
+    }</a><br/>
+        - Контактний телефон: <a href="tel:${
+          userData?.phone
+        }" style="color:#2c7be5; text-decoration:none;">${userData?.phone}</a>
       </p>
 
       <p style="margin-bottom: 36px;">
@@ -1206,8 +1209,14 @@ app.post("/sendemail", upload.array("files"), async (req, res) => {
       <p style="margin-bottom: 0;">
         З повагою,<br/>
         <strong>${userData?.name} ${userData?.last_name}</strong><br/>
-        <a href="mailto:${userData?.email}" style="color:#2c7be5; text-decoration:none;">${userData?.email}</a><br/>
-        <a href="tel:${userData?.phone}" style="color:#2c7be5; text-decoration:none;">${userData?.phone}</a>
+        <a href="mailto:${
+          userData?.email
+        }" style="color:#2c7be5; text-decoration:none;">${
+      userData?.email
+    }</a><br/>
+        <a href="tel:${
+          userData?.phone
+        }" style="color:#2c7be5; text-decoration:none;">${userData?.phone}</a>
       </p>
 
        <div style="display: flex; gap: 10px; margin-top: 36px;">

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useParams } from "react-router-dom";
 import { socket } from "../../function.js";
 import axios from "axios";
@@ -33,7 +33,9 @@ export default function RoomPage() {
 
   const [users, setUsers] = useState([]);
   const [isOwner, setOwner] = useState(false);
+  const ownerIdRef = useRef("");
   const [allUsers, setAllusers] = useState([]);
+  const redirectRef = useRef(false);
   const [cameraAccess, setCameraAccess] = useState(false);
 
   useEffect(() => {
@@ -65,12 +67,10 @@ export default function RoomPage() {
   }, []);
 
   useEffect(() => {
-    console.log("IN ROOM USEEFFECT", socket.connected);
     if (!user) return;
 
     if (!socket.connected) {
       socket.connect();
-      console.log("CONNECT");
     } else {
       socket.emit("getAllRoomUsers", { roomId: uniqueUIDV4Id });
     }
@@ -89,7 +89,7 @@ export default function RoomPage() {
     });
 
     socket.on("roomClosed", () => {
-      message.warning("Кімнату закрито — творець вийшов");
+      message.warning("Кімнату закрито — власник вийшов");
       navigate("/", { replace: true });
     });
 
@@ -99,6 +99,7 @@ export default function RoomPage() {
 
     socket.on("roomOwner", (ownerId) => {
       setOwner(ownerId === user._id);
+      ownerIdRef.current = ownerId;
     });
 
     socket.on("camera-status-updated", (status) => {
@@ -106,8 +107,10 @@ export default function RoomPage() {
     });
 
     socket.on("redirect", () => {
-      if (!isOwner)
+      if (!isOwner) {
+        redirectRef.current = true;
         navigate(`/workoutprogress/${uniqueUIDV4Id}`, { replace: true });
+      }
     });
 
     return () => {
@@ -117,6 +120,16 @@ export default function RoomPage() {
       socket.off("roomOwner");
       socket.off("receiveUpdate");
       socket.off("camera-status-updated");
+      if (user?._id === ownerIdRef.current || redirectRef.current === false) {
+        disconnectSocket();
+        console.log(
+          "U left the room cuz",
+          redirectRef.current,
+          user?._id === ownerIdRef.current
+        );
+        if (isOwner)
+          message.warning("Ви покинули кімнату, всі гості розпущені");
+      }
     };
   }, [user, uniqueUIDV4Id, navigate, location]);
 
@@ -139,7 +152,7 @@ export default function RoomPage() {
         userId: user._id,
       });
       navigate("/", { replace: true });
-      console.log("Socket disconnected");
+      message.warning("Ви вийшли з кімнати");
       socket.disconnect();
     } else {
       console.error("❌ Socket is not connected");
@@ -214,6 +227,8 @@ export default function RoomPage() {
                   block
                   onClick={() => {
                     socket.emit("redirectAll", { roomId: uniqueUIDV4Id });
+                    ownerIdRef.current = "";
+                    redirectRef.current = true;
                   }}
                 >
                   Почати тренування

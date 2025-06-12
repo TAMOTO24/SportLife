@@ -136,7 +136,6 @@ export default function ChatElement() {
       }
     };
     fetchChatData();
-    console.log("FUNCTION TRIGGERET");
     setTrigger(false);
   }, [user, activeChatId, trigger]);
 

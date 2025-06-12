@@ -1,18 +1,20 @@
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
-const loading = () => {
+const Loading = ({ children }) => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsLoading(false);
-    }, 5000);
+    }, 1000);
     return () => clearTimeout(timer);
   }, []);
 
   if (isLoading) {
     return <div>Loading...</div>;
   }
+
+  return children;
 };
 
-export default loading;
+export default Loading;

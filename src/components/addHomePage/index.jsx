@@ -123,7 +123,12 @@ function Home() {
             <p className="blog-title">Наш блог</p>
             <p className="blog-subtitle">Шукайте новини та публікації</p>
             <div
-              style={{ display: "flex", gap: "2%", justifyContent: "center" }}
+              style={{
+                display: "flex",
+                gap: "2em",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
             >
               {posts.slice(0, 3).map((item) => (
                 <PostElement
