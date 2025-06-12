@@ -7,6 +7,7 @@ import {
   trainerRequest,
 } from "../../function";
 import axios from "axios";
+import dayjs from "dayjs";
 import "./style.css";
 
 const NotificationElement = () => {
@@ -164,10 +165,20 @@ const NotificationElement = () => {
             <div className="notification-content">
               <div className="notification-header">
                 <h2>{notification.title}</h2>
-                <div>{notification.date}</div>
+                <div>{`${dayjs(notification.date).format("HH:mm")} | ${dayjs(
+                  notification.date
+                ).format("DD.MM")}`}</div>
               </div>
 
-              <p>{notification.message}</p>
+              <p
+                style={{
+                  overflowWrap: "break-word",
+                  wordBreak: "break-word",
+                  whiteSpace: "normal",
+                }}
+              >
+                {notification.message}
+              </p>
               {notification?.action && (
                 <Space>
                   <Button

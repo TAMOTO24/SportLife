@@ -95,12 +95,14 @@ const AccountInfoSection = () => {
     };
     if (uploadFile) {
       setLoading(true);
-      const url = await uploadFileToCloudinary(uploadFile?.file);
-      data.picture = url;
+      data.picture =
+        uploadFile === "delete"
+          ? ""
+          : await uploadFileToCloudinary(uploadFile?.file);
     }
     try {
-      const response = await axios.put("/updateuser", data);
-      message.success("Profile updated successfully!");
+      const response = await axios.patch("/updateuser", data);
+      message.success("Профіль змінено успішно!");
 
       if (setUser) {
         setUser(response.data);
@@ -130,7 +132,13 @@ const AccountInfoSection = () => {
             >
               <Avatar
                 size={150}
-                src={uploadedPhoto ? uploadedPhoto : user.profile_picture}
+                src={
+                  uploadedPhoto
+                    ? (uploadFile !== "delete" && uploadedPhoto) ||
+                      "/img-pack/icons/user-blacktheme.png"
+                    : user.profile_picture ||
+                      "/img-pack/icons/user-blacktheme.png"
+                }
               />
             </Col>
             <Col span={3}>
@@ -160,13 +168,22 @@ const AccountInfoSection = () => {
                   name="file"
                   maxCount={1}
                   beforeUpload={beforeUpload}
+                  showUploadList={{ showRemoveIcon: false }}
                   onChange={(e) => {
                     setUploadedFile(e);
                   }}
                 >
                   <Button icon={<EditOutlined />}>Змінити фото профілю</Button>
                 </Upload>
-                <Button icon={<DeleteOutlined />} danger>
+                <Button
+                  icon={<DeleteOutlined />}
+                  danger
+                  onClick={() => {
+                    setUploadedFile("delete");
+                    setUploadedPhoto("/img-pack/icons/user-blacktheme.png");
+                    console.log("awdawdawdw", uploadedPhoto, "awdawd");
+                  }}
+                >
                   Видалити
                 </Button>
                 <Button type="primary" onClick={() => setPreviewOpen(true)}>
@@ -176,7 +193,15 @@ const AccountInfoSection = () => {
             </Col>
           </Row>
         </Card>
-        <Card title="Зміна пароля" style={{ maxWidth: 800,  marginBlock: "15px", padding: "10px", flex: 1 }}>
+        <Card
+          title="Зміна пароля"
+          style={{
+            maxWidth: 800,
+            marginBlock: "15px",
+            padding: "10px",
+            flex: 1,
+          }}
+        >
           <Form layout="vertical" onFinish={onFinish}>
             <Form.Item
               label="Старий пароль"
@@ -260,7 +285,7 @@ const AccountInfoSection = () => {
               <Col>
                 <Space size={10}>
                   <Button type="primary" htmlType="submit">
-                    Save Changes
+                    Зберегти
                   </Button>
                   {/* <Button htmlType="button">Cancel</Button> */}
                 </Space>

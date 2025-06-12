@@ -63,6 +63,7 @@ export default function RoomPage() {
         setLoading(false);
       });
   }, []);
+
   useEffect(() => {
     console.log("IN ROOM USEEFFECT", socket.connected);
     if (!user) return;
@@ -75,6 +76,10 @@ export default function RoomPage() {
     }
 
     socket.on("connect", async () => {
+      socket.emit("update-camera-status", {
+        roomId: uniqueUIDV4Id,
+        status: false,
+      });
       socket.emit("joinRoom", { roomId: uniqueUIDV4Id, userId: user._id });
       socket.emit("getRoomOwner", { roomId: uniqueUIDV4Id });
     });
@@ -84,8 +89,7 @@ export default function RoomPage() {
     });
 
     socket.on("roomClosed", () => {
-      message.error("Кімнату закрито — творець вийшов");
-      // Cookies.remove("roomId");
+      message.warning("Кімнату закрито — творець вийшов");
       navigate("/", { replace: true });
     });
 
@@ -97,9 +101,9 @@ export default function RoomPage() {
       setOwner(ownerId === user._id);
     });
 
-    // socket.on("receiveUpdate", (data) => {
-    //   setData(data);
-    // });
+    socket.on("camera-status-updated", (status) => {
+      setCameraAccess(status);
+    });
 
     socket.on("redirect", () => {
       if (!isOwner)
@@ -112,6 +116,7 @@ export default function RoomPage() {
       socket.off("chatHistory");
       socket.off("roomOwner");
       socket.off("receiveUpdate");
+      socket.off("camera-status-updated");
     };
   }, [user, uniqueUIDV4Id, navigate, location]);
 
@@ -142,7 +147,10 @@ export default function RoomPage() {
   };
   const handleToggle = (checked) => {
     setCameraAccess(checked);
-    console.log("Camera access:", checked);
+    socket.emit("update-camera-status", {
+      roomId: uniqueUIDV4Id,
+      status: checked,
+    });
   };
 
   return (

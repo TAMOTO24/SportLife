@@ -31,7 +31,7 @@ function Header() {
             {[
               { to: "/", label: "Головна" },
               { to: "/trainerspage", label: "Тренери" },
-              { to: "/newsandinf", label: "Новити та інформація" },
+              { to: "/newsandinf", label: "Новини та інформація" },
               { to: "/userspage", label: "Користувачі" },
               { to: "/workoutpage", label: "Плани тренувань" },
             ].map((item) => (
@@ -65,7 +65,13 @@ function Header() {
       )}
       {!location.pathname.startsWith("/classpage") &&
         !location.pathname.startsWith("/workoutroom") &&
-        !location.pathname.startsWith("/workoutprogress") && <ChatElement />}
+        !location.pathname.startsWith("/workoutprogress") &&
+        location.pathname !== "/workoutpage" && (
+          <>
+            {console.log("Рендеримо чат", location.pathname)}
+            <ChatElement />
+          </>
+        )}
     </div>
   );
 }

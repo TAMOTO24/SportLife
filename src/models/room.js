@@ -14,7 +14,8 @@ const roomSchema = new mongoose.Schema({
     owner: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "accounts",
-    }
+    },
+    cameraStatus: Boolean,
 });
 
 module.exports = mongoose.models.room || mongoose.model("room", roomSchema);

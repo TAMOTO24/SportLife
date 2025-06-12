@@ -16,6 +16,13 @@ const WorkoutPage = () => {
   const [workouts, setWorkouts] = useState([]);
   const [cachedWorkouts, setCachedWorkouts] = useState({});
   const navigate = useNavigate();
+  const labels = [
+    { en: "Running", ua: "Біг" },
+    { en: "Stretch", ua: "Розтяжка" },
+    { en: "Yoga", ua: "Йога" },
+    { en: "Strength", ua: "Сила" },
+    { en: "Cardio", ua: "Кардіо" },
+  ];
 
   const handleClick = (index) => {
     setActiveIndex(index);
@@ -25,43 +32,52 @@ const WorkoutPage = () => {
     navigate(`/classpage/${item?._id}`, { state: { workout: item } });
   };
 
-  const fetchWorkouts = useCallback(async (index) => {
-    if (cachedWorkouts[index]) {
-      setWorkouts(cachedWorkouts[index]);
-      setLoading(false);
-      return;
-    }
+  const fetchWorkouts = useCallback(
+    async (index) => {
+      if (cachedWorkouts[index]) {
+        setWorkouts(cachedWorkouts[index]);
+        setLoading(false);
+        return;
+      }
 
-    setLoading(true);
-    try {
-      const response = await axios.get(`/api/workouts/${encodeURIComponent(index)}`);
-      setWorkouts(response.data);
-      setCachedWorkouts((prev) => ({
-        ...prev,
-        [index]: response.data,
-      }));
-    } catch (error) {
-      message.error(error);
-    } finally {
-      setLoading(false);
-    }
-  }, [cachedWorkouts]);
+      setLoading(true);
+      try {
+        const response = await axios.get(
+          `/api/workouts/${encodeURIComponent(index)}`
+        );
+        setWorkouts(response.data);
+        setCachedWorkouts((prev) => ({
+          ...prev,
+          [index]: response.data,
+        }));
+      } catch (error) {
+        message.error(error);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [cachedWorkouts]
+  );
 
   useEffect(() => {
-    fetchWorkouts(activeIndex); 
+    fetchWorkouts(activeIndex);
   }, [activeIndex, fetchWorkouts]);
 
   return (
     <div id="workoutpage">
       <div className="navWorkout">
-        {["Running", "Stretch", "Yoga", "Strength", "Cardio"].map((label) => (
+        {labels.map(({ en, ua }) => (
           <a
-            key={label}
-            className={`navElements ${activeIndex === label ? "activeEl" : ""}`}
-            onClick={() => handleClick(label)}
+            key={en}
+            className={`navElements ${activeIndex === en ? "activeEl" : ""}`}
+            onClick={() => handleClick(en)}
           >
-            <img loading="lazy" src={`./img-pack/icons/${label.toLowerCase()}.png`} alt={label} />
-            <div>{label}</div>
+            <img
+              loading="lazy"
+              src={`./img-pack/icons/${en.toLowerCase()}.png`}
+              alt={ua}
+            />
+            <div>{ua}</div>
           </a>
         ))}
       </div>
@@ -72,7 +88,7 @@ const WorkoutPage = () => {
 
       <div className="workoutBodyComponent">
         <div className="upperWorkoutTable">
-          <p>Try out workout plans</p>
+          <p>Спробуй плани тренувань!</p>
         </div>
 
         {loading ? (
@@ -90,11 +106,15 @@ const WorkoutPage = () => {
                   <div className="workoutTitle">{item.title}</div>
                   <div className="workoutDesc">{item.description}</div>
                   <div className="workoutTrainer">
-                    <a style={{ textDecoration: "underline" }}>{item.trainer}</a>
+                    <a style={{ textDecoration: "underline" }}>
+                      {item.trainer}
+                    </a>
                     <div className="tag-block">
                       {item.type.map((tag) => (
-                      <div id="workout-id" key={tag}>#{tag}</div>
-                    ))}
+                        <div id="workout-id" key={tag}>
+                          #{tag}
+                        </div>
+                      ))}
                     </div>
                   </div>
                 </div>
@@ -103,7 +123,6 @@ const WorkoutPage = () => {
           </div>
         )}
       </div>
-
       <TrainerCardElement />
       <hr />
 

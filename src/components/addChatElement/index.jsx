@@ -85,7 +85,7 @@ export default function ChatElement() {
           notification.open({
             description: `@${foundUser.username} : ${message.message}`,
             key,
-            duration: 7,
+            duration: 30,
           });
         }
 

@@ -18,7 +18,7 @@ const WorkoutProgressPage = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const location = useLocation();
   const navigate = useNavigate();
-  const { cameraAccess } = location.state || true;
+  const cameraAccess = location.state?.cameraAccess ?? false;
   const [startTime, setStartTime] = useState(dayjs().unix());
 
   const [currentWorkout, setCurrentWorkout] = useState(
@@ -131,6 +131,7 @@ const WorkoutProgressPage = () => {
     });
 
     socket.on("backToRoom", () => {
+      console.log("backtoRoom", socket.connected);
       if (socket.connected) {
         message.warning("Перенаправлено в кімнату");
         navigate(`/workoutroom/${uniqueUIDV4Id}`, { replace: true });
@@ -138,10 +139,7 @@ const WorkoutProgressPage = () => {
     });
 
     socket.on("roomClosed", () => {
-      if (socket.connected) {
-        message.warning("Кімнату закрито — творець вийшов");
-        navigate("/", { replace: true });
-      }
+      navigate("/", { replace: true });
     });
 
     if (!socket.connected) socket.connect();
@@ -219,16 +217,32 @@ const WorkoutProgressPage = () => {
           data: resultData,
         });
       }
-      navigate(ownerRef.current ? `/workoutroom/${uniqueUIDV4Id}/result` : "", {
-        replace: true,
-        state: { result: resultData },
-      });
-      socket.emit("disconnectData", {
-        roomId: uniqueUIDV4Id,
-        userId: user._id,
-      });
+      socket.emit(
+        "disconnectData",
+        {
+          roomId: uniqueUIDV4Id,
+          userId: user._id,
+        },
+        () => {
+          console.log("✅ disconnectData sent, now disconnecting...");
+          socket.disconnect();
+          navigate(
+            ownerRef.current ? `/workoutroom/${uniqueUIDV4Id}/result` : "/",
+            {
+              replace: true,
+              state: { result: resultData },
+            }
+          );
+        }
+      );
 
-      socket.disconnect();
+      navigate(
+        ownerRef.current ? `/workoutroom/${uniqueUIDV4Id}/result` : "/",
+        {
+          replace: true,
+          state: { result: resultData },
+        }
+      );
     } else {
       console.error("❌ Socket is not connected");
     }
@@ -243,15 +257,16 @@ const WorkoutProgressPage = () => {
     <Loading />
   ) : (
     <div className="progress-page">
-      <PeerCamera
-        user={user}
-        isHost={ownerRef.current}
-        roomId={uniqueUIDV4Id}
-        access={cameraAccess}
-      />
+      {(data?.cameraStatus ?? cameraAccess ?? false) && (
+        <PeerCamera
+          user={user}
+          isHost={ownerRef.current}
+          roomId={uniqueUIDV4Id}
+        />
+      )}
       <div className="progress-nav-block">
         <div className="progressBlock">
-          <img src="/img-pack/logo/logo_black2.png" alt="logo" />
+          <img src="/img-pack/logo/logo_black2.png" alt="логотип" />
           <h1>{currentWorkout?.title}</h1>
           <Progress
             percent={Math.round(
@@ -282,13 +297,13 @@ const WorkoutProgressPage = () => {
                 "/img-pack/trainers/full-shot-woman-with-laptop.jpg"
               }
               lazy
-              alt="trainingImg"
+              alt="зображення тренування"
             />
             <div className="item-content">
               <h2 style={{ marginBottom: 8, color: "#222" }}>{item.name}</h2>
               <Divider style={{ background: "#ddd" }} />
 
-              <h4 style={{ color: "#222" }}>Muscle Engagement</h4>
+              <h4 style={{ color: "#222" }}>Залучення м'язів</h4>
               {Object.entries(item.muscleGroups).map(([muscle, percent]) => (
                 <div
                   key={muscle}
@@ -320,12 +335,12 @@ const WorkoutProgressPage = () => {
 
               <Divider style={{ background: "#ddd" }} />
 
-              <h4 style={{ color: "#222" }}>Description</h4>
+              <h4 style={{ color: "#222" }}>Опис</h4>
               <p style={{ color: "#555" }}>{item.description}</p>
 
               <Divider style={{ background: "#ddd" }} />
 
-              <h4 style={{ color: "#222" }}>Workout Details</h4>
+              <h4 style={{ color: "#222" }}>Деталі тренування</h4>
               <div
                 style={{
                   color: "#555",
@@ -334,22 +349,22 @@ const WorkoutProgressPage = () => {
                 }}
               >
                 <div>
-                  <strong>Sets:</strong>
+                  <strong>Сети:</strong>
                   <p>{item.sets}</p>
                 </div>
                 <div>
-                  <strong>Reps:</strong>
+                  <strong>Повторення:</strong>
                   <p>{item.reps}</p>
                 </div>
                 <div>
-                  <strong>Rest:</strong>
+                  <strong>Відпочинок:</strong>
                   <p>{item.restTime}</p>
                 </div>
               </div>
 
               <Divider style={{ background: "#ddd" }} />
 
-              <h4 style={{ color: "#222" }}>Technique</h4>
+              <h4 style={{ color: "#222" }}>Техніка виконання</h4>
               <ul style={{ color: "#555" }}>
                 {item.technique.map((step, index) => (
                   <li key={index}>{step}</li>
@@ -358,7 +373,7 @@ const WorkoutProgressPage = () => {
 
               <Divider style={{ background: "#ddd" }} />
 
-              <h4 style={{ color: "#222" }}>Tips</h4>
+              <h4 style={{ color: "#222" }}>Поради</h4>
               <ul style={{ color: "#555" }}>
                 {item.tips.map((tip, index) => (
                   <li key={index}>{tip}</li>
@@ -376,7 +391,7 @@ const WorkoutProgressPage = () => {
                       workoutStatuses[item.index] !== "WorkingOn" ? true : false
                     }
                   >
-                    Next exercise
+                    Наступна вправа
                   </Button>
                 )}
                 {workoutStatuses[item.index] && (
@@ -389,7 +404,7 @@ const WorkoutProgressPage = () => {
                       }[workoutStatuses[item.index]]
                     }`}
                     id="icon"
-                    alt="status"
+                    alt="статус"
                   />
                 )}
               </div>
@@ -434,7 +449,7 @@ const WorkoutProgressPage = () => {
                   : "pointer",
               }}
             >
-              End Training
+              Завершити тренування
             </Button>
           )}
         </div>
@@ -453,27 +468,24 @@ const WorkoutProgressPage = () => {
           justifyContent: "space-evenly",
         }}
       >
+        <div>Початок: {timeString(data?.startTime)}</div>
         <div>
-          Start time:
-          {timeString(data?.startTime)}
+          Вправи: {currentIndex} / {exercises.length}
         </div>
         <div>
-          Sets: {currentIndex} / {exercises.length}
+          Час: {Math.abs(dayjs(data?.startTime).diff(dayjs(), "seconds"))}
         </div>
-        <div>
-          time: {Math.abs(dayjs(data?.startTime).diff(dayjs(), "seconds"))}
-        </div>
-        <div>© 2025 Sportlife. All rights reserved.</div>
+        <div>© 2025 Sportlife. Всі права захищені.</div>
         <div>
           <EyeOutlined /> {userCount}
         </div>
 
         {owner && (
           <div>
-            Live right now!
+            Прямий ефір!
             <img
               src="/img-pack/icons/Red_circle.gif"
-              alt=""
+              alt="Онлайн"
               style={{ width: "30px", height: "30px" }}
             />
           </div>

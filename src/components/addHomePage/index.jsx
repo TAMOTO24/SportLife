@@ -172,7 +172,7 @@ function Home() {
             className="background"
             style={{
               backgroundImage:
-                "url(/img-pack/trainers/woman-helping-man-gym.jpg)",
+                "url(/img-pack/trainers/strong-gymnast-guy-rings_144962-1347.jpg)",
             }}
           />
           <div

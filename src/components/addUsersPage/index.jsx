@@ -7,6 +7,7 @@ import {
   Typography,
   Pagination,
   Divider,
+  Tag
 } from "antd";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -95,6 +96,7 @@ const UsersPage = () => {
                     @{item.username}
                   </Text>
                 </div>
+                <div><Tag color={item.role === "admin" ? "orange" : (item.role === "trainer" ? "green" : "" )}>{item.role}</Tag></div>
               </Space>
             </Card>
           ))}

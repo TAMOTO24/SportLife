@@ -100,7 +100,6 @@ io.on("connection", (socket) => {
 
       if (oldId) socket.join(`chat_${chat?._id}`);
       console.log(`Joining room: ${chat?._id}`);
-      console.log("+++++++++++++++++++++++++++++++++++");
 
       const first = await User.findById(firstUser);
       const second = await User.findById(secondUser);
@@ -127,14 +126,11 @@ io.on("connection", (socket) => {
   socket.on("recconnect", ({ old, newRoom }) => {
     if (old) {
       socket.leave(`chat_${old}`);
-      console.log(`Leaving room: ${old}`);
     }
 
     if (newRoom) {
       socket.join(`chat_${newRoom}`);
-      console.log(`Joining room: ${newRoom}`);
     }
-    console.log("==============");
   });
 
   socket.on("send_message", async ({ chatId, message, date, fromId }) => {
@@ -230,6 +226,20 @@ io.on("connection", (socket) => {
     socket.broadcast.to(roomId).emit("backToRoom");
   });
 
+  socket.on("update-camera-status", async ({ roomId, status }) => {
+    const existingRoom = await Room.findOne({ roomId });
+
+    if (existingRoom?.data && status) {
+      existingRoom.data.cameraStatus = status;
+      existingRoom.markModified("data");
+      await existingRoom.save();
+
+      console.log(`Room ${roomId} camera status updated to: ${status}`);
+
+      io.to(roomId).emit("camera-status-updated", status);
+    }
+  });
+
   socket.on("getRoomOwner", async ({ roomId }) => {
     const existingRoom = await Room.findOne({ roomId });
 
@@ -250,7 +260,17 @@ io.on("connection", (socket) => {
     io.to(roomId).to(roomId).emit("receiveUpdate", data);
   });
 
-  socket.on( "updateData", async ({ roomId, userId, data, currentWorkout, startTime = null, finalTimeResult = null, status}) => {
+  socket.on(
+    "updateData",
+    async ({
+      roomId,
+      userId,
+      data,
+      currentWorkout,
+      startTime = null,
+      finalTimeResult = null,
+      status,
+    }) => {
       const existingRoom = await Room.findOne({ roomId });
 
       if (!existingRoom || !data) return;
@@ -278,10 +298,22 @@ io.on("connection", (socket) => {
   });
 
   socket.on("disconnectData", async ({ roomId, userId }) => {
+    console.log("roomId", roomId);
     const existingRoom = await Room.findOne({ roomId });
 
-    if (!existingRoom) return;
+    if (!existingRoom) {
+      console.log(
+        "Room is deleted?? !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+      );
+      return;
+    }
 
+    console.log(
+      "disconect Data: ---- ",
+      existingRoom.owner.toString() === userId,
+      existingRoom.owner.toString(),
+      userId
+    );
     if (existingRoom.owner.toString() === userId) {
       await Room.deleteOne({ roomId });
 
@@ -308,8 +340,6 @@ io.on("connection", (socket) => {
   socket.on("updateUsersStatistic", async ({ userId, data }) => {
     if (!userId) return;
     const user = await User.findById(userId);
-
-    console.log("userId - ", userId, " - data - ", data, "- user -", user);
 
     if (!data || !user) {
       return;
@@ -398,7 +428,7 @@ app.put("/changerole/:userId", async (req, res) => {
   }
 });
 
-app.put("/usersetpersonaltrainer", async (req, res) => {
+app.patch("/usersetpersonaltrainer", async (req, res) => {
   const { userId, trainerId, action } = req.body;
 
   if (!userId) {
@@ -642,7 +672,7 @@ app.delete("/deletecomment/:postId/:comment", async (req, res) => {
   }
 });
 
-app.put("/createcomment/:postId", async (req, res) => {
+app.patch("/createcomment/:postId", async (req, res) => {
   const { postId } = req.params;
   const { text, userId } = req.body;
 
@@ -846,22 +876,23 @@ app.get("/currentuserdata", async (req, res) => {
   }
 });
 
-app.put('/user/:id/password', async (req, res) => {
+app.put("/user/:id/password", async (req, res) => {
   try {
     const { oldPassword, newPassword } = req.body;
     const user = await User.findById(req.params.id);
-    if (!user) return res.status(404).json({ message: 'User not found' });
+    if (!user) return res.status(404).json({ message: "User not found" });
 
     const isMatch = await bcrypt.compare(oldPassword, user.password);
-    if (!isMatch) return res.status(400).json({ message: 'Wrong old password' });
+    if (!isMatch)
+      return res.status(400).json({ message: "Wrong old password" });
 
     const hashedPassword = await bcrypt.hash(newPassword, 10);
     user.password = hashedPassword;
     await user.save();
 
-    res.json({ message: 'Password updated successfully' });
+    res.json({ message: "Password updated successfully" });
   } catch (err) {
-    res.status(500).json({ message: 'Server error' });
+    res.status(500).json({ message: "Server error" });
   }
 });
 
@@ -947,7 +978,6 @@ app.get("/request/:id", async (req, res) => {
     if (!id) {
       return res.status(400).json({ message: "No ID provided" });
     }
-    console.log(id);
 
     const request = await Request.findById(id);
 
@@ -1105,9 +1135,9 @@ app.put("/bookmark/:userId", async (req, res) => {
 app.post("/sendemail", upload.array("files"), async (req, res) => {
   const { id, email, subject, note, role } = req.body;
   const files = req.files;
+  const userData = JSON.parse(req.body.userData);
 
   if (!email || !subject || !note || !id || !files || files.length === 0) {
-    console.log(id, email, subject, note, files);
     return res.status(400).json({ message: "All fields are required" });
   }
 
@@ -1118,59 +1148,108 @@ app.post("/sendemail", upload.array("files"), async (req, res) => {
       contentType: file.mimetype,
     }));
 
-    console.log("Attachments:", attachments);
     const baseUrl = process.env.BASE_SERVER_URL || "http://localhost:5000";
     const linkAccept = `${baseUrl}/acceptchangerequest/${id}/${role}`;
     const linkReject = `${baseUrl}/rejectchangerequest/${id}`;
 
     const htmlContent = `
-  <div style="font-family: Arial, sans-serif; background-color: #f9f9f9; padding: 40px;">
+  <div style="font-family: Arial, sans-serif; background-color: #f9f9f9; padding: 40px 20px;">
     <div style="
       max-width: 600px;
       margin: 0 auto;
-      background: white;
-      padding: 30px;
-      border-radius: 8px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      background: #ffffff;
+      padding: 36px 40px;
+      border-radius: 12px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+      color: #333333;
+      line-height: 1.6;
+      font-size: 16px;
     ">
-      <h2 style="color: #333;">Підтвердження зміни ролі</h2>
-      <p style="font-size: 16px; color: #555;">
-        Щоб підтвердити свою електронну пошту та зміну ролі, натисніть на одну з кнопок нижче:
+      <p style="margin-bottom: 24px;">Шановна компанія <strong>SportLife</strong>,</p>
+
+      <p style="margin-bottom: 24px;">
+        Прошу розглянути мою заявку на зміну ролі в веб-додатку для спортивних тренувань.
       </p>
 
-      <div style="display: flex; gap: 16px; margin: 30px 0;">
-        <a href="${linkAccept}" 
-          style="
-            display: inline-block;
-            padding: 12px 24px;
-            background-color: #28a745;
-            color: white;
-            text-decoration: none;
-            border-radius: 6px;
-            font-weight: bold;
-            text-align: center;
-            flex: 1;
-          ">
+      <p style="margin-bottom: 16px;">
+        <strong>Поточна роль:</strong> ${userData?.role}<br/>
+        <strong>Бажана роль:</strong> ${role}
+      </p>
+
+      <div style="
+        margin: 24px 0;
+        padding: 20px 24px;
+        background-color: #f1f5ff;
+        border-left: 5px solid #2c7be5;
+        border-radius: 6px;
+        color: #1a1a1a;
+        font-size: 16px;
+        line-height: 1.5;
+        white-space: pre-line;
+      ">
+        <strong>Причина зміни ролі:</strong><br/>
+        ${note}
+      </div>
+
+      <p style="margin: 24px 0 16px 0;">
+        <strong>Дані користувача:</strong><br/>
+        - ПІБ: ${userData?.name} ${userData?.last_name}<br/>
+        - Нікнейм: ${userData?.username}<br/>
+        - Пошта: <a href="mailto:${userData?.email}" style="color:#2c7be5; text-decoration:none;">${userData?.email}</a><br/>
+        - Контактний телефон: <a href="tel:${userData?.phone}" style="color:#2c7be5; text-decoration:none;">${userData?.phone}</a>
+      </p>
+
+      <p style="margin-bottom: 36px;">
+        Дякую за розгляд моєї заявки.
+      </p>
+
+      <p style="margin-bottom: 0;">
+        З повагою,<br/>
+        <strong>${userData?.name} ${userData?.last_name}</strong><br/>
+        <a href="mailto:${userData?.email}" style="color:#2c7be5; text-decoration:none;">${userData?.email}</a><br/>
+        <a href="tel:${userData?.phone}" style="color:#2c7be5; text-decoration:none;">${userData?.phone}</a>
+      </p>
+
+       <div style="display: flex; gap: 10px; margin-top: 36px;">
+        <a href="${linkAccept}" style="
+          flex: 1;
+          text-align: center;
+          background-color: #28a745;
+          color: white !important;
+          text-decoration: none;
+          padding: 14px 15px;
+          font-weight: 600;
+          font-size: 16px;
+          border-radius: 8px;
+          box-shadow: 0 4px 12px rgba(40, 167, 69, 0.5);
+          display: inline-block;
+          transition: background-color 0.3s ease;
+          padding-inline: 15px;
+          margin-right: 10px;
+        " onmouseover="this.style.backgroundColor='#218838'" onmouseout="this.style.backgroundColor='#28a745'">
           ✅ Підтвердити
         </a>
-
-        <a href="${linkReject}" 
-          style="
-            display: inline-block;
-            padding: 12px 24px;
-            background-color: #d32f2f;
-            color: white;
-            text-decoration: none;
-            border-radius: 6px;
-            font-weight: bold;
-            text-align: center;
-            flex: 1;
-          ">
+        ${" "}
+        <a href="${linkReject}" style="
+          flex: 1;
+          text-align: center;
+          background-color: #dc3545;
+          color: white !important;
+          text-decoration: none;
+          padding: 14px 15px;
+          font-weight: 600;
+          font-size: 16px;
+          border-radius: 8px;
+          box-shadow: 0 4px 12px rgba(220, 53, 69, 0.5);
+          display: inline-block;
+          transition: background-color 0.3s ease;
+          padding-inline: 15px;
+        " onmouseover="this.style.backgroundColor='#c82333'" onmouseout="this.style.backgroundColor='#dc3545'">
           ❌ Відхилити
         </a>
       </div>
 
-      <p style="font-size: 14px; color: #999;">
+      <p style="font-size: 14px; color: #999999; margin-top: 48px; text-align: center;">
         Якщо ви не надсилали цей запит, просто проігноруйте цей лист.
       </p>
     </div>
@@ -1180,7 +1259,7 @@ app.post("/sendemail", upload.array("files"), async (req, res) => {
     await transporter.sendMail({
       from: `"SportLife" ${email}`,
       to: "sportlife.corporate.mail@gmail.com",
-      subject: `Підтвердження на тему ${subject}`,
+      subject: `Підтвердження`,
       text: note,
       html: htmlContent,
       replyTo: email,
@@ -1334,7 +1413,7 @@ app.put("/notification/:userId", async (req, res) => {
   }
 });
 
-app.put("/updateuser", async (req, res) => {
+app.patch("/updateuser", async (req, res) => {
   try {
     const {
       id,
@@ -1407,4 +1486,3 @@ const PORT = process.env.SERVER_PORT || 5000;
 server.listen(5000, () => {
   console.log(`🚀 Server is running on port ${PORT}`);
 });
-// app.listen(PORT, () => console.log(`🚀 Server is running on port ${PORT}`));

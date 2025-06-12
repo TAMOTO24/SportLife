@@ -52,7 +52,7 @@ const CommentsPage = () => {
 
     try {
       setLoading(true);
-      const response = await axios.put(`/createcomment/${post._id}`, {
+      const response = await axios.patch(`/createcomment/${post._id}`, {
         userId: user._id,
         text: commentTextRef.current.trim(),
       });

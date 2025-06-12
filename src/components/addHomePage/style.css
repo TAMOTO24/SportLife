@@ -81,7 +81,7 @@
   /* background-image: url("../../../public/img-pack/trainers/strong-man-pulling-rope_23-2147671924.jpg"); */
   background-size: cover;
   background-position: center;
-  filter: brightness(30%);
+  filter: brightness(50%);
   z-index: 0;
 }
 .blog-title {
@@ -94,7 +94,7 @@
 }
 
 .blog-subtitle {
-  font-family: 'Anton', sans-serif !important;
+  font-family: "Rubik Dirt", sans-serif !important;
   font-size: 50px;
   color: #e35454;
   text-transform: uppercase;
@@ -121,8 +121,10 @@
   gap: 10px;
 }
 .blog-section-block #titleItem{
-  font-family: 'Anton', sans-serif !important;
-  font-size: "5rem"
+  font-family: "Stalinist One", sans-serif !important;
+  font-weight: 400;
+  font-style: normal;
+  font-size: 5rem;
 }
 
 .dot {

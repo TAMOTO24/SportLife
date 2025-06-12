@@ -122,10 +122,6 @@ const ClassPage = () => {
             <strong>Тривалість розминки:</strong>{" "}
             {workoutState.workoutplan["Warm up"]} хв
           </Paragraph>
-          <Paragraph style={{ color: "#a8acb1", fontSize: "18px" }}>
-            <strong>Тренажери:</strong>{" "}
-            {workoutState.exercise_machines.join(", ")}
-          </Paragraph>
           <hr />
           <Paragraph style={{ color: "#a8acb1", fontSize: "30px" }}>
             <strong>Активність тіла:</strong>

@@ -9,6 +9,7 @@ const { Option } = Select;
 const SubscriptionSection = () => {
   const [form] = Form.useForm();
   const onFinishEmail = async (values) => {
+    console.log("значення!", values);
     try {
       const res = await axios.post("/send-newsletter", values);
       form.resetFields();

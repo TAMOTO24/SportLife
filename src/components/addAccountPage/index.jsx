@@ -41,7 +41,7 @@ const AccountPage = () => {
         const response = await axios.get(`/allbookmarks/${user?._id}`);
         setBookMarks(response.data.bookmarks);
       } catch (error) {
-        message.error("Error recieving bookmarks");
+        console.log("Error recieving bookmarks");
       } finally {
         setLoading(false);
       }
@@ -75,7 +75,7 @@ const AccountPage = () => {
           },
           {
             img: "/img-pack/icons/dumbbell.png",
-            label: "Особистий тренер",
+            label: "Персональний тренер",
           },
           {
             img: "/img-pack/icons/physical-activity.png",
@@ -116,8 +116,8 @@ const AccountPage = () => {
           <AccountInfoSection />
         </div>
         <div
-          id="Особистий тренер"
-          className={selected === "Особистий тренер" ? "" : "hidePage"}
+          id="Персональний тренер"
+          className={selected === "Персональний тренер" ? "" : "hidePage"}
         >
           <PersonalTrainer user={user} />
         </div>

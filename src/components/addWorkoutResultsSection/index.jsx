@@ -1,7 +1,7 @@
 import React from "react";
 import dayjs from "dayjs";
 import { formatTime } from "../../function";
-import { Card, Typography, Space, List, Divider } from "antd";
+import { Card, Typography, Space, List, Descriptions } from "antd";
 
 const { Title, Text } = Typography;
 
@@ -18,11 +18,16 @@ const WorkoutResultsSection = ({ user }) => {
           user.statistic.map((session, idx) => (
             <Card
               key={idx}
-              title={`📅 ${dayjs(session.startTime).format(
-                "DD.MM.YYYY"
-              )} • 🕒 ${formatTime(session.trainingTime)}`}
+              title={`📅 ${dayjs(
+                session.startTime
+              ).format("DD.MM.YYYY")} • 🕒 ${formatTime(session.trainingTime)}`}
               style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.1)" }}
             >
+              <Descriptions title={session.workout.title}>
+                <Descriptions.Item label="Опис">{session.workout.description}</Descriptions.Item>
+                <Descriptions.Item label="Тренер">{session.workout.trainer}</Descriptions.Item>
+              </Descriptions>
+              
               <List
                 itemLayout="vertical"
                 dataSource={session.data}
@@ -35,7 +40,7 @@ const WorkoutResultsSection = ({ user }) => {
                     {exercise.description && (
                       <Text type="secondary">{exercise.description}</Text>
                     )}
-                    <br/>
+                    <br />
                     <Text strong>Сети / Повторення: </Text>
                     {exercise.sets} × {exercise.reps}
                     <br />
