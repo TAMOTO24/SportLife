@@ -34,7 +34,6 @@ export const AuthProvider = ({ children }) => {
       message.error(error.response.data.message);
     }
   };
-  //! AFTER Signup user should be logged in automatically
   const signup = async (email, username, name, lastname, password, phone, profile, gender, role, navigate, message) => { 
     // logout(navigate);
     const userData = {

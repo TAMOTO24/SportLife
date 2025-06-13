@@ -15,7 +15,6 @@ const NotificationElement = () => {
   const [user, setUser] = useState(undefined);
   const [loading, setLoading] = useState(true);
   const [notifications, setNotifications] = useState([]);
-  // const [sender, setSender] = useState(undefined);
 
   useEffect(() => {
     // Get current user data
@@ -30,56 +29,6 @@ const NotificationElement = () => {
         setLoading(false);
       });
   }, []);
-
-  // useEffect(() => {
-  //   // Get all notifications
-  //   if (!user) return;
-
-  //   const interval = setInterval(async () => {
-  //     setLoading(true);
-  //     axios
-  //       .get(`/allnotifications/${user?._id}`)
-  //       .then((response) => {
-  //         setNotifications(response.data);
-  //       })
-  //       .catch((error) => console.error("Notification error", error))
-  //       .finally(() => {
-  //         setLoading(false);
-  //       });
-  //   }, 10000);
-
-  //   return () => clearInterval(interval);
-  // }, [user]);
-
-  // useEffect(() => {
-  //   // Output notification checking new ones every 10 seconds
-  //   if (!user) return;
-
-  //   const interval = setInterval(async () => {
-  //     const res = await axios.get(`/notification/${user?._id}`); // find new notifications
-  //     const data = res.data;
-
-  //     if (!data) return; //if no new notifications then just exit
-  //     if (data.type === "error") return; //if error then just exit
-  //     if (!data.title) return; //if no title then just exit
-
-  //     await axios.put(`/notification/${user?._id}`, {
-  //       //mark notification as read for this user
-  //       notificationId: data._id,
-  //     });
-  //     console.log("Notification:", data._id);
-  //     Notification(
-  //       data.message,
-  //       data.title,
-  //       data.type,
-  //       data._id,
-  //       data.url,
-  //       data?.action
-  //     );
-  //   }, 5000);
-
-  //   return () => clearInterval(interval);
-  // }, [user]);
 
   const fetchNotifications = async () => {
     if (!user) return;
@@ -133,21 +82,12 @@ const NotificationElement = () => {
   };
   return (
     <>
-      {/* <Badge
-        dot={true}
-        style={{
-          boxShadow: "none",
-          border: "none",
-        }}
-        size={"large"}
-      > */}
       <Avatar
         size={40}
         src="/img-pack/icons/bell.png"
         onClick={showDrawer}
         className="notification"
       />
-      {/* </Badge> */}
       <Drawer
         onClose={onClose}
         closable={false}

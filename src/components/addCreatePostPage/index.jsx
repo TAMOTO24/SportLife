@@ -88,7 +88,6 @@ const CreatePostPage = () => {
               style={{ borderRadius: "8px" }}
             />
           </Form.Item>
-          {/* <Form.Item name="upload" valuePropName="fileList" /> */}
           <Form.Item label="Додати файли">
             <Form.Item
               name="upload"

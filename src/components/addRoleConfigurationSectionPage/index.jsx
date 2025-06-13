@@ -135,7 +135,6 @@ const RoleConfigurationSection = ({ user }) => {
                 <Input disabled={true} />
               </Form.Item>
 
-              {/* <Form.Item name="upload" valuePropName="fileList"></Form.Item> */}
               <p className="roleConfigurationSectionText">
                 Будь ласка, надішліть нам своє резюме або інші документи, які
                 підтверджують вашу кваліфікацію. Ви можете завантажити їх тут.

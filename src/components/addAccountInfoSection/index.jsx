@@ -287,7 +287,6 @@ const AccountInfoSection = () => {
                   <Button type="primary" htmlType="submit">
                     Зберегти
                   </Button>
-                  {/* <Button htmlType="button">Cancel</Button> */}
                 </Space>
               </Col>
             </Row>

@@ -41,20 +41,6 @@ function Header() {
                 </li>
               </Link>
             ))}
-            {/* <li
-              onClick={() => setIsOpen(!isOpen)}
-              className="dropDownButton"
-              id="moreBtn"
-            >
-              More {isOpen ? "▲" : "▼"}
-              {isOpen && (
-                <div className="dropdownBlock">
-                  <Link to="#">
-                    <div id="DRPLink">codes</div>
-                  </Link>
-                </div>
-              )}
-            </li> */}
             <li>
               {location.pathname !== "/authpage" &&
                 location.pathname !== "/account" && <Auth />}

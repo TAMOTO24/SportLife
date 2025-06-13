@@ -22,7 +22,7 @@ const CommentElement = ({
         <div className="postUserContent">
           <div className="postUser">{user?.name || "unknown user"}</div>
           <div className="postUsername">@{user?.username}</div>
-          {/* <div className="postDate">{date}</div> */}
+          <div className="postDate">{date}</div>
         </div>
         <div className="commentText">{text}</div>
       </div>
