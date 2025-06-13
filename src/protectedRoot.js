@@ -7,10 +7,14 @@ const ProtectedRoute = () => {
   const { user } = useContext(AuthContext);
   const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    if (user !== undefined) {
+ useEffect(() => {
+    if (user) {
       setIsLoading(false);
     }
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 2000);
+    return () => clearTimeout();
   }, [user]);
 
   if (isLoading) {
