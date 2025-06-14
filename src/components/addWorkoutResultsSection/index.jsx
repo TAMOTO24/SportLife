@@ -12,22 +12,26 @@ const WorkoutResultsSection = ({ user }) => {
       <Space
         direction="vertical"
         size="large"
-        style={{ width: "100%", overflow: "auto" }}
+        style={{ width: "100%", overflow: "auto", maxHeight: "93vh" }}
       >
         {user?.statistic && user.statistic.length > 0 ? (
           user.statistic.map((session, idx) => (
             <Card
               key={idx}
-              title={`📅 ${dayjs(
-                session.startTime
-              ).format("DD.MM.YYYY")} • 🕒 ${formatTime(session.trainingTime)}`}
+              title={`📅 ${dayjs(session.startTime * 1000).format(
+                "DD.MM.YYYY"
+              )} • 🕒 ${formatTime(session.trainingTime)}`}
               style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.1)" }}
             >
               <Descriptions title={session.workout.title}>
-                <Descriptions.Item label="Опис">{session.workout.description}</Descriptions.Item>
-                <Descriptions.Item label="Тренер">{session.workout.trainer}</Descriptions.Item>
+                <Descriptions.Item label="Опис">
+                  {session.workout.description}
+                </Descriptions.Item>
+                <Descriptions.Item label="Тренер">
+                  {session.workout.trainer}
+                </Descriptions.Item>
               </Descriptions>
-              
+
               <List
                 itemLayout="vertical"
                 dataSource={session.data}

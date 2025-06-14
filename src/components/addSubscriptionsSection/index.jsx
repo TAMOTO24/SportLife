@@ -1,3 +1,4 @@
+import {useState} from "react";
 import { Form, Input, Button, Select, DatePicker, Card, message } from "antd";
 import axios from "axios";
 import dayjs from "dayjs";
@@ -8,19 +9,24 @@ const { Option } = Select;
 
 const SubscriptionSection = () => {
   const [form] = Form.useForm();
+  const [loadingEmail, setLoadingEmail] = useState(false);
+  const [loading, setLoading] = useState(false);
   const onFinishEmail = async (values) => {
     console.log("значення!", values);
+    setLoadingEmail(true);
     try {
       const res = await axios.post("/send-newsletter", values);
       form.resetFields();
       message.success(res.data.message || "Розсилку відправлено!");
     } catch (err) {
       message.error(err.response?.data?.message || "Помилка при відправці");
+    } finally {
+      setLoadingEmail(false);
     }
   };
   const onFinishNotification = async (values) => {
     try {
-
+      setLoading(true);
       createNotification(
         values.message,
         values.title,
@@ -37,6 +43,8 @@ const SubscriptionSection = () => {
     } catch (err) {
       console.error(err);
       message.error("Помилка направлення повідомлення!");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -45,6 +53,7 @@ const SubscriptionSection = () => {
       <Card
         title="Розсилка повідомлень усім користувачам"
         style={{ width: "100%" }}
+        loading={loading}
       >
         <Form
           form={form}
@@ -96,7 +105,7 @@ const SubscriptionSection = () => {
         </Form>
       </Card>
 
-      <Card title="Відправити розсилку пошти" style={{ width: "100%" }}>
+      <Card title="Відправити розсилку пошти" style={{ width: "100%" }} loading={loadingEmail}>
         <Form layout="vertical" onFinish={onFinishEmail}>
           <Form.Item
             label="Тема листа"

@@ -62,7 +62,7 @@ const PersonalTrainer_User = ({ user, trainer }) => {
         <b>Персональний тренер</b>
       </h1>
 
-      {!user?.personalTrainerId ? (
+      {!user?.personalTrainerId || user?.personalTrainerId === "rejected" ? (
         <Result
           status="404"
           title="У вас ще немає персонального тренера"
@@ -120,7 +120,8 @@ const PersonalTrainer_User = ({ user, trainer }) => {
             Відхилено
           </Tag>
         ) : user?.personalTrainerId === undefined ||
-          user?.personalTrainerId === null ? (
+          user?.personalTrainerId === null ||
+          !user?.personalTrainerId ? (
           <Tag bordered={false} color="default" style={{ fontSize: 20 }}>
             Ви ще не відправили запит!
           </Tag>

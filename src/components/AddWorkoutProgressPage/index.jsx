@@ -226,13 +226,6 @@ const WorkoutProgressPage = () => {
         () => {
           console.log("✅ disconnectData sent, now disconnecting...");
           socket.disconnect();
-          navigate(
-            ownerRef.current ? `/workoutroom/${uniqueUIDV4Id}/result` : "/",
-            {
-              replace: true,
-              state: { result: resultData },
-            }
-          );
         }
       );
 

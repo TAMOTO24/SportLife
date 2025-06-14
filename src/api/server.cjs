@@ -303,9 +303,6 @@ io.on("connection", (socket) => {
     if (!existingRoom.roomId) return;
 
     if (existingRoom.owner.toString() === userId) {
-      await Room.deleteOne({ roomId });
-
-      console.log("owner disconnected, room deleted");
 
       socket.broadcast.to(roomId).emit("roomClosed");
       return;

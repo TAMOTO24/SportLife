@@ -2,14 +2,20 @@ import { Calendar, Tooltip as AntdTooltip } from "antd";
 
 const TrainingCalendar = ({ statistics }) => {
   const trainingDates = statistics.map((s) =>
-    new Date(s.startTime).toDateString()
+    new Date(s.startTime * 1000).toDateString()
   );
 
   const dateCellRender = (value) => {
     const date_str = value.toDate().toDateString();
 
     return (
-      <AntdTooltip title={trainingDates.includes(date_str) ? "Було тренування" : "Відсутня активність"}>
+      <AntdTooltip
+        title={
+          trainingDates.includes(date_str)
+            ? "Було тренування"
+            : "Відсутня активність"
+        }
+      >
         <div
           style={{
             background: trainingDates.includes(date_str) ? "#52c41a" : "gray",

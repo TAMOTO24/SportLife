@@ -104,7 +104,7 @@ const RoleConfigurationSection = ({ user }) => {
               <Form.Item
                 name="note"
                 label="Записка до звернення"
-                rules={[{ required: true }]}
+                rules={[{ required: true, message: "Напишіть записку!" }]}
               >
                 <TextArea rows={4} />
               </Form.Item>
@@ -116,7 +116,7 @@ const RoleConfigurationSection = ({ user }) => {
               <Form.Item
                 name="request"
                 label="Виберіть потрібну роль."
-                rules={[{ required: true }]}
+                rules={[{ required: true, message: "Виберіть потрібну роль!",}]}
               >
                 <Select placeholder="Select a option and change input text above">
                   <Option value='{"role":"trainer","subject":"Запит на роль тренер"}'>
@@ -145,6 +145,12 @@ const RoleConfigurationSection = ({ user }) => {
                   valuePropName="fileList"
                   getValueFromEvent={normFile}
                   noStyle
+                  rules={[
+                    {
+                      required: true,
+                      message: "Обов'язково додайте документи!",
+                    },
+                  ]}
                 >
                   <Upload.Dragger
                     name="files"
