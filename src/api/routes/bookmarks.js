@@ -3,6 +3,7 @@ const router = express.Router();
 const User = require("../../models/user");
 const Post = require("../../models/post");
 const Workouts = require("../../models/workouts");
+const mongoose = require("mongoose");
 
 router.get("/allbookmarks/:userId", async (req, res) => {
   const { userId } = req.params;
